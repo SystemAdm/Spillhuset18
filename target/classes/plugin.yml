@@ -1,0 +1,8 @@
+name: Spillhuset
+main: com.spillhuset.oddjob.OddJob
+version: 0.2
+api-version: 1.18
+
+commands:
+  homes:
+    description: Test
