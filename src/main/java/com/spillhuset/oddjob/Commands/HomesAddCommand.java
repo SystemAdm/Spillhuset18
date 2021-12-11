@@ -103,7 +103,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (can(sender,true,false)) {
+        if (can(sender, true, false)) {
             if (args.length == 2) {
                 ListInterface.playerList(list, args[1]);
             } else if (args.length == 3) {

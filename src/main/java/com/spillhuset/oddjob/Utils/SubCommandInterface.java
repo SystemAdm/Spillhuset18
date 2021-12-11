@@ -93,7 +93,7 @@ public abstract class SubCommandInterface {
         for (SubCommand subCommand : subCommands) {
             String name = subCommand.getName();
             if (subCommand.can(sender, false, false)) {
-                if (args.length >= 1 && name.equalsIgnoreCase(args[0])) {
+                if (args.length >= 1 && name.equalsIgnoreCase(args[0]) && !args[0].equals("help")) {
                     subCommand.getCommandExecutor(sender, args);
                     // found a subcommand return 'null'
                     return null;

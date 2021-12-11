@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class HomesManager extends Managers {
+
     public boolean del(@Nonnull CommandSender sender, @Nonnull OddPlayer target, @Nonnull String name) {
         UUID uuid = target.getUuid();
 

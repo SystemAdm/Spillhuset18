@@ -17,7 +17,6 @@ import java.util.UUID;
 public class GuildSQL extends MySQLManager {
 
     /**
-     *
      * @param uuid UUID of Guild
      * @return Integer of saved guilds
      */
@@ -64,7 +63,6 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     *
      * @param guild Guild to save
      * @return Boolean if success
      */
@@ -110,7 +108,6 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     *
      * @return HashMap of Chunk and Guild UUID
      */
     public static HashMap<Chunk, UUID> loadChunks() {
@@ -140,7 +137,6 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     *
      * @param chunks HashMap of Chunk and Guild UUID
      * @return Integer | number of saved chunks
      */
@@ -150,10 +146,10 @@ public class GuildSQL extends MySQLManager {
             try {
                 connect();
                 preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_chunks` WHERE `server` = ? AND `world` = ? AND `x` = ? AND `z` = ?");
-                preparedStatement.setString(1,server);
-                preparedStatement.setString(2,chunk.getWorld().getUID().toString());
-                preparedStatement.setInt(3,chunk.getX());
-                preparedStatement.setInt(4,chunk.getZ());
+                preparedStatement.setString(1, server);
+                preparedStatement.setString(2, chunk.getWorld().getUID().toString());
+                preparedStatement.setInt(3, chunk.getX());
+                preparedStatement.setInt(4, chunk.getZ());
                 resultSet = preparedStatement.executeQuery();
 
                 if (resultSet.next()) {
@@ -161,11 +157,11 @@ public class GuildSQL extends MySQLManager {
                 } else {
                     preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_chunks` (`uuid`,`server`,`world`,`x`,`z`) VALUES (?,?,?,?,?)");
                 }
-                preparedStatement.setString(1,chunks.get(chunk).toString());
-                preparedStatement.setString(2,server);
-                preparedStatement.setString(3,chunk.getWorld().getUID().toString());
-                preparedStatement.setInt(4,chunk.getX());
-                preparedStatement.setInt(5,chunk.getZ());
+                preparedStatement.setString(1, chunks.get(chunk).toString());
+                preparedStatement.setString(2, server);
+                preparedStatement.setString(3, chunk.getWorld().getUID().toString());
+                preparedStatement.setInt(4, chunk.getX());
+                preparedStatement.setInt(5, chunk.getZ());
                 affected += preparedStatement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -178,20 +174,19 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     *
      * @return HashMap of Player UUID and Guild UUID
      */
     public static HashMap<UUID, UUID> loadMembers() {
-        HashMap<UUID,UUID> members = new HashMap<>();
-        try{
+        HashMap<UUID, UUID> members = new HashMap<>();
+        try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_members`");
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 UUID guild = UUID.fromString(resultSet.getString("uuid"));
                 if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    members.put(UUID.fromString(resultSet.getString("player")),guild);
+                    members.put(UUID.fromString(resultSet.getString("player")), guild);
                 }
             }
         } catch (SQLException ex) {
@@ -203,21 +198,20 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     *
      * @return HashMap of Player UUID and Role
      */
     public static HashMap<UUID, Role> loadRoles() {
-        HashMap<UUID,Role> roles = new HashMap<>();
-        try{
+        HashMap<UUID, Role> roles = new HashMap<>();
+        try {
             connect();
-            preparedStatement = connection.prepareStatement("SELECT `player`,`role` FROM `mine_guilds_members`");
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members`");
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 UUID player = UUID.fromString(resultSet.getString("uuid"));
                 Role role = Role.valueOf(resultSet.getString("role"));
                 if (OddJob.getInstance().getGuildsManager().getMembers().containsKey(player)) {
-                    roles.put(player,role);
+                    roles.put(player, role);
                 }
             }
         } catch (SQLException ex) {
@@ -229,17 +223,17 @@ public class GuildSQL extends MySQLManager {
     }
 
     public static HashMap<UUID, UUID> loadPending() {
-        HashMap<UUID,UUID> pending = new HashMap<>();
-        try{
+        HashMap<UUID, UUID> pending = new HashMap<>();
+        try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_pendings`");
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 UUID guild = UUID.fromString(resultSet.getString("uuid"));
                 UUID player = UUID.fromString(resultSet.getString("player"));
                 if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    pending.put(player,guild);
+                    pending.put(player, guild);
                 }
             }
         } catch (SQLException ex) {
@@ -251,17 +245,17 @@ public class GuildSQL extends MySQLManager {
     }
 
     public static HashMap<UUID, UUID> loadInvites() {
-        HashMap<UUID,UUID> invites = new HashMap<>();
-        try{
+        HashMap<UUID, UUID> invites = new HashMap<>();
+        try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_invites`");
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 UUID guild = UUID.fromString(resultSet.getString("uuid"));
                 UUID player = UUID.fromString(resultSet.getString("player"));
                 if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    invites.put(player,guild);
+                    invites.put(player, guild);
                 }
             }
         } catch (SQLException ex) {
@@ -271,4 +265,92 @@ public class GuildSQL extends MySQLManager {
         }
         return invites;
     }
+
+    public static int saveMembersRoles(HashMap<UUID, UUID> members, HashMap<UUID, Role> roles) {
+        int i = 0;
+        for (UUID member : members.keySet()) {
+            UUID guild = members.get(member);
+            if (roles.containsKey(member)) {
+                try {
+                    connect();
+                    preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_members` WHERE `player` = ?");
+                    preparedStatement.setString(1, member.toString());
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_members` SET `uuid` = ? AND `role` = ? WHERE `uuid` = ?");
+                    } else {
+                        preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_members` (`uuid`,`role`,`player`) VALUES (?,?,?)");
+                    }
+                    preparedStatement.setString(1, guild.toString());
+                    preparedStatement.setString(2, roles.get(member).name());
+                    preparedStatement.setString(3, member.toString());
+                    preparedStatement.executeUpdate();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    close();
+                }
+                i++;
+            }
+        }
+        return i;
+    }
+
+    public static int saveInvites(HashMap<UUID, UUID> invites) {
+        int i = 0;
+        for (UUID member : invites.keySet()) {
+            UUID guild = invites.get(member);
+            try {
+                connect();
+                preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_invites` WHERE `player` = ?");
+                preparedStatement.setString(1, member.toString());
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_invites` SET `uuid` = ? WHERE `uuid` = ?");
+                } else {
+                    preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_invites` (`uuid`,`player`) VALUES (?,?)");
+                }
+                preparedStatement.setString(1, guild.toString());
+                preparedStatement.setString(2, member.toString());
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                close();
+            }
+            i++;
+        }
+        return i;
+    }
+
+    public static int savePending(HashMap<UUID, UUID> pending) {
+        int i = 0;
+        for (UUID member : pending.keySet()) {
+            UUID guild = pending.get(member);
+            try {
+                connect();
+                preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_pendings` WHERE `player` = ?");
+                preparedStatement.setString(1, member.toString());
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_pendings` SET `uuid` = ? WHERE `uuid` = ?");
+                } else {
+                    preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_pendings` (`uuid`,`player`) VALUES (?,?)");
+                }
+                preparedStatement.setString(1, guild.toString());
+                preparedStatement.setString(2, member.toString());
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                close();
+            }
+            i++;
+        }
+        return i;
+    }
+
 }

@@ -13,11 +13,11 @@ import java.util.UUID;
 public class PlayerManager {
     static HashMap<UUID, OddPlayer> oddPlayers = new HashMap<>();
 
-    public static List<String> listString() {
+    public List<String> listString() {
         OddJob.getInstance().log("listing");
         List<String> list = new ArrayList<>();
-        OddJob.getInstance().log("size:"+oddPlayers.size());
-        for (OddPlayer oddPlayer:oddPlayers.values()) {
+        OddJob.getInstance().log("size:" + oddPlayers.size());
+        for (OddPlayer oddPlayer : oddPlayers.values()) {
             OddJob.getInstance().log("item-player");
             list.add(oddPlayer.getName());
         }
@@ -47,7 +47,7 @@ public class PlayerManager {
         OddPlayer oddPlayer = PlayerSQL.get(uuid);
         OddJob.getInstance().log("got-player");
         Long joined = System.currentTimeMillis() / 1000;
-        OddJob.getInstance().log("joined "+joined);
+        OddJob.getInstance().log("joined " + joined);
         if (oddPlayer == null) {
             OddJob.getInstance().log("added");
             HistoryManager.add(uuid, Changed.first, "", String.valueOf(joined));

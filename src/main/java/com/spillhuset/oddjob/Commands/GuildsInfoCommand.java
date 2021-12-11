@@ -1,14 +1,11 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsCreateCommand extends SubCommand {
+public class GuildsInfoCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -26,7 +23,7 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "create";
+        return "info";
     }
 
     @Override
@@ -41,38 +38,26 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds.create";
+        return "guilds";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender, false, true)) {
-            return;
-        }
-        if (!argsLength(sender, args.length)) {
-            return;
-        }
 
-        OddJob.getInstance().getGuildsManager().create(sender, args[1]);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        if (args.length == 2) {
-            List<String> list = new ArrayList<>();
-            list.add("<name>");
-            return list;
-        }
         return null;
     }
 }

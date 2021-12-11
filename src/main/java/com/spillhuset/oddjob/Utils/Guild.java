@@ -56,7 +56,6 @@ public class Guild {
             this.spawn = null;
         } else {
             this.spawn = player.getLocation();
-
         }
     }
 

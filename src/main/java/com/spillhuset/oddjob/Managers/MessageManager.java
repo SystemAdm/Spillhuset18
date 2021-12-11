@@ -155,4 +155,8 @@ public class MessageManager {
     public static void guilds_name_already_exists(String name, CommandSender sender) {
         notify(Plugin.guilds,sender,Notify.danger,"There is already a guild named "+cGuild+name);
     }
+
+    public static void guilds_already_associated(CommandSender sender, String name) {
+        notify(Plugin.guilds,sender,Notify.danger,"You are already associated with "+cGuild+name);
+    }
 }

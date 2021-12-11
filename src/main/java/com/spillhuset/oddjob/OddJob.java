@@ -5,12 +5,16 @@ import com.spillhuset.oddjob.Commands.HomesCommand;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Events.OnJoinEvent;
 import com.spillhuset.oddjob.Events.OnLeaveEvent;
-import com.spillhuset.oddjob.Managers.*;
-import com.spillhuset.oddjob.Utils.Managers;
+import com.spillhuset.oddjob.Managers.GuildsManager;
+import com.spillhuset.oddjob.Managers.HistoryManager;
+import com.spillhuset.oddjob.Managers.HomesManager;
+import com.spillhuset.oddjob.Managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static com.spillhuset.oddjob.Managers.ConfigManager.load;
 
 public class OddJob extends JavaPlugin {
 
@@ -30,11 +34,11 @@ public class OddJob extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         /* Loadings */
-        ConfigManager.load();
-        Managers.load();
+        load();
         homesManager = new HomesManager();
         playerManager = new PlayerManager();
         guildsManager = new GuildsManager();
+        guildsManager.loadStart();
         historyManager = new HistoryManager();
 
         /* Listeners */

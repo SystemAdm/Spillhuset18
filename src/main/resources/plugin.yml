@@ -5,4 +5,6 @@ api-version: 1.18
 
 commands:
   homes:
-    description: Test
+    description: Homes
+  guilds:
+    description: Guilds

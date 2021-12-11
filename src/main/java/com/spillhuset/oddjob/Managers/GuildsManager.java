@@ -5,12 +5,13 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.GuildSQL;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.Managers;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class GuildsManager extends Managers {
@@ -36,8 +37,15 @@ public class GuildsManager extends Managers {
     private HashMap<UUID, UUID> pending = new HashMap<>();
     private HashMap<UUID, UUID> invites = new HashMap<>();
 
+    public GuildsManager() {
+    }
+
     public void loadGuilds() {
         int i = GuildSQL.loadGuild(null);
+        if (i == 0) {
+            create(Bukkit.getConsoleSender(), "SafeZone");
+            i++;
+        }
         OddJob.getInstance().log("loaded guilds: " + i);
     }
 
@@ -69,14 +77,27 @@ public class GuildsManager extends Managers {
     public boolean create(CommandSender sender, String name) {
         boolean affected = false;
 
-        name = ChatColor.stripColor(name.toLowerCase().trim().substring(0, 15));
+        name = ChatColor.stripColor(name.toLowerCase().trim());
+        name = (name.length() > 15) ? name.substring(0, 15) : name;
+
+        if (sender instanceof Player player) {
+            UUID uuid = player.getUniqueId();
+            if (members.containsKey(uuid)) {
+                MessageManager.guilds_already_associated(sender, guilds.get(members.get(uuid)).getName());
+                return false;
+            }
+        }
 
         for (Guild guild : guilds.values()) {
             if (guild.getName().equals(name)) {
                 MessageManager.guilds_name_already_exists(name, sender);
+                return false;
             }
         }
 
+        Guild guild = new Guild(name, null);
+        guilds.put(guild.getUuid(), guild);
+        GuildSQL.save(guild);
         return affected;
     }
 
@@ -93,29 +114,30 @@ public class GuildsManager extends Managers {
         int i = GuildSQL.saveChunks(chunks);
         OddJob.getInstance().log("saved guild-chunks: " + i);
     }
+
     public void saveMembersRoles() {
-        int i = GuildSQL.saveMembersRoles(members,roles);
-        OddJob.getInstance().log("saved guild-chunks: " + i);
-    }
-    public void saveChunks() {
-        int i = GuildSQL.saveChunks(chunks);
-        OddJob.getInstance().log("saved guild-chunks: " + i);
-    }
-    public void saveChunks() {
-        int i = GuildSQL.saveChunks(chunks);
-        OddJob.getInstance().log("saved guild-chunks: " + i);
-    }
-    public void saveChunks() {
-        int i = GuildSQL.saveChunks(chunks);
+        int i = GuildSQL.saveMembersRoles(members, roles);
         OddJob.getInstance().log("saved guild-chunks: " + i);
     }
 
-    public HashMap<UUID, String> getGuilds() {
-        HashMap<UUID, String> guildList = new HashMap<>();
-        for (UUID uuid : guilds.keySet()) {
-            guildList.put(uuid, guilds.get(uuid).getName());
-        }
-        return guildList;
+    public void savePendingInvites() {
+        int i = GuildSQL.saveInvites(invites);
+        int j = GuildSQL.savePending(pending);
+        OddJob.getInstance().log("saved guild-pending: " + i);
+        OddJob.getInstance().log("saved guild-invites: " + j);
+    }
+
+    public void loadStart() {
+        loadGuilds();
+        loadChunks();
+        loadMembers();
+        loadRoles();
+        loadInvites();
+        loadPending();
+    }
+
+    public HashMap<UUID, Guild> getGuilds() {
+        return guilds;
     }
 
     public HashMap<UUID, UUID> getMembers() {
