@@ -76,14 +76,14 @@ public class HomesDelCommand extends SubCommand {
         String name = "home";
         OddPlayer target = null;
         if ((args.length == 1 || args.length == 2) && sender instanceof Player player) {
-            target = PlayerManager.get(player.getUniqueId());
+            target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
         }
         if (args.length == 2) {
             name = args[1].toLowerCase();
         }
         if (args.length == 3) {
             name = args[2].toLowerCase();
-            target = PlayerManager.get(args[1]);
+            target = OddJob.getInstance().getPlayerManager().get(args[1]);
         }
 
         if (target != null) {
@@ -103,7 +103,7 @@ public class HomesDelCommand extends SubCommand {
             if (args.length == 2) {
                 ListInterface.playerList(list,args[1]);
             } else if (args.length == 3) {
-                UUID uuid = PlayerManager.get(args[1]).getUuid();
+                UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
                     ListInterface.listHomes(list,uuid,args[2]);
                 }

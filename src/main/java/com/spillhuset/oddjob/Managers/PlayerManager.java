@@ -92,7 +92,7 @@ public class PlayerManager {
      * @param name String name of the Player
      * @return OddPlayer
      */
-    public static OddPlayer get(String name) {
+    public OddPlayer get(String name) {
         for (UUID uuid : oddPlayers.keySet()) {
             OddPlayer oddPlayer = oddPlayers.get(uuid);
             if (oddPlayer.getName().equalsIgnoreCase(name)) {
@@ -102,7 +102,7 @@ public class PlayerManager {
         return PlayerSQL.get(name);
     }
 
-    public static OddPlayer get(UUID uuid) {
+    public OddPlayer get(UUID uuid) {
         OddPlayer oddPlayer = oddPlayers.get(uuid);
         if (oddPlayer != null) return oddPlayer;
         return PlayerSQL.get(uuid);

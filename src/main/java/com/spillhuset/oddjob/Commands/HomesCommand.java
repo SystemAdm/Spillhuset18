@@ -93,7 +93,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
 
         if (args.length == 1 && sender instanceof Player player && !sub) {
             String name = args[0].toLowerCase();
-            OddPlayer oddPlayer = PlayerManager.get(player.getUniqueId());
+            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             Location home = OddJob.getInstance().getHomeManager().find(oddPlayer, name);
             if (home != null) {
                 redirect(sender, getPlugin(), "tp " + name);

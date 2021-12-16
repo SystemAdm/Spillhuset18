@@ -34,9 +34,10 @@ public class ConfigManager {
             if (!config.isSet("sql.password")) config.set("sql.password", "");
 
             if (!config.isSet("homes.ladder.default")) config.set("homes.ladder.default", 5);
-
             if (!config.isSet("homes.log.set")) config.set("homes.log.set", true);
             if (!config.isSet("homes.response")) config.set("homes.response", Response.ACTIONBAR.name());
+
+            if (!config.isSet("guilds.default.list")) config.set("guilds.default.list",10);
 
             save();
         }
@@ -50,5 +51,13 @@ public class ConfigManager {
     public static int get(String string) {
         FileConfiguration config = OddJob.getInstance().getConfig();
         return config.getInt(string, 0);
+    }
+
+    public static int getInt(String s) {
+        return OddJob.getInstance().getConfig().getInt(s);
+    }
+
+    public static boolean isSet(String s) {
+        return OddJob.getInstance().getConfig().isSet(s);
     }
 }

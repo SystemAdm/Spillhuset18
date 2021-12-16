@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -10,16 +11,16 @@ import java.util.UUID;
 
 public class Guild {
     private final UUID uuid;
-    private int maxClaims = OddJob.getInstance().getConfig().getInt("guilds.default.max_claims");
+    private int maxClaims = ConfigManager.isSet("guilds.default.max_claims") ? ConfigManager.getInt("guilds.default.max_claims") : 10;
     private Location spawn = null;
-    private boolean spawnMobs;
-    private boolean open;
-    private boolean invited_only;
-    private boolean friendlyFire;
-    private Role permissionKick;
-    private Role permissionInvite;
+    private boolean spawnMobs = false;
+    private boolean open = false;
+    private boolean invited_only = false;
+    private boolean friendlyFire = false;
+    private Role permissionKick = Role.Members;
+    private Role permissionInvite = Role.Members;
     private String name;
-    private Zone zone;
+    private Zone zone = Zone.GUILD;
 
     /**
      * Created from loading

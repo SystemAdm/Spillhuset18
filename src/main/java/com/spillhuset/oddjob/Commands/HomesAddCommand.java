@@ -76,10 +76,10 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
         String name = "home";
         if (args.length == 3) {
             targetName = args[1];
-            target = PlayerManager.get(targetName);
+            target = OddJob.getInstance().getPlayerManager().get(targetName);
             name = args[2];
         } else if (sender instanceof Player player) {
-            target = PlayerManager.get(player.getUniqueId());
+            target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             if (args.length == 2) {
                 name = args[1];
             }
@@ -107,7 +107,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
             if (args.length == 2) {
                 ListInterface.playerList(list, args[1]);
             } else if (args.length == 3) {
-                UUID uuid = PlayerManager.get(args[1]).getUuid();
+                UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
                     list.add("<name_of_home>");
                 }

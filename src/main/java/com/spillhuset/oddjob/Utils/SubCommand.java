@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,6 +32,9 @@ public abstract class SubCommand {
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
 
     public boolean can(CommandSender sender, boolean others, boolean response) {
+        OddJob.getInstance().log("player "+((sender instanceof Player)?1:0));
+        OddJob.getInstance().log("permission "+((sender.hasPermission(getPermission()))?1:0));
+        OddJob.getInstance().log("player "+((sender.isOp())?1:0));
         if (denyConsole() && !(sender instanceof Player)) {
             if (response) MessageManager.errors_denied_console(getPlugin(), sender);
             return false;
@@ -44,6 +48,7 @@ public abstract class SubCommand {
             return false;
         }
         if (sender instanceof Player && (!sender.hasPermission(getPermission()) && !sender.isOp())) {
+
             if (response) MessageManager.errors_denied_players(getPlugin(), sender);
             return false;
         }

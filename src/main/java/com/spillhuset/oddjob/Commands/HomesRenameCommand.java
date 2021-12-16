@@ -77,12 +77,12 @@ public class HomesRenameCommand extends SubCommand {
         OddPlayer target = null;
 
         if (args.length == 3 && sender instanceof Player player) {
-            target = PlayerManager.get(player.getUniqueId());
+            target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             nameOld = args[1].toLowerCase();
             nameNew = args[2].toLowerCase();
         }
         if (args.length == 4) {
-            target = PlayerManager.get(args[1]);
+            target = OddJob.getInstance().getPlayerManager().get(args[1]);
             nameOld = args[2].toLowerCase();
             nameNew = args[3].toLowerCase();
         }
@@ -103,7 +103,7 @@ public class HomesRenameCommand extends SubCommand {
             if (args.length == 2) {
                 ListInterface.playerList(list,args[1]);
             } else if (args.length == 3) {
-                UUID uuid = PlayerManager.get(args[1]).getUuid();
+                UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
                     ListInterface.listHomes(list,uuid,args[2]);
                 }

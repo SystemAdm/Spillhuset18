@@ -104,7 +104,7 @@ public class HomesManager extends Managers {
     }
 
     public int getMax(@Nonnull UUID uuid) {
-        int playerManager = PlayerManager.get(uuid).getMaxHomes();
+        int playerManager = OddJob.getInstance().getPlayerManager().get(uuid).getMaxHomes();
         int configManager = ConfigManager.get("homes.ladder.default");
         return playerManager + configManager;
     }

@@ -173,97 +173,30 @@ public class GuildSQL extends MySQLManager {
         return affected;
     }
 
-    /**
-     * @return HashMap of Player UUID and Guild UUID
-     */
-    public static HashMap<UUID, UUID> loadMembers() {
-        HashMap<UUID, UUID> members = new HashMap<>();
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_members`");
-            resultSet = preparedStatement.executeQuery();
+    public static void loadMembersRoles() {
+        HashMap<UUID,UUID> members = new HashMap<>();
+        HashMap<UUID,Role> roles = new HashMap<>();
+        for (UUID uuid: OddJob.getInstance().getGuildsManager().getGuilds().keySet()) {
+            try {
+                connect();
+                preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members` WHERE `uuid` = ?");
+                preparedStatement.setString(1,uuid.toString());
+                resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) {
-                UUID guild = UUID.fromString(resultSet.getString("uuid"));
-                if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    members.put(UUID.fromString(resultSet.getString("player")), guild);
+                while (resultSet.next()) {
+                    UUID member = UUID.fromString(resultSet.getString("player"));
+                    members.put(member, uuid);
+                    Role role = Role.valueOf(resultSet.getString("role"));
+                    roles.put(member,role);
                 }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                close();
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
         }
-        return members;
-    }
-
-    /**
-     * @return HashMap of Player UUID and Role
-     */
-    public static HashMap<UUID, Role> loadRoles() {
-        HashMap<UUID, Role> roles = new HashMap<>();
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members`");
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                UUID player = UUID.fromString(resultSet.getString("uuid"));
-                Role role = Role.valueOf(resultSet.getString("role"));
-                if (OddJob.getInstance().getGuildsManager().getMembers().containsKey(player)) {
-                    roles.put(player, role);
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-        return roles;
-    }
-
-    public static HashMap<UUID, UUID> loadPending() {
-        HashMap<UUID, UUID> pending = new HashMap<>();
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_pendings`");
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                UUID guild = UUID.fromString(resultSet.getString("uuid"));
-                UUID player = UUID.fromString(resultSet.getString("player"));
-                if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    pending.put(player, guild);
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-        return pending;
-    }
-
-    public static HashMap<UUID, UUID> loadInvites() {
-        HashMap<UUID, UUID> invites = new HashMap<>();
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `uuid`,`player` FROM `mine_guilds_invites`");
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                UUID guild = UUID.fromString(resultSet.getString("uuid"));
-                UUID player = UUID.fromString(resultSet.getString("player"));
-                if (OddJob.getInstance().getGuildsManager().getGuilds().containsKey(guild)) {
-                    invites.put(player, guild);
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-        return invites;
+        OddJob.getInstance().getGuildsManager().roles = roles;
+        OddJob.getInstance().getGuildsManager().members = members;
     }
 
     public static int saveMembersRoles(HashMap<UUID, UUID> members, HashMap<UUID, Role> roles) {
@@ -278,8 +211,10 @@ public class GuildSQL extends MySQLManager {
                     resultSet = preparedStatement.executeQuery();
 
                     if (resultSet.next()) {
+                        OddJob.getInstance().log("update");
                         preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_members` SET `uuid` = ? AND `role` = ? WHERE `uuid` = ?");
                     } else {
+                        OddJob.getInstance().log("insert");
                         preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_members` (`uuid`,`role`,`player`) VALUES (?,?,?)");
                     }
                     preparedStatement.setString(1, guild.toString());
@@ -296,61 +231,4 @@ public class GuildSQL extends MySQLManager {
         }
         return i;
     }
-
-    public static int saveInvites(HashMap<UUID, UUID> invites) {
-        int i = 0;
-        for (UUID member : invites.keySet()) {
-            UUID guild = invites.get(member);
-            try {
-                connect();
-                preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_invites` WHERE `player` = ?");
-                preparedStatement.setString(1, member.toString());
-                resultSet = preparedStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_invites` SET `uuid` = ? WHERE `uuid` = ?");
-                } else {
-                    preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_invites` (`uuid`,`player`) VALUES (?,?)");
-                }
-                preparedStatement.setString(1, guild.toString());
-                preparedStatement.setString(2, member.toString());
-                preparedStatement.executeUpdate();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                close();
-            }
-            i++;
-        }
-        return i;
-    }
-
-    public static int savePending(HashMap<UUID, UUID> pending) {
-        int i = 0;
-        for (UUID member : pending.keySet()) {
-            UUID guild = pending.get(member);
-            try {
-                connect();
-                preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_pendings` WHERE `player` = ?");
-                preparedStatement.setString(1, member.toString());
-                resultSet = preparedStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_pendings` SET `uuid` = ? WHERE `uuid` = ?");
-                } else {
-                    preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_pendings` (`uuid`,`player`) VALUES (?,?)");
-                }
-                preparedStatement.setString(1, guild.toString());
-                preparedStatement.setString(2, member.toString());
-                preparedStatement.executeUpdate();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                close();
-            }
-            i++;
-        }
-        return i;
-    }
-
 }

@@ -3,11 +3,14 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.Notify;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Response;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -78,6 +81,7 @@ public class MessageManager {
     public static void errors_denied_players(Plugin plugin, CommandSender sender) {
         notify(plugin, sender, Notify.danger, "Players are denied");
     }
+
     public static void errors_denied_others(Plugin plugin, CommandSender sender) {
         notify(plugin, sender, Notify.danger, "Others are denied");
     }
@@ -87,7 +91,7 @@ public class MessageManager {
     }
 
     public static void homes_list(CommandSender sender, List<String> list, Player target, int count, int max) {
-        list(Plugin.homes, sender, Notify.info, list, target,count,max);
+        list(Plugin.homes, sender, Notify.info, list, target, count, max);
     }
 
     public static void list(Plugin plugin, CommandSender sender, Notify notify, List<String> list, Player target, int count, int max) {
@@ -96,7 +100,7 @@ public class MessageManager {
         } else if (list.size() == 1) {
             list(plugin, sender, notify, cPlayer + target.getDisplayName() + cInfo + " has only assigned " + cValue + list.get(0) + cInfo);
         } else {
-            list(plugin, sender, notify, "List of " + cValue + plugin.name() + cInfo + " by " + cPlayer + target.getDisplayName() + cInfo+" "+cValue+count+cInfo+"/"+cValue+max);
+            list(plugin, sender, notify, "List of " + cValue + plugin.name() + cInfo + " by " + cPlayer + target.getDisplayName() + cInfo + " " + cValue + count + cInfo + "/" + cValue + max);
             list(plugin, sender, notify, "-----------------------------------------");
             for (int i = 0; i < list.size(); i++) {
                 list(plugin, sender, notify, cValue + "" + (i + 1) + cInfo + ".) " + cValue + list.get(i) + cInfo);
@@ -145,18 +149,83 @@ public class MessageManager {
 
 
     public static void homes_name_changed(CommandSender sender, String nameOld, String nameNew) {
-        notify(Plugin.homes,sender,Notify.success,"Name of the home "+cValue+nameOld+cSuccess+" changed to "+cValue+nameNew);
+        notify(Plugin.homes, sender, Notify.success, "Name of the home " + cValue + nameOld + cSuccess + " changed to " + cValue + nameNew);
     }
 
     public static void homes_location_changed(CommandSender sender, String name, Location location, OddPlayer target) {
-        notify(Plugin.homes,sender,Notify.success,"Location of "+cValue+name+cSuccess+" has been changed");
+        notify(Plugin.homes, sender, Notify.success, "Location of " + cValue + name + cSuccess + " has been changed");
     }
 
     public static void guilds_name_already_exists(String name, CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,"There is already a guild named "+cGuild+name);
+        notify(Plugin.guilds, sender, Notify.danger, "There is already a guild named " + cGuild + name);
     }
 
     public static void guilds_already_associated(CommandSender sender, String name) {
-        notify(Plugin.guilds,sender,Notify.danger,"You are already associated with "+cGuild+name);
+        notify(Plugin.guilds, sender, Notify.danger, "You are already associated with " + cGuild + name);
+    }
+
+    public static void guilds_list(Plugin plugin, CommandSender sender, List<String> list, int page) {
+        Notify notify = Notify.info;
+        double size = ConfigManager.isSet("guilds.default.list") ? ConfigManager.getInt("guilds.default.list") : 10;
+        int items = list.size();
+        double pages = Math.floor(items / size);
+
+        if (items == 0) {
+            list(plugin, sender, notify, "There are " + cValue + "0" + notify.getColor() + " registered guilds");
+        } else if (items == 1) {
+            list(plugin, sender, notify, "There is " + cValue + "1" + notify.getColor() + " registered guild");
+            list(plugin, sender, notify, "-----------------------------------------");
+            list(plugin, sender, notify, cValue + "" + (1) + notify.getColor() + ".) " + cValue + list.get(0));
+        } else {
+
+            list(plugin, sender, notify, "Listing guilds, page " + cValue + page + notify.getColor() + " of " + cValue + pages);
+            list(plugin, sender, notify, "-----------------------------------------");
+            for (int i = 0; i < list.size(); i++) {
+                list(plugin, sender, notify, cValue + "" + (i + 1) + notify.getColor() + ".) " + cValue + list.get(i));
+            }
+        }
+        list(plugin, sender, notify, "-----------------------------------------");
+    }
+
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> mods, List<OddPlayer> members, List<OddPlayer> pending, List<OddPlayer> invites) {
+        Notify notify = Notify.info;
+        Plugin plugin = Plugin.guilds;
+        list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "UUID: " + cValue + guild.getUuid());
+        list(plugin, sender, notify, "Name: " + cValue + guild.getName());
+        if (guildMaster != null) {
+            list(plugin, sender, notify, "GuildMaster: " + cPlayer + guildMaster.getName());
+        }
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "-----------------------------------------");
+    }
+
+    public static void guilds_not_found(CommandSender sender, String arg) {
+        notify(Plugin.guilds, sender, Notify.danger, "We can't find a guild named " + cValue + arg);
+    }
+
+    public static void guilds_claim_already(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "You have already claimed this chunk.");
+    }
+
+    public static void guilds_claims_by_else(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "This chunk is claimed by another guild.");
+    }
+
+    public static void guilds_claims_claimed(CommandSender sender, Chunk chunk) {
+        notify(Plugin.guilds, sender, Notify.success, "You have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
+    }
+
+    public static void guilds_need_permission(CommandSender sender, Role role) {
+        notify(Plugin.guilds,sender,Notify.danger,"You are not qualified to serve this command! You need to have to "+cValue+role.name()+cDanger+" role");
+    }
+
+    public static void guilds_created(CommandSender sender, String name) {
+        notify(Plugin.guilds, sender, Notify.success, "You have successfully created a new guild named "+cGuild+name);
     }
 }

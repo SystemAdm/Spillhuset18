@@ -76,7 +76,7 @@ public class HomesTpCommand extends SubCommand {
         OddPlayer destinationPlayer;
         String destinationName = "home";
         if (sender instanceof Player) {
-            destinationPlayer = PlayerManager.get(((Player) sender).getUniqueId());
+            destinationPlayer = OddJob.getInstance().getPlayerManager().get(((Player) sender).getUniqueId());
             if (args.length == 1) {
                 MessageManager.homes_no_name(sender, destinationName);
             }
@@ -84,7 +84,7 @@ public class HomesTpCommand extends SubCommand {
                 destinationName = args[1];
             } else if (args.length == 3) {
                 destinationName = args[2];
-                destinationPlayer = PlayerManager.get(args[1]);
+                destinationPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
             }
         } else {
             MessageManager.errors_denied_console(getPlugin(), sender);
@@ -108,7 +108,7 @@ public class HomesTpCommand extends SubCommand {
             if (args.length == 2) {
                 ListInterface.playerList(list, args[1]);
             } else if (args.length == 3) {
-                UUID uuid = PlayerManager.get(args[1]).getUuid();
+                UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
                     ListInterface.listHomes(list, uuid, args[2]);
                 }

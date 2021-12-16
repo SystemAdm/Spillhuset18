@@ -1,20 +1,16 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.Guild;
-import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 
-public class GuildsInfoCommand extends SubCommand {
+public class GuildsClaimCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -29,7 +25,7 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "info";
+        return "claim";
     }
 
     @Override
@@ -44,12 +40,12 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guilds.claim";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -62,19 +58,13 @@ public class GuildsInfoCommand extends SubCommand {
         if (!argsLength(sender,args.length)) {
             return;
         }
+
         if (!can(sender,false,true)) {
             return;
         }
 
-        Guild guild = null;
-        for (Guild test : OddJob.getInstance().getGuildsManager().getGuilds().values()) {
-            if (test.getName().equalsIgnoreCase(args[1])) {
-                guild = test;
-                break;
-            }
-        }
-
-       OddJob.getInstance().getGuildsManager().info(sender,args[1]);
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().claim(player);
     }
 
     @Override
