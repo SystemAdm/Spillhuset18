@@ -9,6 +9,7 @@ import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class MessageManager {
     static ChatColor cValue = ChatColor.GRAY;
@@ -29,6 +31,24 @@ public class MessageManager {
     private static void syntax(Plugin plugin, CommandSender sender, Notify notify, String message) {
         String prefixed = plugin.getString() + notify.getColor() + message;
         sender.sendMessage(prefixed);
+    }
+
+    private static void guild_notify(Plugin plugin, Guild guild, Notify notify, String message) {
+        Response response = Response.valueOf(OddJob.getInstance().getConfig().getString(plugin.name() + ".response", "CHAT"));
+        String prefixed = plugin.getString() + notify.getColor() + message;
+        for (UUID member : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
+            UUID test = OddJob.getInstance().getGuildsManager().getMembers().get(member);
+            if (test == guild.getUuid()) {
+                Player player = Bukkit.getPlayer(member);
+                if (player != null && player.isOnline()) {
+                    if (response == Response.ACTIONBAR) {
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefixed));
+                    } else {
+                        player.sendMessage(prefixed);
+                    }
+                }
+            }
+        }
     }
 
     private static void notify(Plugin plugin, CommandSender sender, Notify notify, String message) {
@@ -217,15 +237,20 @@ public class MessageManager {
         notify(Plugin.guilds, sender, Notify.danger, "This chunk is claimed by another guild.");
     }
 
-    public static void guilds_claims_claimed(CommandSender sender, Chunk chunk) {
-        notify(Plugin.guilds, sender, Notify.success, "You have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
+    public static void guilds_claims_claimed(Guild guild, Chunk chunk) {
+
+        guild_notify(Plugin.guilds, guild, Notify.success, "The guild have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
     }
 
     public static void guilds_need_permission(CommandSender sender, Role role) {
-        notify(Plugin.guilds,sender,Notify.danger,"You are not qualified to serve this command! You need to have to "+cValue+role.name()+cDanger+" role");
+        notify(Plugin.guilds, sender, Notify.danger, "You are not qualified to serve this command! You need to have to " + cValue + role.name() + cDanger + " role");
     }
 
     public static void guilds_created(CommandSender sender, String name) {
-        notify(Plugin.guilds, sender, Notify.success, "You have successfully created a new guild named "+cGuild+name);
+        notify(Plugin.guilds, sender, Notify.success, "You have successfully created a new guild named " + cGuild + name);
+    }
+
+    public static void guilds_not_associated(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "You are not associated with any guild");
     }
 }

@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.GuildSQL;
 import com.spillhuset.oddjob.Utils.Guild;
@@ -12,6 +13,7 @@ import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -103,10 +105,9 @@ public class GuildsManager extends Managers {
         if (owner != null) {
             members.put(owner.getUniqueId(), guild.getUuid());
             roles.put(owner.getUniqueId(), Role.Master);
-            int i = GuildSQL.saveMembersRoles(members, roles);
-            OddJob.getInstance().log("Saved members " + i);
+            saveMembersRoles();
         }
-        GuildSQL.save(guild);
+        saveGuild(guild);
         OddJob.getInstance().log("Saved guild");
         MessageManager.guilds_created(sender, name);
         return affected;
@@ -177,9 +178,15 @@ public class GuildsManager extends Managers {
     }
 
     public void claim(Player player) {
+        OddJob.getInstance().log("claim");
         Chunk chunk = player.getLocation().getChunk();
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = roles.get(player.getUniqueId());
+
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
 
         if (role != Role.Master) {
             MessageManager.guilds_need_permission(player, role);
@@ -195,13 +202,14 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_claims_by_else(player);
             return;
         }
-        claim(player, chunk);
+        claim(guild, chunk);
         saveChunks();
     }
 
-    private void claim(Player player, Chunk chunk) {
-        chunks.put(chunk, player.getUniqueId());
-        MessageManager.guilds_claims_claimed(player, chunk);
+    private void claim(Guild guild, Chunk chunk) {
+        OddJob.getInstance().log("claimed");
+        chunks.put(chunk, guild.getUuid());
+        MessageManager.guilds_claims_claimed(guild, chunk);
     }
 
     private Guild getGuildByMember(UUID uniqueId) {
@@ -210,5 +218,23 @@ public class GuildsManager extends Managers {
 
     private Guild getGuild(UUID uuid) {
         return guilds.get(uuid);
+    }
+
+    public UUID getGuildByChunk(@Nonnull Chunk chunk) {
+        if (chunks.containsKey(chunk))        return chunks.get(chunk);
+        else return getGuildByZone(Zone.WILD).getUuid();
+    }
+
+    public Guild getGuildByUuid(@Nonnull UUID guild) {
+        return guilds.get(guild);
+    }
+
+    public Guild getGuildByZone(Zone zone) {
+        for (Guild guild : guilds.values()) {
+            if (guild.getZone() == zone) {
+                return guild;
+            }
+        }
+        return null;
     }
 }

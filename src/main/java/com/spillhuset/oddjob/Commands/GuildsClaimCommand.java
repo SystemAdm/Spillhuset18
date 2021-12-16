@@ -55,6 +55,7 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        OddJob.getInstance().log("claimer");
         if (!argsLength(sender,args.length)) {
             return;
         }

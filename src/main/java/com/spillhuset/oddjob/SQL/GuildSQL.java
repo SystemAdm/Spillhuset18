@@ -206,20 +206,21 @@ public class GuildSQL extends MySQLManager {
             if (roles.containsKey(member)) {
                 try {
                     connect();
-                    preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_members` WHERE `player` = ?");
+                    preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members` WHERE `player` = ? AND `uuid` = ?");
                     preparedStatement.setString(1, member.toString());
+                    preparedStatement.setString(2,guild.toString());
                     resultSet = preparedStatement.executeQuery();
 
                     if (resultSet.next()) {
                         OddJob.getInstance().log("update");
-                        preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_members` SET `uuid` = ? AND `role` = ? WHERE `uuid` = ?");
+                        preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_members` SET `role` = ? WHERE `player` = ? AND `uuid` = ? ");
                     } else {
                         OddJob.getInstance().log("insert");
-                        preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_members` (`uuid`,`role`,`player`) VALUES (?,?,?)");
+                        preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_members` (`role`,`player`,`uuid`) VALUES (?,?,?)");
                     }
-                    preparedStatement.setString(1, guild.toString());
-                    preparedStatement.setString(2, roles.get(member).name());
-                    preparedStatement.setString(3, member.toString());
+                    preparedStatement.setString(1, roles.get(member).name());
+                    preparedStatement.setString(2, member.toString());
+                    preparedStatement.setString(3, guild.toString());
                     preparedStatement.executeUpdate();
                 } catch (SQLException ex) {
                     ex.printStackTrace();

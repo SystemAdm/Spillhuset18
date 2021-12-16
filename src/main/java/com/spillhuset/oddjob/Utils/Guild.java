@@ -7,6 +7,7 @@ import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class Guild {
@@ -71,7 +72,7 @@ public class Guild {
     public void setName(String name) {
         this.name = name;
     }
-
+@Nonnull
     public Zone getZone() {
         return this.zone;
     }

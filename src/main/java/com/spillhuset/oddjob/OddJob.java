@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Commands.HomesCommand;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Events.OnJoinEvent;
 import com.spillhuset.oddjob.Events.OnLeaveEvent;
+import com.spillhuset.oddjob.Events.OnMoveEvent;
 import com.spillhuset.oddjob.Managers.GuildsManager;
 import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.Managers.HomesManager;
@@ -44,6 +45,7 @@ public class OddJob extends JavaPlugin {
         /* Listeners */
         pm.registerEvents(new OnJoinEvent(), this);
         pm.registerEvents(new OnLeaveEvent(), this);
+        pm.registerEvents(new OnMoveEvent(),this);
 
         /* Commands */
         getCommand("homes").setExecutor(new HomesCommand());

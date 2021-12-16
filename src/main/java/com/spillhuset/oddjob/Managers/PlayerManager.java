@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
+import com.spillhuset.oddjob.Utils.ChunkCord;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 public class PlayerManager {
     static HashMap<UUID, OddPlayer> oddPlayers = new HashMap<>();
+    public static HashMap<UUID, ChunkCord> tracker = new HashMap<>();
 
     public List<String> listString() {
         OddJob.getInstance().log("listing");
