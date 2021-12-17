@@ -220,9 +220,9 @@ public class GuildsManager extends Managers {
         return guilds.get(uuid);
     }
 
-    public UUID getGuildByChunk(@Nonnull Chunk chunk) {
-        if (chunks.containsKey(chunk))        return chunks.get(chunk);
-        else return getGuildByZone(Zone.WILD).getUuid();
+    public Guild getGuildByChunk(@Nonnull Chunk chunk) {
+        if (chunks.containsKey(chunk))        return getGuildByUuid(chunks.get(chunk));
+        else return getGuildByZone(Zone.WILD);
     }
 
     public Guild getGuildByUuid(@Nonnull UUID guild) {

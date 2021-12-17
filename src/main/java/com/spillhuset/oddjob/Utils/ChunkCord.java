@@ -1,17 +1,28 @@
 package com.spillhuset.oddjob.Utils;
 
+import com.spillhuset.oddjob.OddJob;
+
 import java.util.UUID;
 
 public class ChunkCord {
-    public UUID getVisitingGuild() {
-        return visitingGuild;
+    private UUID guild;
+    private UUID world;
+    private int x;
+    private int z;
+
+    public ChunkCord(UUID world, int x, int z, UUID guild) {
+        OddJob.getInstance().log("created a fuck");
+        this.world = world;
+        this.x = x;
+        this.z = z;
+        this.guild = guild;
     }
 
-    private final UUID visitingGuild;
-    private final UUID world;
-    private final int x;
+    public int getX() {
+        return x;
+    }
 
-    public UUID getWorldUuid() {
+    public UUID getWorld() {
         return world;
     }
 
@@ -19,16 +30,23 @@ public class ChunkCord {
         return z;
     }
 
-    private final int z;
-
-    public ChunkCord(UUID world, int x, int z, UUID visitingGuild) {
-        this.world = world;
-        this.x = x;
-        this.z = z;
-        this.visitingGuild = visitingGuild;
+    public UUID getGuild() {
+        return guild;
     }
 
-    public int getX() {
-        return x;
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
+    }
+
+    public void setGuild(UUID guild) {
+        this.guild = guild;
+    }
+
+    public void setWorld(UUID world) {
+        this.world = world;
     }
 }

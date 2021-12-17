@@ -14,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 public class OnMoveEvent implements Listener {
@@ -24,45 +23,45 @@ public class OnMoveEvent implements Listener {
     public void onMove(PlayerMoveEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         UUID yourGuild = OddJob.getInstance().getGuildsManager().getMembers().get(uuid);
-        UUID visitingGuild = null;
+        Guild visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD);
+
         boolean notify = false;
         if (event.getTo() != null) {
             Chunk chunk = event.getTo().getChunk();
             visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
             if (!PlayerManager.tracker.containsKey(uuid)) {
-                PlayerManager.tracker.put(uuid, new ChunkCord(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ(), visitingGuild));
+                OddJob.getInstance().log("none found");
+                PlayerManager.tracker.put(uuid, new ChunkCord(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ(), visitingGuild.getUuid()));
                 notify = true;
             } else {
                 ChunkCord cords = PlayerManager.tracker.get(uuid);
-                if (chunk.getWorld().getUID() == cords.getWorldUuid()) {
-                    if (!((chunk.getX() == cords.getX() && chunk.getZ() == cords.getZ()) || (visitingGuild == cords.getVisitingGuild()))) {
-                        notify = true;
-                    }
+                if ((chunk.getX() != cords.getX() || chunk.getZ() != cords.getZ() || chunk.getWorld().getUID() != cords.getWorld())) {
+                    OddJob.getInstance().log("change fuck");
+                    cords.setX(chunk.getX());
+                    cords.setZ(chunk.getZ());
+                    cords.setWorld(chunk.getWorld().getUID());
+                    cords.setGuild(visitingGuild.getUuid());
                 }
-                PlayerManager.tracker.put(uuid,cords);
+                if (visitingGuild.getUuid() != cords.getGuild()) {
+                    notify = true;
+                }
+                PlayerManager.tracker.put(uuid, cords);
             }
         }
 
         if (notify) {
-            if (visitingGuild == yourGuild) {
+            if (visitingGuild.getUuid() == yourGuild) {
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.DARK_PURPLE + "Home sweet home"));
             } else {
-                Guild guild;
                 TextComponent text;
-                guild = OddJob.getInstance().getGuildsManager().getGuildByUuid(visitingGuild);
-                if (visitingGuild != null) {
-                    Zone zone = guild.getZone();
-                    switch (zone) {
-                        case WAR, SAFE, WILD -> text = new TextComponent(zone.getColoredString());
-                        default -> {
-                            text = new TextComponent(zone.getColoredString(guild.getName()));
-                        }
+                Zone zone = visitingGuild.getZone();
+                switch (zone) {
+                    case WAR, SAFE, WILD -> text = new TextComponent(zone.getColoredString());
+                    default -> {
+                        text = new TextComponent(zone.getColoredString(visitingGuild.getName()));
                     }
-                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, text);
-                } else {
-                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(Zone.WILD.getColoredString()));
                 }
-
+                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, text);
             }
         }
     }
