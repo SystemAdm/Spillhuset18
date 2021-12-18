@@ -14,10 +14,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class GuildsManager extends Managers {
+    public HashMap<UUID,UUID> autoClaim = new HashMap<>();
     /**
      * Guild UUID | Guild
      */
@@ -41,28 +44,22 @@ public class GuildsManager extends Managers {
         return roles;
     }
 
-    public HashMap<UUID, UUID> getPending() {
-        return pending;
-    }
-
-    public HashMap<UUID, UUID> getInvites() {
-        return invites;
-    }
-
     /**
      * Player UUID | Guild Role
      */
     public HashMap<UUID, Role> roles = new HashMap<>();
-    private HashMap<UUID, UUID> pending = new HashMap<>();
-    private HashMap<UUID, UUID> invites = new HashMap<>();
 
     public GuildsManager() {
     }
 
     public void loadGuilds() {
         int i = GuildSQL.loadGuild(null);
-        if (i == 0) {
-            create(Bukkit.getConsoleSender(), "SafeZone");
+        if (i < 5) {
+            create(Bukkit.getConsoleSender(), "SafeZone", Zone.SAFE);
+            create(Bukkit.getConsoleSender(), "WarZone", Zone.WAR);
+            create(Bukkit.getConsoleSender(), "WildZone", Zone.WILD);
+            create(Bukkit.getConsoleSender(), "ArenaZone", Zone.ARENA);
+            create(Bukkit.getConsoleSender(), "JailZone", Zone.JAIL);
             i++;
         }
         OddJob.getInstance().log("loaded guilds: " + i);
@@ -78,8 +75,11 @@ public class GuildsManager extends Managers {
         OddJob.getInstance().log("loaded guild-members: " + this.members.size());
     }
 
-    public boolean create(CommandSender sender, String name) {
-        boolean affected = false;
+    public void create(CommandSender sender, String name) {
+        create(sender, name, Zone.GUILD);
+    }
+
+    public void create(CommandSender sender, String name, Zone zone) {
         Player owner = null;
         name = ChatColor.stripColor(name.toLowerCase().trim());
         name = (name.length() > 15) ? name.substring(0, 15) : name;
@@ -88,7 +88,7 @@ public class GuildsManager extends Managers {
             UUID uuid = player.getUniqueId();
             if (members.containsKey(uuid)) {
                 MessageManager.guilds_already_associated(sender, guilds.get(members.get(uuid)).getName());
-                return false;
+                return;
             }
             owner = player;
         }
@@ -96,11 +96,11 @@ public class GuildsManager extends Managers {
         for (Guild guild : guilds.values()) {
             if (guild.getName().equalsIgnoreCase(name)) {
                 MessageManager.guilds_name_already_exists(name, sender);
-                return false;
+                return;
             }
         }
 
-        Guild guild = new Guild(name, owner);
+        Guild guild = new Guild(name, owner, zone);
         guilds.put(guild.getUuid(), guild);
         if (owner != null) {
             members.put(owner.getUniqueId(), guild.getUuid());
@@ -110,7 +110,6 @@ public class GuildsManager extends Managers {
         saveGuild(guild);
         OddJob.getInstance().log("Saved guild");
         MessageManager.guilds_created(sender, name);
-        return affected;
     }
 
     public void loadGuild(Guild guild) {
@@ -177,8 +176,10 @@ public class GuildsManager extends Managers {
         return null;
     }
 
+    public void claim(Player player,Guild guild) {
+        claim(guild,player.getLocation().getChunk());
+    }
     public void claim(Player player) {
-        OddJob.getInstance().log("claim");
         Chunk chunk = player.getLocation().getChunk();
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = roles.get(player.getUniqueId());
@@ -207,7 +208,6 @@ public class GuildsManager extends Managers {
     }
 
     private void claim(Guild guild, Chunk chunk) {
-        OddJob.getInstance().log("claimed");
         chunks.put(chunk, guild.getUuid());
         MessageManager.guilds_claims_claimed(guild, chunk);
     }
@@ -221,7 +221,7 @@ public class GuildsManager extends Managers {
     }
 
     public Guild getGuildByChunk(@Nonnull Chunk chunk) {
-        if (chunks.containsKey(chunk))        return getGuildByUuid(chunks.get(chunk));
+        if (chunks.containsKey(chunk)) return getGuildByUuid(chunks.get(chunk));
         else return getGuildByZone(Zone.WILD);
     }
 
@@ -232,6 +232,24 @@ public class GuildsManager extends Managers {
     public Guild getGuildByZone(Zone zone) {
         for (Guild guild : guilds.values()) {
             if (guild.getZone() == zone) {
+                return guild;
+            }
+        }
+        return null;
+    }
+
+    public void autoClaim(Player player,UUID guild) {
+        if (!autoClaim.containsKey(player.getUniqueId())) {
+            autoClaim.put(player.getUniqueId(),guild);
+            claim(getGuild(guild),player.getLocation().getChunk());
+        } else {
+            autoClaim.remove(player.getUniqueId());
+        }
+    }
+
+    public Guild getGuildByName(String name) {
+        for (Guild guild : guilds.values()) {
+            if (guild.getName().equalsIgnoreCase(name)) {
                 return guild;
             }
         }

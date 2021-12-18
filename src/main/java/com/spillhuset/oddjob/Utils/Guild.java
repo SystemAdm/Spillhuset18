@@ -3,7 +3,6 @@ package com.spillhuset.oddjob.Utils;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
-import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -46,13 +45,13 @@ public class Guild {
     /**
      * Created from Command
      *
-     * @param name String name
+     * @param name   String name
      * @param player Player GuildMaster
      */
-    public Guild(String name, Player player) {
+    public Guild(String name, Player player, Zone zone) {
         this.name = name;
         this.uuid = UUID.randomUUID();
-        this.zone = Zone.GUILD;
+        this.zone = zone;
 
         if (player == null) {
             this.spawn = null;
@@ -72,7 +71,8 @@ public class Guild {
     public void setName(String name) {
         this.name = name;
     }
-@Nonnull
+
+    @Nonnull
     public Zone getZone() {
         return this.zone;
     }

@@ -238,7 +238,6 @@ public class MessageManager {
     }
 
     public static void guilds_claims_claimed(Guild guild, Chunk chunk) {
-
         guild_notify(Plugin.guilds, guild, Notify.success, "The guild have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
     }
 
@@ -252,5 +251,51 @@ public class MessageManager {
 
     public static void guilds_not_associated(CommandSender sender) {
         notify(Plugin.guilds, sender, Notify.danger, "You are not associated with any guild");
+    }
+
+    public static void guilds_warn_block_placed(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.warning, "You are placing blocks inside " + cGuild + guild.getName());
+    }
+
+    public static void guilds_warn_block_broken(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.warning, "You are breaking blocks inside " + cGuild + guild.getName());
+    }
+
+    public static void guilds_not_allowed(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.warning, "You are worthy of this action inside " + cGuild + guild.getName());
+    }
+
+    public static void guilds_warn_empty_bucket(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.warning, "You are emptying a bucket inside " + cGuild + guild.getName());
+    }
+
+    public static void death1200(CommandSender sender) {
+        message(Plugin.deaths,sender,Notify.warning,"Blocks and tools lost by death will is at own risk, and may disappear over time or be stolen. Lost or stolen things will NOT be refunded! Be careful next time.");
+        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 20 minutes");
+    }
+
+    public static void death600(CommandSender sender) {
+        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 10 minutes");
+    }
+
+    public static void death60(CommandSender sender) {
+        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 1 minutes");
+    }
+
+    public static void death10(int i, CommandSender sender) {
+        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in "+i+" seconds");
+    }
+
+    public static void death0(CommandSender sender) {
+        notify(Plugin.deaths,sender,Notify.danger,"You were too late. All the things are lost!");
+    }
+
+    public static void spiritFoundOther(OddPlayer owner) {
+    }
+
+    public static void spiritFound(OddPlayer finder, OddPlayer owner) {
+    }
+
+    public static void spiritFoundSelf(OddPlayer finder) {
     }
 }

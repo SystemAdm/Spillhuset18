@@ -1,6 +1,8 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,7 +52,7 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -65,7 +67,29 @@ public class GuildsClaimCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().claim(player);
+
+        if (args.length == 1) {
+            OddJob.getInstance().getGuildsManager().claim(player);
+            return;
+        }
+        if (args.length >= 2) {
+            if (args[1].equalsIgnoreCase("auto")) {
+                OddJob.getInstance().getGuildsManager().autoClaim(player,OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
+                return;
+            }
+            if (can(sender, true, true)) {
+                Guild guild = OddJob.getInstance().getGuildsManager().getGuildByName(args[1]);
+                if (guild == null) {
+                    MessageManager.guilds_not_found(sender,args[1]);
+                    return;
+                }
+                if (args.length == 3 && args[2].equalsIgnoreCase("auto")) {
+                    OddJob.getInstance().getGuildsManager().autoClaim(player,guild.getUuid());
+                } else {
+                    OddJob.getInstance().getGuildsManager().claim(player,guild);
+                }
+            }
+        }
     }
 
     @Override
