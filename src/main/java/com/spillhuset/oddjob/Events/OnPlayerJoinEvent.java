@@ -7,14 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class OnJoinEvent implements Listener {
+public class OnPlayerJoinEvent implements Listener {
     //TODO notify stacks
     // - auction
 
     @EventHandler
     public void onJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        OddJob.getInstance().getPlayerManager().join(player.getUniqueId(),player.getName().toLowerCase());
+        OddJob.getInstance().getPlayerManager().join(player.getUniqueId(), player.getName().toLowerCase());
         if (event.getPlayer().hasPermission("player.hidden")) {
             event.setJoinMessage("");
         } else {

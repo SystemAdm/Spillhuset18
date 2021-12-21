@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
@@ -10,17 +11,17 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class GuildsManager extends Managers {
-    public HashMap<UUID,UUID> autoClaim = new HashMap<>();
+    public HashMap<UUID, UUID> autoClaim = new HashMap<>();
+    public HashMap<UUID, UUID> autoUnclaim = new HashMap<>();
     /**
      * Guild UUID | Guild
      */
@@ -176,9 +177,14 @@ public class GuildsManager extends Managers {
         return null;
     }
 
-    public void claim(Player player,Guild guild) {
-        claim(guild,player.getLocation().getChunk());
+    public void claim(Player player, Guild guild) {
+        claim(guild, player.getLocation().getChunk());
     }
+
+    public void unclaim(Player player, Guild guild) {
+        unclaim(guild, player.getLocation().getChunk());
+    }
+
     public void claim(Player player) {
         Chunk chunk = player.getLocation().getChunk();
         Guild guild = getGuildByMember(player.getUniqueId());
@@ -207,8 +213,41 @@ public class GuildsManager extends Managers {
         saveChunks();
     }
 
+    public void unclaim(Player player) {
+        Chunk chunk = player.getLocation().getChunk();
+        Guild guild = getGuildByMember(player.getUniqueId());
+        Role role = roles.get(player.getUniqueId());
+
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+
+        if (role != Role.Master) {
+            MessageManager.guilds_need_permission(player, role);
+            return;
+        }
+
+        UUID owned = chunks.get(chunk);
+        if (owned != null) {
+            if (owned == guild.getUuid()) {
+                unclaim(guild, chunk);
+                return;
+            }
+            MessageManager.guilds_claims_by_else(player);
+            return;
+        }
+        MessageManager.guilds_claim_nope(player);
+        saveChunks();
+    }
+
     private void claim(Guild guild, Chunk chunk) {
         chunks.put(chunk, guild.getUuid());
+        MessageManager.guilds_claims_claimed(guild, chunk);
+    }
+
+    private void unclaim(Guild guild, Chunk chunk) {
+        chunks.remove(chunk);
         MessageManager.guilds_claims_claimed(guild, chunk);
     }
 
@@ -238,12 +277,21 @@ public class GuildsManager extends Managers {
         return null;
     }
 
-    public void autoClaim(Player player,UUID guild) {
+    public void autoClaim(Player player, UUID guild) {
         if (!autoClaim.containsKey(player.getUniqueId())) {
-            autoClaim.put(player.getUniqueId(),guild);
-            claim(getGuild(guild),player.getLocation().getChunk());
+            autoClaim.put(player.getUniqueId(), guild);
+            claim(getGuild(guild), player.getLocation().getChunk());
         } else {
             autoClaim.remove(player.getUniqueId());
+        }
+    }
+
+    public void autoUnclaim(Player player, UUID guild) {
+        if (!autoUnclaim.containsKey(player.getUniqueId())) {
+            autoUnclaim.put(player.getUniqueId(), guild);
+            unclaim(getGuild(guild), player.getLocation().getChunk());
+        } else {
+            autoUnclaim.remove(player.getUniqueId());
         }
     }
 
@@ -254,5 +302,39 @@ public class GuildsManager extends Managers {
             }
         }
         return null;
+    }
+
+    public void setSpawn(Player player) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild != null) {
+            Role role = roles.get(player.getUniqueId());
+            if (role == Role.Master) {
+                Chunk chunk = player.getLocation().getChunk();
+                if (chunks.get(chunk) == guild.getUuid()) {
+                    guild.setSpawn(player.getLocation());
+                    MessageManager.guilds_set_spawn_success(player,player.getLocation(), guild);
+                } else {
+                    MessageManager.guilds_set_spawn_error_in_chunk(player);
+                }
+            } else {
+                MessageManager.guilds_error_role(player);
+            }
+        } else {
+            MessageManager.guilds_not_associated(player);
+        }
+    }
+
+    public void spawn(Player player) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild != null) {
+            Location location = guild.getSpawn();
+            if (location != null) {
+                OddJob.getInstance().getTeleportManager().teleport(player,location, Plugin.guilds);
+            } else {
+                MessageManager.guilds_spawn_not_set(player);
+            }
+        } else {
+            MessageManager.guilds_not_associated(player);
+        }
     }
 }

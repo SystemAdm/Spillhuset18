@@ -9,10 +9,7 @@ import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -270,32 +267,88 @@ public class MessageManager {
     }
 
     public static void death1200(CommandSender sender) {
-        message(Plugin.deaths,sender,Notify.warning,"Blocks and tools lost by death will is at own risk, and may disappear over time or be stolen. Lost or stolen things will NOT be refunded! Be careful next time.");
-        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 20 minutes");
+        message(Plugin.deaths, sender, Notify.warning, "Blocks and tools lost by death will is at own risk, and may disappear over time or be stolen. Lost or stolen things will NOT be refunded! Be careful next time.");
+        notify(Plugin.deaths, sender, Notify.warning, "Unretreived items will disappear in 20 minutes");
     }
 
     public static void death600(CommandSender sender) {
-        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 10 minutes");
+        notify(Plugin.deaths, sender, Notify.warning, "Unretreived items will disappear in 10 minutes");
     }
 
     public static void death60(CommandSender sender) {
-        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in 1 minutes");
+        notify(Plugin.deaths, sender, Notify.warning, "Unretreived items will disappear in 1 minutes");
     }
 
     public static void death10(int i, CommandSender sender) {
-        notify(Plugin.deaths,sender,Notify.warning,"Unretreived items will disappear in "+i+" seconds");
+        notify(Plugin.deaths, sender, Notify.warning, "Unretreived items will disappear in " + i + " seconds");
     }
 
     public static void death0(CommandSender sender) {
-        notify(Plugin.deaths,sender,Notify.danger,"You were too late. All the things are lost!");
+        notify(Plugin.deaths, sender, Notify.danger, "You were too late. All the things are lost!");
     }
 
-    public static void spiritFoundOther(OddPlayer owner) {
+    public static void spiritFoundOther(CommandSender owner) {
+        notify(Plugin.deaths, owner, Notify.danger, "Someone found your loot!");
     }
 
-    public static void spiritFound(OddPlayer finder, OddPlayer owner) {
+    public static void spiritFound(CommandSender finder, OfflinePlayer owner) {
+        notify(Plugin.deaths, finder, Notify.success, "You found the loot from " + cPlayer + owner.getName() + cSuccess + "!");
     }
 
-    public static void spiritFoundSelf(OddPlayer finder) {
+    public static void spiritFoundSelf(CommandSender finder, boolean looted) {
+        if (looted) {
+            notify(Plugin.deaths, finder, Notify.success, "Congrats! You found your own loot before anyone else.");
+        } else {
+            notify(Plugin.deaths, finder, Notify.success, "Ops! You broke it!.");
+        }
+    }
+
+    public static void guilds_claim_nope(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "Chunk is not claimed by any guild!");
+    }
+
+    public static void guilds_set_spawn_success(CommandSender sender, Location location, Guild guild) {
+        guild_notify(Plugin.guilds, guild, Notify.success, "New spawn set by " + cPlayer + sender.getName() + cSuccess + " x=" + cValue + location.getBlockX() + cSuccess + " y=" + cValue + location.getBlockY() + cSuccess + " z=" + cValue + location.getBlockZ());
+    }
+
+    public static void guilds_set_spawn_error_in_chunk(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "Location must be in a Chunk owned by the guild");
+    }
+
+    public static void guilds_error_role(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "Wrong role in the guild");
+    }
+
+    public static void guilds_spawn_not_set(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "No guild spawn set.");
+    }
+
+    public static void teleports_in_combat(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "Aborted, in combat!");
+    }
+
+    public static void teleports_countdown(int i, CommandSender sender) {
+        notify(Plugin.teleport, sender, Notify.info, "Teleporting in " + cValue + i);
+    }
+
+    public static void teleports_destination_offline(Player requester, Player destination) {
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination + cDanger + " is offline");
+    }
+
+    public static void teleports_requester_offline(Player requester, Player destination) {
+        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, " + cPlayer + requester + cDanger + " is offline");
+    }
+
+    public static void teleports_timed_out(Player requester, Player destination) {
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination + cDanger + " has not responded.");
+        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, request from " + cPlayer + requester + cDanger + " has timed out");
+    }
+
+    public static void teleports_request_denied(Player requester, Player destination) {
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, "+cPlayer+destination+cDanger+" has rejected your request");
+    }
+
+    public static void teleports_request_already_sent(Player requester, Player destination) {
+        notify(Plugin.teleport, requester, Notify.info, "Request to "+cPlayer+destination+cDanger+" has already been sent");
     }
 }

@@ -4,22 +4,28 @@ import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.Chunk;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.Inventory;
+
+import java.util.UUID;
 
 public class OnEntityDamageEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamageByMonster(EntityDamageByEntityEvent event) {
         Entity target = event.getEntity();
         Entity damager = event.getDamager();
-        if (target instanceof Player && damager instanceof Monster) {
+        if (damager instanceof Player && target instanceof ArmorStand armorStand) {
+            UUID stand = armorStand.getUniqueId();
+            Inventory inventory = OddJob.getInstance().getPlayerManager().getSpiritInventory(stand);
+            if (inventory != null) {
+                OddJob.getInstance().getPlayerManager().replaceSpirit(armorStand, damager.getUniqueId(), false);
+            }
+        } else if (target instanceof Player && damager instanceof Monster) {
             Chunk chunk = target.getLocation().getChunk();
             Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
             if (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.GUILD) {
@@ -39,10 +45,10 @@ public class OnEntityDamageEvent implements Listener {
             Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
             if (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.GUILD) {
                 event.setCancelled(true);
-                Monster shooter = (Monster) projectile.getShooter();
+                /*projectile.getShooter();
                 if (shooter != null) {
                     shooter.remove();
-                }
+                }*/
             }
         }
     }
