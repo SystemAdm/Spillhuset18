@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.UUID;
 
-public class OnMoveEvent implements Listener {
+public class OnPlayerMoveEvent implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClaim(PlayerMoveEvent event) {
         Player player = event.getPlayer();

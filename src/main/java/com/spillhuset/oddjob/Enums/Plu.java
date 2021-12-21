@@ -1,9 +1,9 @@
 package com.spillhuset.oddjob.Enums;
 
 public enum Plu {
-    HOMES_SET(200);
+    HOMES_SET(200), TELEPORT_REQUEST(50);
 
-    public double value;
+    public final double value;
 
     Plu(double value) {
         this.value = value;

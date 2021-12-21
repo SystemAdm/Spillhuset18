@@ -38,6 +38,6 @@ public class OnBlockBreakEvent implements Listener {
 
         //TODO check for `trust` guilds
         event.setCancelled(true);
-        MessageManager.guilds_not_allowed(player,chunkGuild);
+        MessageManager.guilds_not_allowed(player, chunkGuild);
     }
 }

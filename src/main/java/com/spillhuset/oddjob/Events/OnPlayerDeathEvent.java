@@ -16,7 +16,7 @@ public class OnPlayerDeathEvent implements Listener {
         Player player = event.getEntity();
         Location location = player.getLocation();
         Entity entity = location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        OddJob.getInstance().getPlayerManager().addSpirit(entity,player);
+        OddJob.getInstance().getPlayerManager().addSpirit(entity, player);
         event.getDrops().clear();
     }
 }

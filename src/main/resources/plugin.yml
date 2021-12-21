@@ -8,3 +8,5 @@ commands:
     description: Homes
   guilds:
     description: Guilds
+  suicide:
+    description: Suicide mother f***er!

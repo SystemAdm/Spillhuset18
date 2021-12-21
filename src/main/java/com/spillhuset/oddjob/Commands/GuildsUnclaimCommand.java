@@ -1,5 +1,4 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
@@ -10,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsClaimCommand extends SubCommand {
+public class GuildsUnclaimCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return true;
+        return false;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "claim";
+        return "unclaim";
     }
 
     @Override
@@ -58,35 +57,36 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!argsLength(sender, args.length)) {
+        OddJob.getInstance().log("claimer");
+        if (!argsLength(sender,args.length)) {
             return;
         }
 
-        if (!can(sender, false, true)) {
+        if (!can(sender,false,true)) {
             return;
         }
 
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            OddJob.getInstance().getGuildsManager().claim(player);
+            OddJob.getInstance().getGuildsManager().unclaim(player);
             return;
         }
         if (args.length >= 2) {
             if (args[1].equalsIgnoreCase("auto")) {
-                OddJob.getInstance().getGuildsManager().autoClaim(player, OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
+                OddJob.getInstance().getGuildsManager().autoUnclaim(player,OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
                 return;
             }
             if (can(sender, true, true)) {
                 Guild guild = OddJob.getInstance().getGuildsManager().getGuildByName(args[1]);
                 if (guild == null) {
-                    MessageManager.guilds_not_found(sender, args[1]);
+                    MessageManager.guilds_not_found(sender,args[1]);
                     return;
                 }
                 if (args.length == 3 && args[2].equalsIgnoreCase("auto")) {
-                    OddJob.getInstance().getGuildsManager().autoClaim(player, guild.getUuid());
+                    OddJob.getInstance().getGuildsManager().autoUnclaim(player,guild.getUuid());
                 } else {
-                    OddJob.getInstance().getGuildsManager().claim(player, guild);
+                    OddJob.getInstance().getGuildsManager().unclaim(player,guild);
                 }
             }
         }
