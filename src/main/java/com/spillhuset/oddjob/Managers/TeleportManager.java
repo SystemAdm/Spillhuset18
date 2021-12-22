@@ -10,13 +10,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class TeleportManager {
-    HashMap<UUID, BukkitTask> timers = new HashMap<>();
-    private HashMap<UUID, UUID> requests = new HashMap<>();
-    private HashMap<UUID, BukkitTask> requestsReset = new HashMap<>();
+    private final HashMap<UUID, BukkitTask> timers = new HashMap<>();
+    private final HashMap<UUID, UUID> requests = new HashMap<>();
+    private final HashMap<UUID, BukkitTask> requestsReset = new HashMap<>();
 
 
     public void teleport(Player player, Location location, Plugin plugin) {
@@ -59,19 +61,16 @@ public class TeleportManager {
         }
     }
 
-    public void deny(UUID destination, UUID requester) {
-        if (requests.get(requester) == destination) {
-            if (requestsReset.containsKey(requester)) requestsReset.get(requester).cancel();
-            removeRequests(requester);
-        }
-    }
-
     public void removeRequests(UUID requester) {
         requests.remove(requester);
         requestsReset.remove(requester);
     }
 
     public void request(Player requester, String target) {
+        if (requests.containsKey(requester.getUniqueId())) {
+            Player old = Bukkit.getPlayer(requests.get(requester.getUniqueId()));
+            MessageManager.teleports_request_changing(requester,old);
+        }
         Player destination = Bukkit.getPlayer(target);
         if (destination != null) {
             OddPlayer oddDestination = OddJob.getInstance().getPlayerManager().get(destination.getUniqueId());
@@ -80,22 +79,22 @@ public class TeleportManager {
             boolean whitelist = oddDestination.getWhiteList().contains(requester.getUniqueId());
 
             if (blacklist || (denied && !whitelist)) {
-                new BukkitRunnable(){
+                new BukkitRunnable() {
                     @Override
                     public void run() {
                         MessageManager.teleports_request_denied(requester, destination);
                     }
-                }.runTaskLater(OddJob.getInstance(),40);
+                }.runTaskLater(OddJob.getInstance(), 40);
 
                 return;
             }
-
+            OddJob.getInstance().log("b"+(destination == requester));
             if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
                 MessageManager.teleports_request_already_sent(requester, destination);
                 return;
             }
-
-            requestsReset.get(requester.getUniqueId()).cancel();
+            BukkitTask reset = requestsReset.get(requester.getUniqueId());
+            if (reset != null) reset.cancel();
             //TODO CostManager.transaction(Account.POCKET,requester.getUniqueId(), Plu.TELEPORT_REQUEST);
             requests.put(requester.getUniqueId(), destination.getUniqueId());
             requestsReset.put(requester.getUniqueId(), new BukkitRunnable() {
@@ -103,6 +102,7 @@ public class TeleportManager {
                 @Override
                 public void run() {
                     if (requestsReset.containsKey(requester.getUniqueId())) {
+                        OddJob.getInstance().log("c"+(destination == requester));
                         removeRequests(requester.getUniqueId());
                         requestsReset.remove(requester.getUniqueId());
                         if (!destination.isOnline()) {
@@ -116,12 +116,84 @@ public class TeleportManager {
                             cancel();
                             return;
                         }
-
+                        OddJob.getInstance().log("d"+(destination == requester));
                         MessageManager.teleports_timed_out(requester, destination);
                         cancel();
                     }
                 }
             }.runTaskLater(OddJob.getInstance(), 1200L));
+            MessageManager.teleports_request_sent(destination,requester);
         }
+    }
+
+    public void accept(Player destination) {
+        List<UUID> requestList = new ArrayList<>();
+        for (UUID requester : requests.keySet()) {
+            if (requests.get(requester) == destination.getUniqueId()) {
+                requestList.add(requester);
+            }
+        }
+
+        if (requestList.size() == 1) {
+            accept(destination, Bukkit.getPlayer(requestList.get(0)));
+        } else if (requestList.size() > 1) {
+            MessageManager.teleports_requests_more(destination, requestList);
+        } else {
+            MessageManager.teleports_request_none(destination);
+        }
+    }
+
+    public void deny(Player destination) {
+        List<UUID> requestList = new ArrayList<>();
+        for (UUID requester : requests.keySet()) {
+            if (requests.get(requester) == destination.getUniqueId()) {
+                requestList.add(requester);
+            }
+        }
+
+        if (requestList.size() == 1) {
+            deny(destination, Bukkit.getPlayer(requestList.get(0)));
+        } else if (requestList.size() > 1) {
+            MessageManager.teleports_requests_more(destination, requestList);
+        } else {
+            MessageManager.teleports_request_none(destination);
+        }
+    }
+
+    public void accept(Player destination, String requesterName) {
+        Player requester = Bukkit.getPlayer(requesterName);
+        if (requester == null) {
+            MessageManager.errors_find_player(Plugin.teleport, requesterName, destination);
+            return;
+        }
+        if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
+            accept(destination, requester);
+            return;
+        }
+        MessageManager.teleports_request_no_request(destination, requester);
+    }
+
+    public void deny(Player destination, String requesterName) {
+        Player requester = Bukkit.getPlayer(requesterName);
+        if (requester == null) {
+            MessageManager.errors_find_player(Plugin.teleport, requesterName, destination);
+            return;
+        }
+        if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
+            deny(destination, requester);
+            return;
+        }
+        MessageManager.teleports_request_no_request(destination, requester);
+    }
+
+    public void accept(Player destination, Player requester) {
+        MessageManager.teleports_request_accepted(destination, requester);
+        removeRequests(requester.getUniqueId());
+        teleport(requester, destination.getLocation(), Plugin.teleport);
+    }
+
+    public void deny(Player destination, Player requester) {
+        MessageManager.teleports_request_denied(destination, requester);
+        removeRequests(requester.getUniqueId());
     }
 }

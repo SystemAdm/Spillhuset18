@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomesCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
-
+    private final ArrayList<SubCommand> subCommands = new ArrayList<>();
     public HomesCommand() {
         subCommands.add(new HomesAddCommand());
         subCommands.add(new HomesListCommand());

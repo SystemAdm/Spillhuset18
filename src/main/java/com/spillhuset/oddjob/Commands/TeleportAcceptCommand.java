@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class TeleportRequestCommand extends SubCommand {
+public class TeleportAcceptCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -26,7 +26,7 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "request";
+        return "accept";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -56,20 +56,24 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("le");
         if (!argsLength(sender, args.length)) {
             return;
         }
+
         if (!can(sender, false, true)) {
             return;
         }
-
-        OddJob.getInstance().getTeleportManager().request((Player) sender, args[1]);
+        if (sender instanceof Player player) {
+            if (args.length == 2) {
+                OddJob.getInstance().getTeleportManager().accept(player,args[1]);
+            } else {
+                OddJob.getInstance().getTeleportManager().accept(player);
+            }
+        }
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("here");
         return null;
     }
 }

@@ -122,7 +122,7 @@ public class HomesManager extends Managers {
 
     public void change(CommandSender sender, OddPlayer target, String name, Location location) {
         if (HomesSQL.change(target.getUuid(),name,location)) {
-            MessageManager.homes_location_changed(sender,name,location,target);
+            MessageManager.homes_location_changed(sender,name);
         }
     }
 }

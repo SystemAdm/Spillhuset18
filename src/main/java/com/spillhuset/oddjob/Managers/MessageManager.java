@@ -8,10 +8,12 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,15 +26,16 @@ public class MessageManager {
     static ChatColor cInfo = Notify.info.getColor();
     static ChatColor cSuccess = Notify.success.getColor();
     static ChatColor cGuild = ChatColor.GOLD;
+    static ChatColor cWarning = Notify.warning.getColor();
 
-    private static void syntax(Plugin plugin, CommandSender sender, Notify notify, String message) {
-        String prefixed = plugin.getString() + notify.getColor() + message;
+    private static void syntax(Plugin plugin, CommandSender sender, String message) {
+        String prefixed = plugin.getString() + Notify.info.getColor() + message;
         sender.sendMessage(prefixed);
     }
 
-    private static void guild_notify(Plugin plugin, Guild guild, Notify notify, String message) {
-        Response response = Response.valueOf(OddJob.getInstance().getConfig().getString(plugin.name() + ".response", "CHAT"));
-        String prefixed = plugin.getString() + notify.getColor() + message;
+    private static void guild_notify(Guild guild, Notify notify, String message) {
+        Response response = Response.valueOf(OddJob.getInstance().getConfig().getString(Plugin.guilds.name() + ".response", "CHAT"));
+        String prefixed = Plugin.guilds.getString() + notify.getColor() + message;
         for (UUID member : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
             UUID test = OddJob.getInstance().getGuildsManager().getMembers().get(member);
             if (test == guild.getUuid()) {
@@ -63,6 +66,12 @@ public class MessageManager {
         sender.sendMessage(prefixed);
     }
 
+    private static void message(Plugin plugin, CommandSender sender, Notify notify, TextComponent textComponent) {
+        TextComponent prefixed = new TextComponent(plugin.getString() + notify.getColor());
+        prefixed.addExtra(textComponent);
+        sender.spigot().sendMessage(prefixed);
+    }
+
     public static void homes_name_already_exist(String name, CommandSender sender) {
         notify(Plugin.homes, sender, Notify.danger, "A home with the name " + cValue + name + cDanger + " is already defined.");
     }
@@ -76,7 +85,7 @@ public class MessageManager {
     }
 
     public static void sendSyntax(Plugin plugin, String string, CommandSender sender) {
-        syntax(plugin, sender, Notify.info, "Valid subcommands are: " + string);
+        syntax(plugin, sender, "Valid subcommands are: " + string);
     }
 
     public static void errors_find_player(Plugin plugin, String name, CommandSender sender) {
@@ -169,7 +178,7 @@ public class MessageManager {
         notify(Plugin.homes, sender, Notify.success, "Name of the home " + cValue + nameOld + cSuccess + " changed to " + cValue + nameNew);
     }
 
-    public static void homes_location_changed(CommandSender sender, String name, Location location, OddPlayer target) {
+    public static void homes_location_changed(CommandSender sender, String name) {
         notify(Plugin.homes, sender, Notify.success, "Location of " + cValue + name + cSuccess + " has been changed");
     }
 
@@ -235,7 +244,7 @@ public class MessageManager {
     }
 
     public static void guilds_claims_claimed(Guild guild, Chunk chunk) {
-        guild_notify(Plugin.guilds, guild, Notify.success, "The guild have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
+        guild_notify(guild, Notify.success, "The guild have successfully claimed this chunk: X=" + cValue + chunk.getX() + cSuccess + " Z=" + cValue + chunk.getZ() + cSuccess + ".");
     }
 
     public static void guilds_need_permission(CommandSender sender, Role role) {
@@ -291,8 +300,9 @@ public class MessageManager {
         notify(Plugin.deaths, owner, Notify.danger, "Someone found your loot!");
     }
 
-    public static void spiritFound(CommandSender finder, OfflinePlayer owner) {
-        notify(Plugin.deaths, finder, Notify.success, "You found the loot from " + cPlayer + owner.getName() + cSuccess + "!");
+    public static void spiritFound(CommandSender finder, @Nullable OfflinePlayer owner) {
+        if (owner != null)
+            notify(Plugin.deaths, finder, Notify.success, "You found the loot from " + cPlayer + owner.getName() + cSuccess + "!");
     }
 
     public static void spiritFoundSelf(CommandSender finder, boolean looted) {
@@ -308,7 +318,7 @@ public class MessageManager {
     }
 
     public static void guilds_set_spawn_success(CommandSender sender, Location location, Guild guild) {
-        guild_notify(Plugin.guilds, guild, Notify.success, "New spawn set by " + cPlayer + sender.getName() + cSuccess + " x=" + cValue + location.getBlockX() + cSuccess + " y=" + cValue + location.getBlockY() + cSuccess + " z=" + cValue + location.getBlockZ());
+        guild_notify(guild, Notify.success, "New spawn set by " + cPlayer + sender.getName() + cSuccess + " x=" + cValue + location.getBlockX() + cSuccess + " y=" + cValue + location.getBlockY() + cSuccess + " z=" + cValue + location.getBlockZ());
     }
 
     public static void guilds_set_spawn_error_in_chunk(CommandSender sender) {
@@ -332,23 +342,62 @@ public class MessageManager {
     }
 
     public static void teleports_destination_offline(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination + cDanger + " is offline");
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " is offline");
     }
 
     public static void teleports_requester_offline(Player requester, Player destination) {
-        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, " + cPlayer + requester + cDanger + " is offline");
+        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " is offline");
     }
 
     public static void teleports_timed_out(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination + cDanger + " has not responded.");
-        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, request from " + cPlayer + requester + cDanger + " has timed out");
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has not responded.");
+        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, request from " + cPlayer + requester.getName() + cDanger + " has timed out");
     }
 
-    public static void teleports_request_denied(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, "+cPlayer+destination+cDanger+" has rejected your request");
+    public static void teleports_request_denied(Player destination, Player requester) {
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has rejected your request");
+        notify(Plugin.teleport, destination, Notify.danger, "You have denied the teleport request from " + cPlayer + destination.getName());
     }
 
     public static void teleports_request_already_sent(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.info, "Request to "+cPlayer+destination+cDanger+" has already been sent");
+        notify(Plugin.teleport, requester, Notify.warning, "Request to " + cPlayer + destination.getName() + cWarning + " has already been sent");
+    }
+
+    public static void teleports_request_accepted(Player destination, Player requester) {
+        notify(Plugin.teleport, requester, Notify.success, "Your teleport request to " + cPlayer + destination.getName() + cSuccess + " has been accepted");
+        notify(Plugin.teleport, destination, Notify.info, "You have accepted " + cPlayer + requester.getName() + cInfo + "'s teleport request");
+    }
+
+    public static void teleports_request_no_request(Player destination, Player requester) {
+        notify(Plugin.teleport, destination, Notify.warning, "You have no teleport requests from " + cPlayer + requester.getName());
+    }
+
+    public static void teleports_request_none(Player destination) {
+        notify(Plugin.teleport, destination, Notify.warning, "You have " + cValue + 0 + cWarning + " teleport requests waiting");
+    }
+
+    public static void teleports_requests_more(Player destination, List<UUID> requestList) {
+        notify(Plugin.teleport, destination, Notify.warning, "You have " + cValue + requestList.size() + cWarning + " teleport requests waiting");
+    }
+
+    public static void teleports_request_sent(Player destination, Player requester) {
+        notify(Plugin.teleport, requester, Notify.success, "You have sent a teleport request to " + cPlayer + destination.getName());
+        notify(Plugin.teleport, destination, Notify.info, "You have recieved a request from " + cPlayer + requester.getName() + cInfo + " to teleport to you");
+        TextComponent text = new TextComponent("To answer the request, click here: ");
+        TextComponent accept = new TextComponent("[accept]");
+        accept.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/teleport accept " + requester.getName()));
+        text.addExtra(accept);
+        TextComponent deny = new TextComponent("[deny]");
+        deny.setColor(net.md_5.bungee.api.ChatColor.RED);
+        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/teleport deny " + requester.getName()));
+        text.addExtra(deny);
+        message(Plugin.teleport, destination, Notify.info, text);
+    }
+
+    public static void teleports_request_changing(Player requester, @Nullable Player old) {
+        if (old != null && old.isOnline())
+        notify(Plugin.teleport, old, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " has changed direction");
+        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, changing direction");
     }
 }

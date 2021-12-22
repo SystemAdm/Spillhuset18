@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class TeleportRequestCommand extends SubCommand {
+public class GuildsInviteCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -21,12 +21,12 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.teleport;
+        return Plugin.guilds;
     }
 
     @Override
     public String getName() {
-        return "request";
+        return "invite";
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "teleports.request";
+        return "guilds";
     }
 
     @Override
@@ -56,20 +56,19 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("le");
         if (!argsLength(sender, args.length)) {
             return;
         }
         if (!can(sender, false, true)) {
             return;
         }
-
-        OddJob.getInstance().getTeleportManager().request((Player) sender, args[1]);
+        if (sender instanceof Player player) {
+            OddJob.getInstance().getGuildsManager().invite(player, args[1]);
+        }
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("here");
         return null;
     }
 }

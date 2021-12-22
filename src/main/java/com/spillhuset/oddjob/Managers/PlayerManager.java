@@ -32,7 +32,7 @@ public class PlayerManager {
     /**
      * Player UUID | Entity UUID
      */
-    public HashMap<UUID,Entity> openSpirit = new HashMap<>();
+    public HashMap<UUID, Entity> openSpirit = new HashMap<>();
 
     public static boolean isFrozen(UUID uniqueId) {
         //Todo
@@ -42,6 +42,15 @@ public class PlayerManager {
     public static boolean inCombat(UUID uniqueId) {
         //Todo
         return false;
+    }
+
+    public static OddPlayer getPlayerByName(String arg) {
+        for (OddPlayer oddPlayer : oddPlayers.values()) {
+            if (oddPlayer.getName().equalsIgnoreCase(arg)) {
+                return oddPlayer;
+            }
+        }
+        return null;
     }
 
     public List<String> listString() {

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class GuildsCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
-
     public GuildsCommand() {
         subCommands.add(new GuildsCreateCommand());
         subCommands.add(new GuildsInfoCommand());
@@ -26,6 +25,7 @@ public class GuildsCommand extends SubCommandInterface implements CommandExecuto
         subCommands.add(new GuildsUnclaimCommand());
         subCommands.add(new GuildsSetCommand());
         subCommands.add(new GuildsSpawnCommand());
+        subCommands.add(new GuildsInviteCommand());
     }
 
     @Override

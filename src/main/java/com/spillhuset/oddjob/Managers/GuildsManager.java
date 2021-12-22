@@ -312,7 +312,7 @@ public class GuildsManager extends Managers {
                 Chunk chunk = player.getLocation().getChunk();
                 if (chunks.get(chunk) == guild.getUuid()) {
                     guild.setSpawn(player.getLocation());
-                    MessageManager.guilds_set_spawn_success(player,player.getLocation(), guild);
+                    MessageManager.guilds_set_spawn_success(player, player.getLocation(), guild);
                 } else {
                     MessageManager.guilds_set_spawn_error_in_chunk(player);
                 }
@@ -329,12 +329,57 @@ public class GuildsManager extends Managers {
         if (guild != null) {
             Location location = guild.getSpawn();
             if (location != null) {
-                OddJob.getInstance().getTeleportManager().teleport(player,location, Plugin.guilds);
+                OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.guilds);
             } else {
                 MessageManager.guilds_spawn_not_set(player);
             }
         } else {
             MessageManager.guilds_not_associated(player);
         }
+    }
+
+    public void invite(Player player, String arg) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        OddPlayer oddPlayer = PlayerManager.getPlayerByName(arg);
+        if (oddPlayer == null) {
+            MessageManager.errors_find_player(Plugin.guilds, arg, player);
+            return;
+        }
+
+        UUID invited = GuildSQL.hasInvite(oddPlayer.getUuid());
+        UUID pending = GuildSQL.hasPending(oddPlayer.getUuid());
+        if (invited == guild.getUuid()) {
+            /* Already invited to this guild */
+            MessageManager.guilds_already_invited_this();
+            return;
+        } else if (invited != null) {
+            /* Already invited to another guild */
+            MessageManager.guilds_already_invited();
+        }
+
+        if (pending == guild.getUuid()) {
+            /* Has already sent a request to join this guild */
+            join(guild,oddPlayer);
+            MessageManager.guilds_already_pending_this();
+            return;
+        }
+        /* Send an invitation */
+        GuildSQL.invite(oddPlayer.getUuid());
+        MessageManager.guilds_invited();
+    }
+
+    private void join(Guild guild, OddPlayer oddPlayer) {
+        if (members.containsKey(oddPlayer.getUuid())) {
+            members.remove(oddPlayer.getUuid());
+            roles.remove(oddPlayer.getUuid());
+        }
+
+        members.put(oddPlayer.getUuid(),guild.getUuid());
+        roles.put(oddPlayer.getUuid(),Role.Members);
+        saveMembersRoles();
     }
 }
