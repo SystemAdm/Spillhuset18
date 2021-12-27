@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -69,7 +70,7 @@ public class TeleportManager {
     public void request(Player requester, String target) {
         if (requests.containsKey(requester.getUniqueId())) {
             Player old = Bukkit.getPlayer(requests.get(requester.getUniqueId()));
-            MessageManager.teleports_request_changing(requester,old);
+            MessageManager.teleports_request_changing(requester, old);
         }
         Player destination = Bukkit.getPlayer(target);
         if (destination != null) {
@@ -88,7 +89,7 @@ public class TeleportManager {
 
                 return;
             }
-            OddJob.getInstance().log("b"+(destination == requester));
+            OddJob.getInstance().log("b" + (destination == requester));
             if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
                 MessageManager.teleports_request_already_sent(requester, destination);
                 return;
@@ -102,7 +103,7 @@ public class TeleportManager {
                 @Override
                 public void run() {
                     if (requestsReset.containsKey(requester.getUniqueId())) {
-                        OddJob.getInstance().log("c"+(destination == requester));
+                        OddJob.getInstance().log("c" + (destination == requester));
                         removeRequests(requester.getUniqueId());
                         requestsReset.remove(requester.getUniqueId());
                         if (!destination.isOnline()) {
@@ -116,13 +117,13 @@ public class TeleportManager {
                             cancel();
                             return;
                         }
-                        OddJob.getInstance().log("d"+(destination == requester));
+                        OddJob.getInstance().log("d" + (destination == requester));
                         MessageManager.teleports_timed_out(requester, destination);
                         cancel();
                     }
                 }
             }.runTaskLater(OddJob.getInstance(), 1200L));
-            MessageManager.teleports_request_sent(destination,requester);
+            MessageManager.teleports_request_sent(destination, requester);
         }
     }
 
@@ -195,5 +196,35 @@ public class TeleportManager {
     public void deny(Player destination, Player requester) {
         MessageManager.teleports_request_denied(destination, requester);
         removeRequests(requester.getUniqueId());
+    }
+
+    public void teleport(Player player, String destination) {
+        Player teleportDestination = Bukkit.getPlayer(destination);
+        if (teleportDestination == null) {
+            MessageManager.errors_find_player(Plugin.teleport, destination, player);
+            return;
+        }
+    }
+
+    public void teleport(CommandSender sender, String destination, String source) {
+        Player teleportDestination = Bukkit.getPlayer(destination);
+        if (teleportDestination == null) {
+            MessageManager.errors_find_player(Plugin.teleport, destination, sender);
+            return;
+        }
+        Player teleportSource = Bukkit.getPlayer(source);
+        if (teleportSource == null) {
+            MessageManager.errors_find_player(Plugin.teleport, source, sender);
+            return;
+        }
+        if (sender.getName().equals(teleportDestination.getName())) {
+            MessageManager.teleports_another_to_you(teleportDestination, teleportSource);
+        } else if (sender.getName().equals(teleportSource.getName())) {
+            MessageManager.teleports_you_to_another(teleportDestination, teleportSource);
+        } else {
+            MessageManager.teleports_another_to_another(teleportDestination, teleportSource);
+        }
+        teleportSource.teleport(teleportDestination);
+
     }
 }

@@ -397,7 +397,51 @@ public class MessageManager {
 
     public static void teleports_request_changing(Player requester, @Nullable Player old) {
         if (old != null && old.isOnline())
-        notify(Plugin.teleport, old, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " has changed direction");
+            notify(Plugin.teleport, old, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " has changed direction");
         notify(Plugin.teleport, requester, Notify.danger, "Cancelled, changing direction");
+    }
+
+    public static void guilds_invited(CommandSender sender, OddPlayer oddPlayer, Guild guild) {
+        Player target = Bukkit.getPlayer(oddPlayer.getUuid());
+        notify(Plugin.guilds, sender, Notify.success, "Player " + cPlayer + oddPlayer.getName() + cSuccess + " has been invited to join the guild");
+        if (target != null && target.isOnline())
+            notify(Plugin.guilds, target, Notify.info, "You have been invited to join " + cGuild + guild.getName());
+        guild_notify(guild, Notify.info, cPlayer + oddPlayer.getName() + cInfo + " has been invited to the guild");
+    }
+
+    public static void guilds_already_pending_this(CommandSender sender, OddPlayer oddPlayer) {
+        notify(Plugin.guilds, sender, Notify.danger, "Player " + cPlayer + oddPlayer.getName() + cDanger + " has already has a pending request to join the guild");
+    }
+
+    public static void guilds_already_invited(CommandSender sender, OddPlayer oddPlayer) {
+        notify(Plugin.guilds, sender, Notify.warning, "Player " + cPlayer + oddPlayer.getName() + cWarning + " has already been invited to another guild");
+    }
+
+    public static void guilds_already_invited_this(CommandSender sender, OddPlayer oddPlayer) {
+        notify(Plugin.guilds, sender, Notify.danger, "Player " + cPlayer + oddPlayer.getName() + cDanger + " has already been invited to the guild");
+    }
+
+    public static void guilds_pending_removed(UUID uuid) {
+        Player target = Bukkit.getPlayer(uuid);
+        if (target != null && target.isOnline())
+        notify(Plugin.guilds, target, Notify.info, "All of your pending request to join guilds are now removed");
+    }
+
+    public static void guilds_invites_removed(UUID uuid) {
+        Player target = Bukkit.getPlayer(uuid);
+        if (target != null && target.isOnline())
+            notify(Plugin.guilds, target, Notify.info, "All of your invites to join guilds are now removed");
+    }
+
+    public static void teleports_another_to_you(CommandSender teleportDestination, CommandSender teleportSource) {
+        notify(Plugin.guilds, teleportDestination, Notify.info, "You are haunted by "+cPlayer+teleportSource.getName());
+    }
+
+    public static void teleports_you_to_another(CommandSender teleportDestination, CommandSender teleportSource) {
+        notify(Plugin.guilds, teleportDestination, Notify.info, "All of your pending request to join guilds are now removed");
+    }
+
+    public static void teleports_another_to_another(CommandSender teleportDestination, CommandSender teleportSource) {
+        notify(Plugin.guilds, teleportDestination, Notify.info, "All of your pending request to join guilds are now removed");
     }
 }
