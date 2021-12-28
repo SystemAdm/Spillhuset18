@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Utils;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
+import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -143,5 +144,9 @@ public class Guild {
 
     public void setPermissionInvite(Role permissionInvite) {
         this.permissionInvite = permissionInvite;
+    }
+
+    public int getClaims() {
+        return OddJob.getInstance().getGuildsManager().getChunks().values().size();
     }
 }

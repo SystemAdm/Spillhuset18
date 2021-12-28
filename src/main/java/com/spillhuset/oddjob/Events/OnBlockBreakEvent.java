@@ -1,10 +1,12 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.Managers.CurrencyManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,5 +41,16 @@ public class OnBlockBreakEvent implements Listener {
         //TODO check for `trust` guilds
         event.setCancelled(true);
         MessageManager.guilds_not_allowed(player, chunkGuild);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockBreakForMoney(BlockBreakEvent event) {
+        if (!event.isCancelled()) {
+            Player player = event.getPlayer();
+            // Econ
+            if (!player.isOp() && player.getGameMode() == GameMode.SURVIVAL) {
+                OddJob.getInstance().getCurrencyManager().earnBlockBrake(player,event.getBlock());
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
@@ -66,9 +67,10 @@ public class GuildsListCommand extends SubCommand {
         }
         List<String> list = new ArrayList<>();
         for (Guild guild : OddJob.getInstance().getGuildsManager().getGuilds().values()) {
-            list.add(guild.getName());
+            if (guild.getZone() == Zone.GUILD)
+                list.add(guild.getName());
         }
-        MessageManager.guilds_list(getPlugin(), sender, list,1);
+        MessageManager.guilds_list(getPlugin(), sender, list, 1);
     }
 
     @Override

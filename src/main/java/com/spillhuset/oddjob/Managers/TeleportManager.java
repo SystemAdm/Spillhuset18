@@ -164,7 +164,7 @@ public class TeleportManager {
     public void accept(Player destination, String requesterName) {
         Player requester = Bukkit.getPlayer(requesterName);
         if (requester == null) {
-            MessageManager.errors_find_player(Plugin.teleport, requesterName, destination);
+            MessageManager.errors_find_player(Plugin.teleports, requesterName, destination);
             return;
         }
         if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
@@ -177,7 +177,7 @@ public class TeleportManager {
     public void deny(Player destination, String requesterName) {
         Player requester = Bukkit.getPlayer(requesterName);
         if (requester == null) {
-            MessageManager.errors_find_player(Plugin.teleport, requesterName, destination);
+            MessageManager.errors_find_player(Plugin.teleports, requesterName, destination);
             return;
         }
         if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
@@ -190,7 +190,7 @@ public class TeleportManager {
     public void accept(Player destination, Player requester) {
         MessageManager.teleports_request_accepted(destination, requester);
         removeRequests(requester.getUniqueId());
-        teleport(requester, destination.getLocation(), Plugin.teleport);
+        teleport(requester, destination.getLocation(), Plugin.teleports);
     }
 
     public void deny(Player destination, Player requester) {
@@ -198,23 +198,24 @@ public class TeleportManager {
         removeRequests(requester.getUniqueId());
     }
 
-    public void teleport(Player player, String destination) {
+    public void teleport(Player player, String destination, Plugin plugin) {
         Player teleportDestination = Bukkit.getPlayer(destination);
         if (teleportDestination == null) {
-            MessageManager.errors_find_player(Plugin.teleport, destination, player);
+            MessageManager.errors_find_player(Plugin.teleports, destination, player);
             return;
         }
+        teleport(player, teleportDestination.getLocation(), plugin);
     }
 
     public void teleport(CommandSender sender, String destination, String source) {
         Player teleportDestination = Bukkit.getPlayer(destination);
         if (teleportDestination == null) {
-            MessageManager.errors_find_player(Plugin.teleport, destination, sender);
+            MessageManager.errors_find_player(Plugin.teleports, destination, sender);
             return;
         }
         Player teleportSource = Bukkit.getPlayer(source);
         if (teleportSource == null) {
-            MessageManager.errors_find_player(Plugin.teleport, source, sender);
+            MessageManager.errors_find_player(Plugin.teleports, source, sender);
             return;
         }
         if (sender.getName().equals(teleportDestination.getName())) {

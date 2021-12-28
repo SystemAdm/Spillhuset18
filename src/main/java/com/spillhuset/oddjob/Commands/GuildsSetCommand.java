@@ -1,7 +1,7 @@
 package com.spillhuset.oddjob.Commands;
+
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

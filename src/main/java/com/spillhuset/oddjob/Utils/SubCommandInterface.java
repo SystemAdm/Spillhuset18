@@ -2,7 +2,6 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
-import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,19 +36,16 @@ public abstract class SubCommandInterface {
     public boolean can(CommandSender sender, boolean others, boolean response) {
         if (denyConsole() && !(sender instanceof Player)) {
             if (response) MessageManager.errors_denied_console(getPlugin(), sender);
-            OddJob.getInstance().debug(getPlugin(), "can", "console denied");
             return false;
         }
 
         if (denyOp() && sender.isOp()) {
             if (response) MessageManager.errors_denied_op(getPlugin(), sender);
-            OddJob.getInstance().debug(getPlugin(), "can", "op denied");
             return false;
         }
 
         if (!sender.hasPermission(getPermission()) && !sender.isOp() && sender instanceof Player) {
             if (response) MessageManager.errors_denied_players(getPlugin(), sender);
-            OddJob.getInstance().debug(getPlugin(), "can", "players denied");
             return false;
         }
 

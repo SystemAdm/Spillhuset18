@@ -5,14 +5,15 @@ import org.bukkit.ChatColor;
 public enum Plugin {
     homes(ChatColor.YELLOW, "H"),
     guilds(ChatColor.BLUE, "G"),
-    teleport(ChatColor.LIGHT_PURPLE, "T"),
+    teleports(ChatColor.LIGHT_PURPLE, "T"),
     auctions(ChatColor.DARK_PURPLE, "A"),
     currency(ChatColor.GOLD, "C"),
     messages(ChatColor.GRAY, "M"),
     deaths(ChatColor.DARK_GRAY, "D"),
 
     join(ChatColor.GREEN, "+"),
-    leave(ChatColor.RED, "-");
+    leave(ChatColor.RED, "-"),
+    locks(ChatColor.YELLOW, "L");
 
     private final String string;
     private final ChatColor color;

@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.Enums.Response;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.IncomeQueue;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -13,8 +14,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -153,7 +157,7 @@ public class MessageManager {
     }
 
     public static void teleports_to_home(CommandSender sender, String name) {
-        notify(Plugin.teleport, sender, Notify.success, "Teleporting home to " + cValue + name);
+        notify(Plugin.teleports, sender, Notify.success, "Teleporting home to " + cValue + name);
     }
 
     public static void homes_not_found(CommandSender sender, String name) {
@@ -194,7 +198,7 @@ public class MessageManager {
         Notify notify = Notify.info;
         double size = ConfigManager.isSet("guilds.default.list") ? ConfigManager.getInt("guilds.default.list") : 10;
         int items = list.size();
-        double pages = Math.floor(items / size);
+        double pages = Math.floor(items / size) + 1;
 
         if (items == 0) {
             list(plugin, sender, notify, "There are " + cValue + "0" + notify.getColor() + " registered guilds");
@@ -213,7 +217,7 @@ public class MessageManager {
         list(plugin, sender, notify, "-----------------------------------------");
     }
 
-    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> mods, List<OddPlayer> members, List<OddPlayer> pending, List<OddPlayer> invites) {
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites) {
         Notify notify = Notify.info;
         Plugin plugin = Plugin.guilds;
         list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
@@ -223,12 +227,14 @@ public class MessageManager {
         if (guildMaster != null) {
             list(plugin, sender, notify, "GuildMaster: " + cPlayer + guildMaster.getName());
         }
-        list(plugin, sender, notify, "-----------------------------------------");
-        list(plugin, sender, notify, "-----------------------------------------");
-        list(plugin, sender, notify, "-----------------------------------------");
-        list(plugin, sender, notify, "-----------------------------------------");
-        list(plugin, sender, notify, "-----------------------------------------");
-        list(plugin, sender, notify, "-----------------------------------------");
+        list(plugin, sender, notify, "Pending players: " + pending.size());
+        list(plugin, sender, notify, "Invited players: " + invites.size());
+        list(plugin, sender, notify, "Open to join: " + guild.isOpen());
+        list(plugin, sender, notify, "Claims: " + guild.getClaims() + "/" + guild.getMaxClaims());
+        list(plugin, sender, notify, "Spawn point set: " + (guild.getSpawn() != null));
+        list(plugin, sender, notify, "Spawn mobs: " + guild.isSpawnMobs());
+        list(plugin, sender, notify, "Invited only: " + guild.isInvited_only());
+        list(plugin, sender, notify, "Friendly fire: " + guild.isFriendlyFire());
     }
 
     public static void guilds_not_found(CommandSender sender, String arg) {
@@ -338,51 +344,51 @@ public class MessageManager {
     }
 
     public static void teleports_countdown(int i, CommandSender sender) {
-        notify(Plugin.teleport, sender, Notify.info, "Teleporting in " + cValue + i);
+        notify(Plugin.teleports, sender, Notify.info, "Teleporting in " + cValue + i);
     }
 
     public static void teleports_destination_offline(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " is offline");
+        notify(Plugin.teleports, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " is offline");
     }
 
     public static void teleports_requester_offline(Player requester, Player destination) {
-        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " is offline");
+        notify(Plugin.teleports, destination, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " is offline");
     }
 
     public static void teleports_timed_out(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has not responded.");
-        notify(Plugin.teleport, destination, Notify.danger, "Cancelled, request from " + cPlayer + requester.getName() + cDanger + " has timed out");
+        notify(Plugin.teleports, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has not responded.");
+        notify(Plugin.teleports, destination, Notify.danger, "Cancelled, request from " + cPlayer + requester.getName() + cDanger + " has timed out");
     }
 
     public static void teleports_request_denied(Player destination, Player requester) {
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has rejected your request");
-        notify(Plugin.teleport, destination, Notify.danger, "You have denied the teleport request from " + cPlayer + destination.getName());
+        notify(Plugin.teleports, requester, Notify.danger, "Cancelled, " + cPlayer + destination.getName() + cDanger + " has rejected your request");
+        notify(Plugin.teleports, destination, Notify.danger, "You have denied the teleport request from " + cPlayer + destination.getName());
     }
 
     public static void teleports_request_already_sent(Player requester, Player destination) {
-        notify(Plugin.teleport, requester, Notify.warning, "Request to " + cPlayer + destination.getName() + cWarning + " has already been sent");
+        notify(Plugin.teleports, requester, Notify.warning, "Request to " + cPlayer + destination.getName() + cWarning + " has already been sent");
     }
 
     public static void teleports_request_accepted(Player destination, Player requester) {
-        notify(Plugin.teleport, requester, Notify.success, "Your teleport request to " + cPlayer + destination.getName() + cSuccess + " has been accepted");
-        notify(Plugin.teleport, destination, Notify.info, "You have accepted " + cPlayer + requester.getName() + cInfo + "'s teleport request");
+        notify(Plugin.teleports, requester, Notify.success, "Your teleport request to " + cPlayer + destination.getName() + cSuccess + " has been accepted");
+        notify(Plugin.teleports, destination, Notify.info, "You have accepted " + cPlayer + requester.getName() + cInfo + "'s teleport request");
     }
 
     public static void teleports_request_no_request(Player destination, Player requester) {
-        notify(Plugin.teleport, destination, Notify.warning, "You have no teleport requests from " + cPlayer + requester.getName());
+        notify(Plugin.teleports, destination, Notify.warning, "You have no teleport requests from " + cPlayer + requester.getName());
     }
 
     public static void teleports_request_none(Player destination) {
-        notify(Plugin.teleport, destination, Notify.warning, "You have " + cValue + 0 + cWarning + " teleport requests waiting");
+        notify(Plugin.teleports, destination, Notify.warning, "You have " + cValue + 0 + cWarning + " teleport requests waiting");
     }
 
     public static void teleports_requests_more(Player destination, List<UUID> requestList) {
-        notify(Plugin.teleport, destination, Notify.warning, "You have " + cValue + requestList.size() + cWarning + " teleport requests waiting");
+        notify(Plugin.teleports, destination, Notify.warning, "You have " + cValue + requestList.size() + cWarning + " teleport requests waiting");
     }
 
     public static void teleports_request_sent(Player destination, Player requester) {
-        notify(Plugin.teleport, requester, Notify.success, "You have sent a teleport request to " + cPlayer + destination.getName());
-        notify(Plugin.teleport, destination, Notify.info, "You have recieved a request from " + cPlayer + requester.getName() + cInfo + " to teleport to you");
+        notify(Plugin.teleports, requester, Notify.success, "You have sent a teleport request to " + cPlayer + destination.getName());
+        notify(Plugin.teleports, destination, Notify.info, "You have recieved a request from " + cPlayer + requester.getName() + cInfo + " to teleport to you");
         TextComponent text = new TextComponent("To answer the request, click here: ");
         TextComponent accept = new TextComponent("[accept]");
         accept.setColor(net.md_5.bungee.api.ChatColor.GREEN);
@@ -392,13 +398,13 @@ public class MessageManager {
         deny.setColor(net.md_5.bungee.api.ChatColor.RED);
         deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/teleport deny " + requester.getName()));
         text.addExtra(deny);
-        message(Plugin.teleport, destination, Notify.info, text);
+        message(Plugin.teleports, destination, Notify.info, text);
     }
 
     public static void teleports_request_changing(Player requester, @Nullable Player old) {
         if (old != null && old.isOnline())
-            notify(Plugin.teleport, old, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " has changed direction");
-        notify(Plugin.teleport, requester, Notify.danger, "Cancelled, changing direction");
+            notify(Plugin.teleports, old, Notify.danger, "Cancelled, " + cPlayer + requester.getName() + cDanger + " has changed direction");
+        notify(Plugin.teleports, requester, Notify.danger, "Cancelled, changing direction");
     }
 
     public static void guilds_invited(CommandSender sender, OddPlayer oddPlayer, Guild guild) {
@@ -424,7 +430,7 @@ public class MessageManager {
     public static void guilds_pending_removed(UUID uuid) {
         Player target = Bukkit.getPlayer(uuid);
         if (target != null && target.isOnline())
-        notify(Plugin.guilds, target, Notify.info, "All of your pending request to join guilds are now removed");
+            notify(Plugin.guilds, target, Notify.info, "All of your pending request to join guilds are now removed");
     }
 
     public static void guilds_invites_removed(UUID uuid) {
@@ -434,7 +440,7 @@ public class MessageManager {
     }
 
     public static void teleports_another_to_you(CommandSender teleportDestination, CommandSender teleportSource) {
-        notify(Plugin.guilds, teleportDestination, Notify.info, "You are haunted by "+cPlayer+teleportSource.getName());
+        notify(Plugin.guilds, teleportDestination, Notify.info, "You are haunted by " + cPlayer + teleportSource.getName());
     }
 
     public static void teleports_you_to_another(CommandSender teleportDestination, CommandSender teleportSource) {
@@ -444,4 +450,10 @@ public class MessageManager {
     public static void teleports_another_to_another(CommandSender teleportDestination, CommandSender teleportSource) {
         notify(Plugin.guilds, teleportDestination, Notify.info, "All of your pending request to join guilds are now removed");
     }
+
+    public static void queueIncome(UUID uuid, double value) {
+
+    }
+
+    private static final HashMap<UUID, BukkitTask> queueIncome = new HashMap<>();
 }

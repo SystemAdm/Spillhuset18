@@ -12,3 +12,5 @@ commands:
     description: Suicide mother f***er!
   teleport:
     description: Teleporters
+  locks:
+    description: Locking

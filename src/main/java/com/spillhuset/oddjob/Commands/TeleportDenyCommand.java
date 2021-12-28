@@ -20,7 +20,7 @@ public class TeleportDenyCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.teleport;
+        return Plugin.teleports;
     }
 
     @Override
