@@ -21,7 +21,7 @@ public class TeleportRequestCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.teleport;
+        return Plugin.teleports;
     }
 
     @Override

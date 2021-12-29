@@ -1,5 +1,5 @@
 package com.spillhuset.oddjob.Enums;
 
 public enum ScoreBoard {
-    Player,None,Server,Guild,Currency
+    player,None,Server,Guild,Currency
 }

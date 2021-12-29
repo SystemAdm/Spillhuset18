@@ -52,6 +52,9 @@ public class ConfigManager {
         FileConfiguration config = OddJob.getInstance().getConfig();
         return config.getInt(string, 0);
     }
+    public static double getDouble(String s) {
+        return OddJob.getInstance().getConfig().getDouble(s);
+    }
 
     public static int getInt(String s) {
         return OddJob.getInstance().getConfig().getInt(s);

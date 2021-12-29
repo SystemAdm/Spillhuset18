@@ -40,7 +40,7 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.teleport;
+        return Plugin.teleports;
     }
 
     @Override
@@ -60,7 +60,6 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        OddJob.getInstance().log("FFS!");
         if (!argsLength(sender, args.length)) {
             return true;
         }
@@ -68,7 +67,7 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
             return true;
         }
         if (args.length == 0) {
-            if (sender instanceof Player player) {
+            if (sender instanceof Player) {
                 Bukkit.dispatchCommand(sender, "teleport help");
             } else {
                 MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
@@ -76,18 +75,22 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
             return true;
         }
 
-        boolean sub = subCommand(sender, args, false);
+        subCommand(sender, args, false);
         if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
             MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
             return true;
+        } else if (args.length == 1 && sender instanceof Player player) {
+            OddJob.getInstance().getTeleportManager().teleport(player, args[0], Plugin.teleports);
+            return true;
+        } else if (args.length == 2) {
+            OddJob.getInstance().getTeleportManager().teleport(sender, args[0], args[1]);
+            return true;
         }
-        OddJob.getInstance().log("sub:" + (sub ? "ok" : "n"));
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        OddJob.getInstance().log("here yet?");
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
 
         // List commands

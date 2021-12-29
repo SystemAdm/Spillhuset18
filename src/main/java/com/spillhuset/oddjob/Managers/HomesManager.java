@@ -65,7 +65,7 @@ public class HomesManager extends Managers {
 
         /* Make transaction */
         if (currency) {
-            if (!CostManager.transaction(Account.POCKET, uuid, Plu.HOMES_SET)) {
+            if (!CostManager.transaction(Account.pocket, uuid, Plu.HOMES_SET)) {
                 MessageManager.errors_currency_expensive(Plugin.homes, sender);
                 return false;
             }

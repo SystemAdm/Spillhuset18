@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.SQL;
 
+import com.spillhuset.oddjob.Enums.GuildType;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MySQLManager;
@@ -11,7 +12,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class GuildSQL extends MySQLManager {
@@ -174,20 +177,20 @@ public class GuildSQL extends MySQLManager {
     }
 
     public static void loadMembersRoles() {
-        HashMap<UUID,UUID> members = new HashMap<>();
-        HashMap<UUID,Role> roles = new HashMap<>();
-        for (UUID uuid: OddJob.getInstance().getGuildsManager().getGuilds().keySet()) {
+        HashMap<UUID, UUID> members = new HashMap<>();
+        HashMap<UUID, Role> roles = new HashMap<>();
+        for (UUID uuid : OddJob.getInstance().getGuildsManager().getGuilds().keySet()) {
             try {
                 connect();
                 preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members` WHERE `uuid` = ?");
-                preparedStatement.setString(1,uuid.toString());
+                preparedStatement.setString(1, uuid.toString());
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) {
                     UUID member = UUID.fromString(resultSet.getString("player"));
                     members.put(member, uuid);
                     Role role = Role.valueOf(resultSet.getString("role"));
-                    roles.put(member,role);
+                    roles.put(member, role);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -208,7 +211,7 @@ public class GuildSQL extends MySQLManager {
                     connect();
                     preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_members` WHERE `player` = ? AND `uuid` = ?");
                     preparedStatement.setString(1, member.toString());
-                    preparedStatement.setString(2,guild.toString());
+                    preparedStatement.setString(2, guild.toString());
                     resultSet = preparedStatement.executeQuery();
 
                     if (resultSet.next()) {
@@ -231,5 +234,110 @@ public class GuildSQL extends MySQLManager {
             }
         }
         return i;
+    }
+
+    /**
+     *
+     * @param uuid UUID of Player
+     * @param type Player or Guild
+     * @return List of opposite type UUID
+     */
+    public static List<UUID> getInvite(UUID uuid, GuildType type) {
+        List<UUID> list = new ArrayList<>();
+
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_invites` WHERE `"+type.name()+"` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String string = resultSet.getString("uuid");
+                UUID guild = UUID.fromString(string);
+                if (!string.isEmpty())
+                    list.add(guild);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return list;
+    }
+
+    /**
+     * @param uuid UUID of type
+     * @param type Player or Guild
+     * @return List of opposite type UUID
+     */
+    public static List<UUID> getPending(UUID uuid, GuildType type) {
+        List<UUID> list = new ArrayList<>();
+
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_pending` WHERE `"+type.name()+"` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String string = resultSet.getString(type.type());
+                UUID guild = UUID.fromString(string);
+                if (!string.isEmpty())
+                    list.add(guild);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return list;
+    }
+
+    public static void invite(UUID player, UUID guild) {
+        try{
+            connect();
+            preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_invites` (`uuid`,`player`) VALUES (?,?)");
+            preparedStatement.setString(1,guild.toString());
+            preparedStatement.setString(2,player.toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public static boolean removeInvites(UUID uuid) {
+        boolean ret = false;
+        try{
+            connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_invites` WHERE `player` = ?");
+            preparedStatement.setString(1,uuid.toString());
+            preparedStatement.executeUpdate();
+            ret = true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return ret;
+    }
+
+    public static boolean removePending(UUID uuid) {
+        boolean ret = false;
+        try{
+            connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_pending` WHERE `player` = ?");
+            preparedStatement.setString(1,uuid.toString());
+            preparedStatement.executeUpdate();
+            ret = true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return ret;
     }
 }

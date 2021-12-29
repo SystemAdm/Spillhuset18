@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomesCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
-    private final ArrayList<SubCommand> subCommands = new ArrayList<>();
     public HomesCommand() {
         subCommands.add(new HomesAddCommand());
         subCommands.add(new HomesListCommand());
@@ -89,7 +88,6 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
             MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
             return true;
         }
-        OddJob.getInstance().log("sub:" + (sub ? "ok" : "n"));
 
         if (args.length == 1 && sender instanceof Player player && !sub) {
             String name = args[0].toLowerCase();

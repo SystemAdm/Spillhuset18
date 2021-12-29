@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.GuildType;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
@@ -16,7 +17,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class GuildsManager extends Managers {
@@ -152,8 +155,23 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_not_found(sender, arg);
             return;
         }
-        MessageManager.guilds_info(sender, guild, getGuildMaster(guild), null, null, null, null);
-        //TODO mods,members,pending,invites
+        MessageManager.guilds_info(sender, guild, getGuildMaster(guild), getPending(guild.getUuid()), getInvites(guild.getUuid()));
+    }
+
+    private List<OddPlayer> getPending(UUID uuid) {
+        List<OddPlayer> oddPlayers = new ArrayList<>();
+        for (UUID player : GuildSQL.getPending(uuid, GuildType.uuid)) {
+            oddPlayers.add(OddJob.getInstance().getPlayerManager().get(player));
+        }
+        return oddPlayers;
+    }
+
+    private List<OddPlayer> getInvites(UUID uuid) {
+        List<OddPlayer> oddPlayers = new ArrayList<>();
+        for (UUID player : GuildSQL.getInvite(uuid, GuildType.uuid)) {
+            oddPlayers.add(OddJob.getInstance().getPlayerManager().get(player));
+        }
+        return oddPlayers;
     }
 
     private OddPlayer getGuildMaster(Guild guild) {
@@ -230,7 +248,7 @@ public class GuildsManager extends Managers {
 
         UUID owned = chunks.get(chunk);
         if (owned != null) {
-            if (owned == guild.getUuid()) {
+            if (owned.equals(guild.getUuid())) {
                 unclaim(guild, chunk);
                 return;
             }
@@ -306,11 +324,15 @@ public class GuildsManager extends Managers {
 
     public void setSpawn(Player player) {
         Guild guild = getGuildByMember(player.getUniqueId());
+
         if (guild != null) {
+            OddJob.getInstance().log("guild: " + guild.getName());
             Role role = roles.get(player.getUniqueId());
+            OddJob.getInstance().log("role: " + role.name());
             if (role == Role.Master) {
                 Chunk chunk = player.getLocation().getChunk();
-                if (chunks.get(chunk) == guild.getUuid()) {
+                OddJob.getInstance().log("Chunk: x=" + chunk.getX() + "; z=" + chunk.getZ());
+                if (chunks.get(chunk) != null && chunks.get(chunk).equals(guild.getUuid())) {
                     guild.setSpawn(player.getLocation());
                     MessageManager.guilds_set_spawn_success(player, player.getLocation(), guild);
                 } else {
@@ -350,26 +372,26 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        UUID invited = GuildSQL.hasInvite(oddPlayer.getUuid());
-        UUID pending = GuildSQL.hasPending(oddPlayer.getUuid());
-        if (invited == guild.getUuid()) {
+        List<UUID> invited = GuildSQL.getInvite(oddPlayer.getUuid(), GuildType.player);
+        List<UUID> pending = GuildSQL.getPending(oddPlayer.getUuid(), GuildType.player);
+        if (invited.contains(guild.getUuid())) {
             /* Already invited to this guild */
-            MessageManager.guilds_already_invited_this();
+            MessageManager.guilds_already_invited_this(player, oddPlayer);
             return;
-        } else if (invited != null) {
+        } else if (!invited.isEmpty()) {
             /* Already invited to another guild */
-            MessageManager.guilds_already_invited();
+            MessageManager.guilds_already_invited(player, oddPlayer);
         }
 
-        if (pending == guild.getUuid()) {
+        if (pending.contains(guild.getUuid())) {
             /* Has already sent a request to join this guild */
-            join(guild,oddPlayer);
-            MessageManager.guilds_already_pending_this();
+            MessageManager.guilds_already_pending_this(player, oddPlayer);
+            join(guild, oddPlayer);
             return;
         }
         /* Send an invitation */
-        GuildSQL.invite(oddPlayer.getUuid());
-        MessageManager.guilds_invited();
+        GuildSQL.invite(oddPlayer.getUuid(), guild.getUuid());
+        MessageManager.guilds_invited(player, oddPlayer, guild);
     }
 
     private void join(Guild guild, OddPlayer oddPlayer) {
@@ -378,8 +400,23 @@ public class GuildsManager extends Managers {
             roles.remove(oddPlayer.getUuid());
         }
 
-        members.put(oddPlayer.getUuid(),guild.getUuid());
-        roles.put(oddPlayer.getUuid(),Role.Members);
+        members.put(oddPlayer.getUuid(), guild.getUuid());
+        roles.put(oddPlayer.getUuid(), Role.Members);
         saveMembersRoles();
+
+        removeInvites(oddPlayer);
+        removePending(oddPlayer);
+    }
+
+    private void removePending(OddPlayer oddPlayer) {
+        if (GuildSQL.removePending(oddPlayer.getUuid())) {
+            MessageManager.guilds_pending_removed(oddPlayer.getUuid());
+        }
+    }
+
+    private void removeInvites(OddPlayer oddPlayer) {
+        if (GuildSQL.removeInvites(oddPlayer.getUuid())) {
+            MessageManager.guilds_invites_removed(oddPlayer.getUuid());
+        }
     }
 }

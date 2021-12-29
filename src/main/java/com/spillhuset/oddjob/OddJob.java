@@ -1,19 +1,16 @@
 package com.spillhuset.oddjob;
 
-import com.spillhuset.oddjob.Commands.GuildsCommand;
-import com.spillhuset.oddjob.Commands.HomesCommand;
-import com.spillhuset.oddjob.Commands.SuicideCommand;
-import com.spillhuset.oddjob.Commands.TeleportCommand;
+import com.spillhuset.oddjob.Commands.*;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static com.spillhuset.oddjob.Managers.ConfigManager.load;
+import java.util.Currency;
+
 
 public class OddJob extends JavaPlugin {
 
@@ -23,6 +20,7 @@ public class OddJob extends JavaPlugin {
     private HistoryManager historyManager;
     private GuildsManager guildsManager;
     private TeleportManager teleportManager;
+    private CurrencyManager currencyManager;
 
     public static OddJob getInstance() {
         return instance;
@@ -34,13 +32,14 @@ public class OddJob extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         /* Loadings */
-        load();
+        ConfigManager.load();
         homesManager = new HomesManager();
         playerManager = new PlayerManager();
         guildsManager = new GuildsManager();
         guildsManager.loadStart();
         historyManager = new HistoryManager();
         teleportManager = new TeleportManager();
+        currencyManager = new CurrencyManager();
 
         /* Listeners */
         pm.registerEvents(new OnPlayerJoinEvent(), this);
@@ -61,6 +60,7 @@ public class OddJob extends JavaPlugin {
         getCommand("guilds").setExecutor(new GuildsCommand());
         getCommand("suicide").setExecutor(new SuicideCommand());
         getCommand("teleport").setExecutor(new TeleportCommand());
+        getCommand("locks").setExecutor(new LocksCommand());
     }
 
     @Override
@@ -97,5 +97,11 @@ public class OddJob extends JavaPlugin {
     public TeleportManager getTeleportManager() {
         return teleportManager;
     }
+
+    public CurrencyManager getCurrencyManager() {
+        return currencyManager;
+    }
+
+
 }
 
