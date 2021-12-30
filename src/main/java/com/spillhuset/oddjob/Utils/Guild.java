@@ -4,10 +4,12 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.SQL.HomesSQL;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Guild {
@@ -83,19 +85,21 @@ public class Guild {
     }
 
     public int getMaxClaims() {
-        return maxClaims;
+        int players = 0;
+        for (UUID uuid : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
+            if (getUuid().equals(OddJob.getInstance().getGuildsManager().getMembers().get(uuid))) {
+                players++;
+            }
+        }
+        return maxClaims + (players * 5);
     }
 
-    public void setMaxClaims(int maxClaims) {
-        this.maxClaims = maxClaims;
+    public Location getHome(@Nullable String name) {
+        return HomesSQL.get(getUuid(),name);
     }
 
-    public Location getSpawn() {
-        return spawn;
-    }
-
-    public void setSpawn(Location spawn) {
-        this.spawn = spawn;
+    public void setHome(Location spawn,String name) {
+        HomesSQL.add(getUuid(),spawn,name);
     }
 
     public boolean isSpawnMobs() {
@@ -148,5 +152,9 @@ public class Guild {
 
     public int getClaims() {
         return OddJob.getInstance().getGuildsManager().getChunks().values().size();
+    }
+
+    public int getHomes() {
+        return HomesSQL.getList(getUuid()).size();
     }
 }

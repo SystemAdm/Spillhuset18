@@ -14,3 +14,7 @@ commands:
     description: Teleporters
   locks:
     description: Locking
+  enderchest:
+    description: Looting
+  invsee:
+    description: Looting

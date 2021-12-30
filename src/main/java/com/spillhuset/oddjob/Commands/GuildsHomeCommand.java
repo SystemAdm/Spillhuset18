@@ -1,22 +1,13 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import com.spillhuset.oddjob.Utils.SubCommandInterface;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsSetCommand extends SubCommand {
-    private final List<SubCommand> subCommands = new ArrayList<>();
-    public GuildsSetCommand() {
-        subCommands.add(new GuildsSetHomeCommand());
-        subCommands.add(new GuildsSetOpenCommand());
-    }
+public class GuildsHomeCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -34,7 +25,7 @@ public class GuildsSetCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "set";
+        return "home";
     }
 
     @Override
@@ -54,22 +45,27 @@ public class GuildsSetCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        subCommand(sender,args,false);
+        if (sender instanceof Player player) {
+            String name = "home";
+            if (args.length == 2 && !args[1].equals("")) {
+                name = args[1];
+            }
+            OddJob.getInstance().getGuildsManager().home(player, name);
+        }
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         return null;
     }
-
 }

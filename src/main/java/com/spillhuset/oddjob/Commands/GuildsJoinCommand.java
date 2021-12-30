@@ -1,22 +1,14 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import com.spillhuset.oddjob.Utils.SubCommandInterface;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsSetCommand extends SubCommand {
-    private final List<SubCommand> subCommands = new ArrayList<>();
-    public GuildsSetCommand() {
-        subCommands.add(new GuildsSetHomeCommand());
-        subCommands.add(new GuildsSetOpenCommand());
-    }
+public class GuildsJoinCommand extends SubCommand implements GuildInterface {
     @Override
     public boolean denyConsole() {
         return false;
@@ -29,12 +21,12 @@ public class GuildsSetCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.guilds;
+        return null;
     }
 
     @Override
     public String getName() {
-        return "set";
+        return null;
     }
 
     @Override
@@ -49,7 +41,7 @@ public class GuildsSetCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guild";
     }
 
     @Override
@@ -61,15 +53,16 @@ public class GuildsSetCommand extends SubCommand {
     public int maxArgs() {
         return 0;
     }
+    public Role getRole(){
+        return guildRole;
+    }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        subCommand(sender,args,false);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         return null;
     }
-
 }

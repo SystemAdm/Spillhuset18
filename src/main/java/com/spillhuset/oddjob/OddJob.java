@@ -61,6 +61,11 @@ public class OddJob extends JavaPlugin {
         getCommand("suicide").setExecutor(new SuicideCommand());
         getCommand("teleport").setExecutor(new TeleportCommand());
         getCommand("locks").setExecutor(new LocksCommand());
+        getCommand("invsee").setExecutor(new InvseeCommand());
+        getCommand("enderchest").setExecutor(new EnderchestCommand());
+        getCommand("auctions").setExecutor(new AuctionsCommand());
+        getCommand("shops").setExecutor(new ShopsCommand());
+
     }
 
     @Override

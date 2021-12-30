@@ -6,7 +6,6 @@ import com.spillhuset.oddjob.Enums.Response;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
-import com.spillhuset.oddjob.Utils.IncomeQueue;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -14,7 +13,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
@@ -231,7 +229,7 @@ public class MessageManager {
         list(plugin, sender, notify, "Invited players: " + invites.size());
         list(plugin, sender, notify, "Open to join: " + guild.isOpen());
         list(plugin, sender, notify, "Claims: " + guild.getClaims() + "/" + guild.getMaxClaims());
-        list(plugin, sender, notify, "Spawn point set: " + (guild.getSpawn() != null));
+        list(plugin, sender, notify, "Homes set: " + guild.getHomes());
         list(plugin, sender, notify, "Spawn mobs: " + guild.isSpawnMobs());
         list(plugin, sender, notify, "Invited only: " + guild.isInvited_only());
         list(plugin, sender, notify, "Friendly fire: " + guild.isFriendlyFire());
@@ -456,4 +454,8 @@ public class MessageManager {
     }
 
     private static final HashMap<UUID, BukkitTask> queueIncome = new HashMap<>();
+
+    public static void guilds_claims_too_many(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "You have claimed too many chunks");
+    }
 }

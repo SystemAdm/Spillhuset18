@@ -76,13 +76,13 @@ public class HomesSQL extends MySQLManager {
         return done;
     }
 
-    public static Location get(@Nonnull OddPlayer player, @Nonnull String name) {
+    public static Location get(@Nonnull UUID uuid, @Nonnull String name) {
         Location home = null;
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_homes` WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
             preparedStatement.setString(1, OddJob.getInstance().getConfig().getString("server_unique_id"));
-            preparedStatement.setString(2, player.getUuid().toString());
+            preparedStatement.setString(2, uuid.toString());
             preparedStatement.setString(3, name);
             resultSet = preparedStatement.executeQuery();
 

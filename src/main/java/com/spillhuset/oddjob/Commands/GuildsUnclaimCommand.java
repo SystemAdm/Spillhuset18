@@ -68,12 +68,12 @@ public class GuildsUnclaimCommand extends SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            OddJob.getInstance().getGuildsManager().unclaim(player);
+            OddJob.getInstance().getGuildsManager().unClaim(player);
             return;
         }
         if (args.length >= 2) {
             if (args[1].equalsIgnoreCase("auto")) {
-                OddJob.getInstance().getGuildsManager().autoUnclaim(player,OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
+                OddJob.getInstance().getGuildsManager().autoUnClaim(player,OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
                 return;
             }
             if (can(sender, true, true)) {
@@ -83,9 +83,9 @@ public class GuildsUnclaimCommand extends SubCommand {
                     return;
                 }
                 if (args.length == 3 && args[2].equalsIgnoreCase("auto")) {
-                    OddJob.getInstance().getGuildsManager().autoUnclaim(player,guild.getUuid());
+                    OddJob.getInstance().getGuildsManager().autoUnClaim(player,guild.getUuid());
                 } else {
-                    OddJob.getInstance().getGuildsManager().unclaim(player,guild);
+                    OddJob.getInstance().getGuildsManager().unClaim(player,guild);
                 }
             }
         }

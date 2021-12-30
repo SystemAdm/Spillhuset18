@@ -1,13 +1,12 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsSpawnCommand extends SubCommand {
+public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface {
     @Override
     public boolean denyConsole() {
         return false;
@@ -20,12 +19,12 @@ public class GuildsSpawnCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.guilds;
+        return null;
     }
 
     @Override
     public String getName() {
-        return "spawn";
+        return null;
     }
 
     @Override
@@ -40,23 +39,22 @@ public class GuildsSpawnCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return null;
     }
 
     @Override
     public int minArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (sender instanceof Player player)
-        OddJob.getInstance().getGuildsManager().spawn(player);
+
     }
 
     @Override

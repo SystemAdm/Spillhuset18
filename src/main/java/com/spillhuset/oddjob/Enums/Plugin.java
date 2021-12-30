@@ -13,7 +13,8 @@ public enum Plugin {
 
     join(ChatColor.GREEN, "+"),
     leave(ChatColor.RED, "-"),
-    locks(ChatColor.YELLOW, "L");
+    locks(ChatColor.YELLOW, "L"),
+    players(ChatColor.DARK_GREEN, "P");
 
     private final String string;
     private final ChatColor color;

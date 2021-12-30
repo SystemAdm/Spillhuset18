@@ -92,12 +92,12 @@ public class GuildSQL extends MySQLManager {
             preparedStatement.setInt(7, guild.isOpen() ? 1 : 0);
             preparedStatement.setInt(8, guild.getMaxClaims());
             preparedStatement.setInt(9, guild.isSpawnMobs() ? 1 : 0);
-            preparedStatement.setString(10, (guild.getSpawn() != null && guild.getSpawn().getWorld() != null) ? guild.getSpawn().getWorld().getUID().toString() : "");
-            preparedStatement.setDouble(11, (guild.getSpawn() != null) ? guild.getSpawn().getX() : 0);
-            preparedStatement.setDouble(12, (guild.getSpawn() != null) ? guild.getSpawn().getY() : 0);
-            preparedStatement.setDouble(13, (guild.getSpawn() != null) ? guild.getSpawn().getZ() : 0);
-            preparedStatement.setFloat(14, (guild.getSpawn() != null) ? guild.getSpawn().getYaw() : 0);
-            preparedStatement.setFloat(15, (guild.getSpawn() != null) ? guild.getSpawn().getPitch() : 0);
+            preparedStatement.setString(10, (guild.getHome() != null && guild.getHome().getWorld() != null) ? guild.getHome().getWorld().getUID().toString() : "");
+            preparedStatement.setDouble(11, (guild.getHome() != null) ? guild.getHome().getX() : 0);
+            preparedStatement.setDouble(12, (guild.getHome() != null) ? guild.getHome().getY() : 0);
+            preparedStatement.setDouble(13, (guild.getHome() != null) ? guild.getHome().getZ() : 0);
+            preparedStatement.setFloat(14, (guild.getHome() != null) ? guild.getHome().getYaw() : 0);
+            preparedStatement.setFloat(15, (guild.getHome() != null) ? guild.getHome().getPitch() : 0);
             preparedStatement.setString(16, guild.getUuid().toString());
             preparedStatement.setString(17, server);
             preparedStatement.executeUpdate();

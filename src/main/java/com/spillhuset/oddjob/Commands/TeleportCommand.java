@@ -75,14 +75,14 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
             return true;
         }
 
-        subCommand(sender, args, false);
+        boolean c = subCommand(sender, args, false);
         if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
             MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
             return true;
-        } else if (args.length == 1 && sender instanceof Player player) {
+        } else if (args.length == 1 && sender instanceof Player player && !c) {
             OddJob.getInstance().getTeleportManager().teleport(player, args[0], Plugin.teleports);
             return true;
-        } else if (args.length == 2) {
+        } else if (args.length == 2 && !c) {
             OddJob.getInstance().getTeleportManager().teleport(sender, args[0], args[1]);
             return true;
         }
