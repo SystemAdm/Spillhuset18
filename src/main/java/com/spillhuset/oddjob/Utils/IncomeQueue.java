@@ -6,7 +6,7 @@ public class IncomeQueue {
     double income = 0;
     UUID uuid;
 
-    public IncomeQueue(double value,UUID uuid) {
+    public IncomeQueue(double value, UUID uuid) {
         this.income = value;
         this.uuid = uuid;
     }

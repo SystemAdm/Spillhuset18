@@ -1,11 +1,13 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsBuyHomeCommand extends SubCommand {
+public class GuildsHomesCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -18,12 +20,12 @@ public class GuildsBuyHomeCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.guilds;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "homes";
     }
 
     @Override
@@ -38,22 +40,28 @@ public class GuildsBuyHomeCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return null;
+        return "guilds";
     }
 
     @Override
     public int minArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-
+        if (sender instanceof Player player) {
+            String name = "home";
+            if (args.length == 2 && !args[1].equals("")) {
+                name = args[1];
+            }
+            OddJob.getInstance().getGuildsManager().home(player, name);
+        }
     }
 
     @Override

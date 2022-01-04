@@ -1,17 +1,25 @@
 package com.spillhuset.oddjob.Enums;
 
 public enum Plu {
-    HOMES_SET(200),
-    TELEPORT_REQUEST(50),
-    DEFAULT(10);
+    HOMES_SET(200, 1),
+    TELEPORT_REQUEST(50, 1),
+    DEFAULT(0.10, 1),
+    GUILDS_CLAIMS(1000, 1.1),
+    GUILDS_HOMES(5000, 1.5);
 
     public final double value;
+    public final double multiplier;
 
-    Plu(double value) {
+    Plu(double value, double multiplier) {
         this.value = value;
+        this.multiplier = multiplier;
     }
 
     public double getValue() {
         return value;
+    }
+
+    public double getMultiplier() {
+        return multiplier;
     }
 }

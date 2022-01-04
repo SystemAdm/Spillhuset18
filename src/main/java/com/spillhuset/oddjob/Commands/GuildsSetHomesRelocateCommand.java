@@ -6,10 +6,9 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsSetOpenCommand extends SubCommand {
+public class GuildsSetHomesRelocateCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return true;
@@ -27,7 +26,7 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "open";
+        return "relocate";
     }
 
     @Override
@@ -37,7 +36,7 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds set open <true|false>";
+        return "/guilds set homes relocate <name>";
     }
 
     @Override
@@ -47,12 +46,12 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
     public int maxArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -60,25 +59,18 @@ public class GuildsSetOpenCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
+
         if (!can(sender, false, true)) {
             return;
         }
+
         Player player = (Player) sender;
 
-        OddJob.getInstance().getGuildsManager().setOpen(player, args[2]);
+        OddJob.getInstance().getGuildsManager().setHomeRelocate(player, args[3]);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 3) {
-            if (args[2].isEmpty() || "true".startsWith(args[2])) {
-                list.add("true");
-            }
-            if (args[2].isEmpty() || "false".startsWith(args[2])) {
-                list.add("false");
-            }
-        }
-        return list;
+        return null;
     }
 }

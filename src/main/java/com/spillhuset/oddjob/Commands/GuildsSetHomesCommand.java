@@ -1,15 +1,20 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsSetOpenCommand extends SubCommand {
+public class GuildsSetHomesCommand extends SubCommand {
+    List<SubCommand> subCommands = new ArrayList<>();
+
+    public GuildsSetHomesCommand() {
+        subCommands.add(new GuildsSetHomesRelocateCommand());
+        subCommands.add(new GuildsSetHomesRenameCommand());
+    }
+
     @Override
     public boolean denyConsole() {
         return true;
@@ -27,7 +32,7 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "open";
+        return "homes";
     }
 
     @Override
@@ -37,7 +42,7 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds set open <true|false>";
+        return null;
     }
 
     @Override
@@ -47,38 +52,22 @@ public class GuildsSetOpenCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 3;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 3;
+        return 0;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!argsLength(sender, args.length)) {
-            return;
-        }
-        if (!can(sender, false, true)) {
-            return;
-        }
-        Player player = (Player) sender;
-
-        OddJob.getInstance().getGuildsManager().setOpen(player, args[2]);
+        //StringBuilder sub = builder(sender,args);
+        subCommand(sender, args, true);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 3) {
-            if (args[2].isEmpty() || "true".startsWith(args[2])) {
-                list.add("true");
-            }
-            if (args[2].isEmpty() || "false".startsWith(args[2])) {
-                list.add("false");
-            }
-        }
-        return list;
+        return null;
     }
 }

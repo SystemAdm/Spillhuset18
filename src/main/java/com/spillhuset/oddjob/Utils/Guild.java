@@ -15,7 +15,6 @@ import java.util.UUID;
 public class Guild {
     private final UUID uuid;
     private int maxClaims = ConfigManager.isSet("guilds.default.max_claims") ? ConfigManager.getInt("guilds.default.max_claims") : 10;
-    private Location spawn = null;
     private boolean spawnMobs = false;
     private boolean open = false;
     private boolean invited_only = false;
@@ -24,6 +23,7 @@ public class Guild {
     private Role permissionInvite = Role.Members;
     private String name;
     private Zone zone = Zone.GUILD;
+    private int maxHomes = ConfigManager.isSet("guilds.default.max_homes") ? ConfigManager.getInt("guilds.default.max_homes") : 1;
 
     /**
      * Created from loading
@@ -31,12 +31,12 @@ public class Guild {
      * @param uuid UUID
      * @param name String name
      */
-    public Guild(UUID uuid, String name, Zone zone, Location spawn, int maxClaims, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite) {
+    public Guild(UUID uuid, String name, Zone zone, int maxClaims,int maxHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite) {
         this.uuid = uuid;
         this.name = name;
         this.zone = zone;
         this.maxClaims = maxClaims;
-        this.spawn = spawn;
+        this.maxHomes = maxHomes;
         this.spawnMobs = spawnMobs;
         this.open = open;
         this.invited_only = invited_only;
@@ -56,10 +56,9 @@ public class Guild {
         this.uuid = UUID.randomUUID();
         this.zone = zone;
 
-        if (player == null) {
-            this.spawn = null;
-        } else {
-            this.spawn = player.getLocation();
+        if (player != null) {
+            OddJob.getInstance().getCurrencyManager().initiateGuild(uuid);
+            OddJob.getInstance().getHomeManager().addGuild(player, uuid, "spawn");
         }
     }
 
@@ -95,11 +94,11 @@ public class Guild {
     }
 
     public Location getHome(@Nullable String name) {
-        return HomesSQL.get(getUuid(),name);
+        return HomesSQL.get(getUuid(), name);
     }
 
-    public void setHome(Location spawn,String name) {
-        HomesSQL.add(getUuid(),spawn,name);
+    public void setHome(Location spawn, String name) {
+        HomesSQL.add(getUuid(), spawn, name);
     }
 
     public boolean isSpawnMobs() {
@@ -156,5 +155,17 @@ public class Guild {
 
     public int getHomes() {
         return HomesSQL.getList(getUuid()).size();
+    }
+
+    public void incMaxClaims() {
+        maxClaims++;
+    }
+
+    public int getMaxHomes() {
+        return maxHomes;
+    }
+
+    public void incMaxHomes() {
+        maxHomes++;
     }
 }

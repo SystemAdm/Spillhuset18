@@ -14,6 +14,7 @@ import java.util.List;
 
 public abstract class SubCommand {
     public List<SubCommand> subCommands = new ArrayList<>();
+
     public abstract boolean denyConsole();
 
     public abstract boolean denyOp();
@@ -37,9 +38,9 @@ public abstract class SubCommand {
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
 
     public boolean can(CommandSender sender, boolean others, boolean response) {
-        OddJob.getInstance().log("player "+((sender instanceof Player)?1:0));
-        OddJob.getInstance().log("permission "+((sender.hasPermission(getPermission()))?1:0));
-        OddJob.getInstance().log("player "+((sender.isOp())?1:0));
+        OddJob.getInstance().log("player " + ((sender instanceof Player) ? 1 : 0));
+        OddJob.getInstance().log("permission " + ((sender.hasPermission(getPermission())) ? 1 : 0));
+        OddJob.getInstance().log("player " + ((sender.isOp()) ? 1 : 0));
         if (denyConsole() && !(sender instanceof Player)) {
             if (response) MessageManager.errors_denied_console(getPlugin(), sender);
             return false;
@@ -48,7 +49,7 @@ public abstract class SubCommand {
             if (response) MessageManager.errors_denied_op(getPlugin(), sender);
             return false;
         }
-        if (sender instanceof Player && others && !sender.hasPermission(getPermission()+".others")) {
+        if (sender instanceof Player && others && !sender.hasPermission(getPermission() + ".others")) {
             if (response) MessageManager.errors_denied_others(getPlugin(), sender);
             return false;
         }
@@ -114,6 +115,7 @@ public abstract class SubCommand {
         }
         return subcommand;
     }
+
     public void redirect(CommandSender sender, Plugin plugin, String subcommand) {
         Bukkit.dispatchCommand(sender, plugin.name() + " " + subcommand);
     }

@@ -1,15 +1,20 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -19,12 +24,12 @@ public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.guilds;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "claims";
     }
 
     @Override
@@ -34,27 +39,35 @@ public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds buy claims";
     }
 
     @Override
     public String getPermission() {
-        return null;
+        return "guilds";
     }
 
     @Override
     public int minArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        if (!argsLength(sender,args.length)) {
+            return;
+        }
 
+        if (!can(sender,false,true)) {
+            return;
+        }
+
+        OddJob.getInstance().getGuildsManager().buyClaims(sender);
     }
 
     @Override

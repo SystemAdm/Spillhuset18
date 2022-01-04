@@ -13,10 +13,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -405,7 +403,7 @@ public class MessageManager {
         notify(Plugin.teleports, requester, Notify.danger, "Cancelled, changing direction");
     }
 
-    public static void guilds_invited(CommandSender sender, OddPlayer oddPlayer, Guild guild) {
+    public static void guilds_invite_sent(CommandSender sender, OddPlayer oddPlayer, Guild guild) {
         Player target = Bukkit.getPlayer(oddPlayer.getUuid());
         notify(Plugin.guilds, sender, Notify.success, "Player " + cPlayer + oddPlayer.getName() + cSuccess + " has been invited to join the guild");
         if (target != null && target.isOnline())
@@ -449,13 +447,80 @@ public class MessageManager {
         notify(Plugin.guilds, teleportDestination, Notify.info, "All of your pending request to join guilds are now removed");
     }
 
-    public static void queueIncome(UUID uuid, double value) {
-
-    }
-
-    private static final HashMap<UUID, BukkitTask> queueIncome = new HashMap<>();
-
     public static void guilds_claims_too_many(CommandSender sender) {
         notify(Plugin.guilds, sender, Notify.danger, "You have claimed too many chunks");
+    }
+
+    public static void guilds_invited_only(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.danger, "The " + cGuild + guild.getName() + cDanger + " is set to " + cValue + "invited only");
+    }
+
+    public static void guilds_already_pending_join(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.danger, "You have already requested to join the " + cGuild + guild.getName());
+    }
+
+    public static void guilds_already_invited_join(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.danger, "You was already invited to join the " + cGuild + guild.getName());
+    }
+
+    public static void guilds_pending_set(CommandSender sender, Guild guild) {
+        notify(Plugin.guilds, sender, Notify.info, "You have now requested to join the " + cGuild + guild.getName());
+        guild_notify(guild, Notify.info, cPlayer + sender.getName() + cInfo + " wants to join the guild");
+    }
+
+    public static void guilds_no_invites(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "You have no invitation to any guild");
+    }
+
+    public static void guilds_no_pending(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "The guild has no pending request to join");
+    }
+
+    public static void guilds_more_invites(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "You have more than one guild invites");
+    }
+
+    public static void guilds_more_pending(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "There are more than one pending request to join");
+    }
+
+    public static void guilds_no_invites_from(CommandSender sender, String name) {
+        notify(Plugin.guilds, sender, Notify.danger, "There is no invitation to join " + cValue + name);
+    }
+
+    public static void guilds_no_pending_from(CommandSender sender, String name) {
+        notify(Plugin.guilds, sender, Notify.danger, "There is no pending request to join from " + cValue + name);
+    }
+
+    public static void insufficient_funds_guild(CommandSender sender, double sum, Guild guild) {
+        notify(Plugin.currency, sender, Notify.warning, "The " + cGuild + guild.getName() + cWarning + " can't afford " + cValue + sum);
+    }
+
+    public static void guilds_bought_homes(CommandSender sender, Guild guild, int maxHomes) {
+        guild_notify(guild, Notify.success, "We created an outpost!");
+    }
+
+    public static void guilds_bought_claims(CommandSender sender, Guild guild, int maxClaims) {
+        guild_notify(guild, Notify.success, "We have more land to claim!");
+    }
+
+    public static void guilds_no_homes_name(CommandSender sender, String name) {
+        notify(Plugin.guilds, sender, Notify.danger, "The guild can't find any home named " + cValue + name);
+    }
+
+    public static void guilds_home_relocated(CommandSender sender, Guild guild, String name) {
+        guild_notify(guild, Notify.success, "Relocation of " + cValue + name + cSuccess + " was successful");
+    }
+
+    public static void guilds_home_renamed(CommandSender sender, Guild guild, String oldName, String newName) {
+        guild_notify(guild, Notify.success, "Rename of " + cValue + oldName + cSuccess + " was successfully changed to " + cValue + newName);
+    }
+
+    public static void guilds_homes_name_already_exist(CommandSender sender, String name) {
+        notify(Plugin.homes, sender, Notify.danger, "A home with the name " + cValue + name + cDanger + " is already defined.");
+    }
+
+    public static void guilds_set_open_success(Guild guild, boolean open) {
+        guild_notify(guild,Notify.success,"Successfully set the guild to open="+cValue+open);
     }
 }

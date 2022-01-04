@@ -10,7 +10,7 @@ import java.util.List;
 public class GuildsBuyCommand extends SubCommand {
     private final List<SubCommand> subCommands = new ArrayList<>();
     public GuildsBuyCommand() {
-        subCommands.add(new GuildsBuyHomeCommand());
+        subCommands.add(new GuildsBuyHomesCommand());
         subCommands.add(new GuildsBuyClaimsCommand());
     }
     @Override
@@ -25,12 +25,12 @@ public class GuildsBuyCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.guilds;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "buy";
     }
 
     @Override
@@ -45,7 +45,7 @@ public class GuildsBuyCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return null;
+        return "guilds";
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.spillhuset.oddjob.Events;
 
-import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.entity.Player;
@@ -23,6 +22,6 @@ public class OnPlayerJoinEvent implements Listener {
         }
 
         // Econ
-        OddJob.getInstance().getCurrencyManager().initiate(player.getUniqueId());
+        OddJob.getInstance().getCurrencyManager().initiatePlayer(player.getUniqueId());
     }
 }
