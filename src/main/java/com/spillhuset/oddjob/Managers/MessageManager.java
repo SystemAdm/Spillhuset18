@@ -213,7 +213,7 @@ public class MessageManager {
         list(plugin, sender, notify, "-----------------------------------------");
     }
 
-    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites) {
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites,List<String> members) {
         Notify notify = Notify.info;
         Plugin plugin = Plugin.guilds;
         list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
@@ -223,6 +223,7 @@ public class MessageManager {
         if (guildMaster != null) {
             list(plugin, sender, notify, "GuildMaster: " + cPlayer + guildMaster.getName());
         }
+        list(plugin,sender,notify,"Assigned members: "+members.size());
         list(plugin, sender, notify, "Pending players: " + pending.size());
         list(plugin, sender, notify, "Invited players: " + invites.size());
         list(plugin, sender, notify, "Open to join: " + guild.isOpen());
@@ -460,7 +461,7 @@ public class MessageManager {
     }
 
     public static void guilds_already_invited_join(CommandSender sender, Guild guild) {
-        notify(Plugin.guilds, sender, Notify.danger, "You was already invited to join the " + cGuild + guild.getName());
+        notify(Plugin.guilds, sender, Notify.danger, "You were already invited to join the " + cGuild + guild.getName());
     }
 
     public static void guilds_pending_set(CommandSender sender, Guild guild) {
@@ -522,5 +523,71 @@ public class MessageManager {
 
     public static void guilds_set_open_success(Guild guild, boolean open) {
         guild_notify(guild,Notify.success,"Successfully set the guild to open="+cValue+open);
+    }
+
+    public static void guilds_joined_open_guild(Player player, Guild guild) {
+        guild_notify(guild,Notify.success,"The guild is open to join; "+cPlayer+player.getName()+cSuccess+" successfully joined.");
+    }
+
+    public static void errors_name(Plugin plugin, Player player, String name) {
+        notify(plugin,player,Notify.danger,"Invalid name "+cValue+name);
+    }
+
+    public static void guilds_set_name_success(Guild guild, String name) {
+        guild_notify(guild,Notify.success,"Successfully changed name of the guild to "+cGuild+name);
+    }
+
+    public static void guilds_disbanded(Guild guild) {
+        guild_notify(guild,Notify.warning,"The guild has been disbanded, you are now free!");
+    }
+
+    public static void guilds_disband(CommandSender sender) {
+        message(Plugin.guilds,sender,Notify.warning,"You are about to disband the guild. To confirm yor action, retype the command including the name of the guild.");
+    }
+
+    public static void guilds_leave_last(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.warning,"The guild can't be empty, since you are the last, you must use "+cValue+"/guilds disband"+cWarning+" to perform this action.");
+    }
+
+    public static void guilds_leave_more(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.warning,"There is more people left in the guild, please consider giving the "+cValue+"Master"+cWarning+" role to someone else before leaving");
+    }
+
+    public static void guilds_left(CommandSender sender, Guild guild) {
+        guild_notify(guild,Notify.warning,"Your guildy "+cPlayer+sender.getName()+cWarning+" left the guild");
+    }
+
+    public static void guilds_leave(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.warning,"You left the guild!");
+    }
+
+    public static void guilds_notify_pending(CommandSender sender, List<OddPlayer> pending) {
+        boolean plural = pending.size() != 1;
+        StringBuilder builder = new StringBuilder();
+        for (OddPlayer oddPlayer: pending) {
+            builder.append(cPlayer).append(oddPlayer.getName()).append(cInfo).append(",");
+        }
+        if (!builder.isEmpty()) {
+            builder.deleteCharAt(builder.lastIndexOf(","));
+        }
+        message(Plugin.guilds,sender,Notify.info,"Your guild "+(plural ? "have":"has")+" "+cValue+pending.size()+cInfo+" pending requests to join the guild: "+builder.toString());
+    }
+
+    public static void guilds_pending_welcome(OddPlayer oddPlayer, Guild guild) {
+        notify(Plugin.guilds,Bukkit.getPlayer(oddPlayer.getUuid()),Notify.success,"Welcome to the "+cGuild+guild.getName()+cSuccess+"!");
+    }
+
+    public static void guilds_pending_welcome_guild(OddPlayer oddPlayer, Guild guild) {
+        guild_notify(guild,Notify.success,"Please be nice to "+cPlayer+oddPlayer.getName()+cSuccess+" as `hen` is the new meat in the guild!");
+    }
+
+    
+
+    public static void guilds_declined_pending(Guild guild, OddPlayer oddPlayer) {
+        guild_notify(guild,Notify.warning,"Pending request to join the guild from "+cPlayer+oddPlayer.getName()+cWarning+" was "+cValue+"declined"+cWarning+"!");
+        notify(Plugin.guilds,Bukkit.getPlayer(oddPlayer.getUuid()),Notify.danger,"Your request to join "+cGuild+guild.getName()+cDanger+" was "+cValue+"declined"+cDanger+"!");
+    }
+
+    public static void guilds_invite_declined(CommandSender sender, OddPlayer oddPlayer) {
     }
 }
