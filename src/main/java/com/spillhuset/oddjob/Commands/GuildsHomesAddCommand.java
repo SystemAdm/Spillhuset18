@@ -5,18 +5,9 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsHomesCommand extends SubCommand {
-    private final List<SubCommand> subCommands = new ArrayList<>();
-    public GuildsHomesCommand() {
-        subCommands.add(new GuildsHomesAddCommand());
-        subCommands.add(new GuildsHomesRelocateCommand());
-        subCommands.add(new GuildsHomesRenameCommand());
-        subCommands.add(new GuildsHomesTeleportCommand());
-        subCommands.add(new GuildsHomesRemoveCommand());
-    }
+public class GuildsHomesAddCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -34,7 +25,7 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "homes";
+        return "add";
     }
 
     @Override
@@ -44,7 +35,7 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds homes add <name>";
     }
 
     @Override
@@ -54,23 +45,30 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 1;
-    }
-
-    @Override
-    public int maxArgs() {
         return 2;
     }
 
     @Override
+    public int maxArgs() {
+        return 3;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (sender instanceof Player player) {
-            String name = "home";
-            if (args.length == 2 && !args[1].equals("")) {
-                name = args[1];
-            }
-            OddJob.getInstance().getGuildsManager().home(player, name);
+        if (!argsLength(sender, args.length)) {
+            return;
         }
+        if (!can(sender, false, true)) {
+            return;
+        }
+
+        String name = "home";
+        if (args.length == 3) {
+            name = args[2];
+        }
+
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().homeAdd(player,name);
     }
 
     @Override

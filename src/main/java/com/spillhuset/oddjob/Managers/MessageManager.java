@@ -590,4 +590,8 @@ public class MessageManager {
 
     public static void guilds_invite_declined(CommandSender sender, OddPlayer oddPlayer) {
     }
+
+    public static void guilds_max_homes_reached(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.danger,"Sky is the limit, and you reached it.");
+    }
 }

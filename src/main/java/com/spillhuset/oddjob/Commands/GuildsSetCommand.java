@@ -12,7 +12,6 @@ import java.util.List;
 public class GuildsSetCommand extends SubCommand {
     private final List<SubCommand> subCommands = new ArrayList<>();
     public GuildsSetCommand() {
-        subCommands.add(new GuildsSetHomesCommand());
         subCommands.add(new GuildsSetOpenCommand());
         subCommands.add(new GuildsSetRenameCommand());
     }

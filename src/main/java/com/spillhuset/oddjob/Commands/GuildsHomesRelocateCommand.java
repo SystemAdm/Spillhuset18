@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsSetHomesRelocateCommand extends SubCommand {
+public class GuildsHomesRelocateCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return true;
@@ -36,7 +36,7 @@ public class GuildsSetHomesRelocateCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds set homes relocate <name>";
+        return "/guilds homes relocate <name>";
     }
 
     @Override
@@ -46,12 +46,12 @@ public class GuildsSetHomesRelocateCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 4;
+        return 3;
     }
 
     @Override
     public int maxArgs() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class GuildsSetHomesRelocateCommand extends SubCommand {
 
         Player player = (Player) sender;
 
-        OddJob.getInstance().getGuildsManager().setHomeRelocate(player, args[3]);
+        OddJob.getInstance().getGuildsManager().setHomeRelocate(player, args[2]);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.*;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.GuildSQL;
+import com.spillhuset.oddjob.SQL.HomesSQL;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.Managers;
 import com.spillhuset.oddjob.Utils.OddPlayer;
@@ -561,6 +562,7 @@ public class GuildsManager extends Managers {
      * @param sender Player invited
      * @param name   Optional String name of the guild
      */
+    // guilds deny <guild>
     public void denyInvite(Player sender, @Nullable String name) {
         UUID uuid = sender.getUniqueId();
         List<UUID> guilds = GuildSQL.getInvite(uuid, GuildType.player);
@@ -570,19 +572,23 @@ public class GuildsManager extends Managers {
             if (guilds.size() > 1) {
                 MessageManager.guilds_more_invites(sender);
             } else {
-                declineInvite(sender, OddJob.getInstance().getPlayerManager().get(uuid));
+                declineInvite(sender, getGuild(guilds.get(0)));
             }
         } else {
             for (Guild guild : getGuilds().values()) {
                 if (guild.getName().equalsIgnoreCase(name)) {
                     if (guilds.contains(guild.getUuid())) {
-                        declineInvite(sender, OddJob.getInstance().getPlayerManager().get(uuid));
+                        declineInvite(sender, guild);
                         return;
                     }
                 }
             }
             MessageManager.guilds_no_invites_from(sender, name);
         }
+    }
+
+    private void declineInvite(Player sender, Guild guild) {
+        GuildSQL.removeInvites(sender.getUniqueId(),guild.getUuid(),GuildType.uuid);
     }
 
     public void acceptPending(CommandSender sender, UUID guild, @Nullable String name) {
@@ -833,4 +839,38 @@ public class GuildsManager extends Managers {
         }
     }
 
+    public void homeTeleport(Player player, String name) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        Location location = HomesSQL.get(guild.getUuid(),name);
+        if (location == null) {
+            MessageManager.homes_not_found(player,name);
+            return;
+        }
+        OddJob.getInstance().getTeleportManager().teleport(player,location,Plugin.guilds);
+    }
+
+    public void homeAdd(Player player, String name) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        Location location = player.getLocation();
+        Chunk chunk = location.getChunk();
+        List<String> list = OddJob.getInstance().getHomeManager().getList(guild.getUuid());
+        if (list.size() >= guild.getMaxHomes()) {
+            MessageManager.guilds_max_homes_reached(player);
+            return;
+        }
+        if (list.contains(name)) {
+            MessageManager.guilds_homes_name_already_exist(player,name);
+            return;
+        }
+        UUID owner = getGuildByChunk(chunk).getUuid();
+        if (owner != guild.getUuid()) {
+            MessageManager.guilds_homes_inside(player);
+            return;
+        }
+        OddJob.getInstance().getHomeManager().addGuild(player,guild.getUuid(),name);
+    }
+
+    public void homeRemove(Player player, String name) {
+
+    }
 }

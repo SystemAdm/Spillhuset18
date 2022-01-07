@@ -161,13 +161,6 @@ public class HomesManager extends Managers {
             return;
         }
 
-        if (currency) {
-            if (!CostManager.transaction(Account.guild, uuid, Plu.GUILDS_HOMES)) {
-                MessageManager.errors_currency_expensive(Plugin.homes, player);
-                return;
-            }
-        }
-
         /* Adding */
         if (!HomesSQL.add(uuid, player.getLocation(), name)) {
             MessageManager.errors_something_somewhere(Plugin.homes, player);
