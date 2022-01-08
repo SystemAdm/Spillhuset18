@@ -1,23 +1,17 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsSetHomesCommand extends SubCommand {
-    List<SubCommand> subCommands = new ArrayList<>();
-
-    public GuildsSetHomesCommand() {
-        subCommands.add(new GuildsSetHomesRelocateCommand());
-        subCommands.add(new GuildsSetHomesRenameCommand());
-    }
-
+public class GuildsHomesTeleportCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return true;
+        return false;
     }
 
     @Override
@@ -32,7 +26,7 @@ public class GuildsSetHomesCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "homes";
+        return "teleport";
     }
 
     @Override
@@ -42,7 +36,7 @@ public class GuildsSetHomesCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds homes teleport <name>";
     }
 
     @Override
@@ -52,18 +46,28 @@ public class GuildsSetHomesCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 3;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        //StringBuilder sub = builder(sender,args);
-        subCommand(sender, args, true);
+        if (!argsLength(sender, args.length)) {
+            return;
+        }
+        if (!can(sender, false, true)) {
+            return;
+        }
+        String name = "home";
+        if (args.length == 3) {
+            name = args[2];
+        }
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().homeTeleport(player, name);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,7 +18,8 @@ public class OnBlockPlaceEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        Chunk chunk = player.getLocation().getChunk();
+        Block block = event.getBlock();
+        Chunk chunk = block.getChunk();
         Guild chunkGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
         UUID playerGuild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
 

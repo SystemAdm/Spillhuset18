@@ -21,6 +21,8 @@ public class OnPlayerJoinEvent implements Listener {
             event.setJoinMessage(Plugin.join.getString() + event.getPlayer().getDisplayName());
         }
 
+        OddJob.getInstance().getGuildsManager().notify(player);
+
         // Econ
         OddJob.getInstance().getCurrencyManager().initiatePlayer(player.getUniqueId());
     }

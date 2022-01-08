@@ -1,15 +1,13 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsJoinCommand extends SubCommand implements GuildInterface {
+public class GuildsHomesRemoveCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,7 +25,7 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getName() {
-        return "join";
+        return "remove";
     }
 
     @Override
@@ -37,12 +35,12 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getSyntax() {
-        return "/guilds join <name>";
+        return "/guilds homes remove <name>";
     }
 
     @Override
     public String getPermission() {
-        return "guild";
+        return "guilds";
     }
 
     @Override
@@ -52,22 +50,24 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender, false, true)) {
-            return;
-        }
-
         if (!argsLength(sender, args.length)) {
             return;
         }
-        if (sender instanceof Player player) {
-            OddJob.getInstance().getGuildsManager().join(player, args[1]);
-        }
 
+        if (!can(sender, false, true)) {
+            return;
+        }
+String name = "home";
+        Player player = (Player) sender;
+if (args.length == 3) {
+    name = args[2];
+}
+        OddJob.getInstance().getGuildsManager().homeRemove(player, name);
     }
 
     @Override

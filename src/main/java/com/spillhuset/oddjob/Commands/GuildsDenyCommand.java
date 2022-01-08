@@ -1,9 +1,12 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
     @Override
@@ -33,7 +36,7 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds deny [player]/[guild]";
     }
 
     @Override
@@ -53,7 +56,23 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        if (!can(sender,false,true)) {
+            return;
+        }
 
+        if (!argsLength(sender,args.length)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+        UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
+        if (guild == null) {
+            // Has invitations to a guild?
+            OddJob.getInstance().getGuildsManager().denyInvite(player,args.length == 1 ? null : args[1]);
+        } else {
+            // Guild has pending requests?
+            OddJob.getInstance().getGuildsManager().denyPending(sender,guild,args.length == 1 ? null : args[1]);
+        }
     }
 
     @Override

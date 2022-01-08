@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand 
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds accept [player]/[guild]";
     }
 
     @Override
@@ -69,10 +70,10 @@ public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand 
         UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
         if (guild == null) {
             // Has invitations to a guild?
-            OddJob.getInstance().getGuildsManager().acceptInvite(player,args[1]);
+            OddJob.getInstance().getGuildsManager().acceptInvite(player,args.length == 1 ? null : args[1]);
         } else {
             // Guild has pending requests?
-            OddJob.getInstance().getGuildsManager().acceptPending(sender,guild,args[1]);
+            OddJob.getInstance().getGuildsManager().acceptPending(sender,guild,args.length == 1 ? null : args[1]);
         }
     }
 

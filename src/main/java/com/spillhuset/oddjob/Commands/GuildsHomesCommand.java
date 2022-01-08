@@ -5,9 +5,18 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsHomesCommand extends SubCommand {
+    private final List<SubCommand> subCommands = new ArrayList<>();
+    public GuildsHomesCommand() {
+        subCommands.add(new GuildsHomesAddCommand());
+        subCommands.add(new GuildsHomesRelocateCommand());
+        subCommands.add(new GuildsHomesRenameCommand());
+        subCommands.add(new GuildsHomesTeleportCommand());
+        subCommands.add(new GuildsHomesRemoveCommand());
+    }
     @Override
     public boolean denyConsole() {
         return false;

@@ -1,15 +1,13 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsJoinCommand extends SubCommand implements GuildInterface {
+public class GuildsDisbandCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,7 +25,7 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getName() {
-        return "join";
+        return "disband";
     }
 
     @Override
@@ -37,17 +35,17 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getSyntax() {
-        return "/guilds join <name>";
+        return "/guilds disband";
     }
 
     @Override
     public String getPermission() {
-        return "guild";
+        return "guilds";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -57,17 +55,14 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender, false, true)) {
+        if (!can(sender,false,true)) {
             return;
         }
-
-        if (!argsLength(sender, args.length)) {
+        if(!argsLength(sender,args.length)) {
             return;
         }
-        if (sender instanceof Player player) {
-            OddJob.getInstance().getGuildsManager().join(player, args[1]);
-        }
-
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().disband(player,args[0]);
     }
 
     @Override

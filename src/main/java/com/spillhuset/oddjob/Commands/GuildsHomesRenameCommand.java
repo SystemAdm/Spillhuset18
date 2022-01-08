@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsSetHomesRenameCommand extends SubCommand {
+public class GuildsHomesRenameCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return true;
@@ -36,7 +36,7 @@ public class GuildsSetHomesRenameCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds set homes rename <old> <new>";
+        return "/guilds homes rename <old> <new>";
     }
 
     @Override
@@ -46,12 +46,12 @@ public class GuildsSetHomesRenameCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 5;
+        return 4;
     }
 
     @Override
     public int maxArgs() {
-        return 5;
+        return 4;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class GuildsSetHomesRenameCommand extends SubCommand {
 
         Player player = (Player) sender;
 
-        OddJob.getInstance().getGuildsManager().setHomeRename(player, args[3], args[4]);
+        OddJob.getInstance().getGuildsManager().setHomeRename(player, args[2], args[3]);
     }
 
     @Override

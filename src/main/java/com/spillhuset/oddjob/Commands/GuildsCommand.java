@@ -31,6 +31,7 @@ public class GuildsCommand extends SubCommandInterface implements CommandExecuto
         subCommands.add(new GuildsLeaveCommand());
         subCommands.add(new GuildsAcceptCommand());
         subCommands.add(new GuildsDenyCommand());
+        subCommands.add(new GuildsDisbandCommand());
     }
 
     @Override

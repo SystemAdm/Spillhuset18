@@ -1,7 +1,9 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class GuildsLeaveCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds leave";
     }
 
     @Override
@@ -43,17 +45,24 @@ public class GuildsLeaveCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-
+        if (!can(sender,false,true)) {
+            return;
+        }
+        if(!argsLength(sender,args.length)) {
+            return;
+        }
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().leave(player);
     }
 
     @Override
