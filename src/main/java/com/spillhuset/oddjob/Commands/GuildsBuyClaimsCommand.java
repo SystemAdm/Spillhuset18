@@ -1,15 +1,12 @@
 package com.spillhuset.oddjob.Commands;
+
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 
 public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface {
     @Override

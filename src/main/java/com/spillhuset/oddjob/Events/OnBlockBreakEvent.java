@@ -1,7 +1,6 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
-import com.spillhuset.oddjob.Managers.CurrencyManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
