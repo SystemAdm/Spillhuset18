@@ -121,15 +121,29 @@ public class MessageManager {
     }
 
     public static void list(Plugin plugin, CommandSender sender, Notify notify, List<String> list, Player target, int count, int max) {
-        if (list.size() == 0) {
-            list(plugin, sender, notify, cPlayer + target.getDisplayName() + cInfo + " have none " + cValue + plugin.name() + cInfo + " assigned");
-        } else if (list.size() == 1) {
-            list(plugin, sender, notify, cPlayer + target.getDisplayName() + cInfo + " has only assigned " + cValue + list.get(0) + cInfo);
+        if (target == null) {
+            if (list.size() == 0) {
+                list(plugin, sender, notify, "There are no " + cValue + plugin.name());
+            } else if (list.size() == 1) {
+                list(plugin, sender, notify, list.get(0));
+            } else {
+                list(plugin, sender, notify, "List of " + cValue + plugin.name() + cInfo + " " + cValue + count + cInfo + "/" + cValue + max);
+                list(plugin, sender, notify, "-----------------------------------------");
+                for (int i = 0; i < list.size(); i++) {
+                    list(plugin, sender, notify, cValue + "" + (i + 1) + cInfo + ".) " + cValue + list.get(i) + cInfo);
+                }
+            }
         } else {
-            list(plugin, sender, notify, "List of " + cValue + plugin.name() + cInfo + " by " + cPlayer + target.getDisplayName() + cInfo + " " + cValue + count + cInfo + "/" + cValue + max);
-            list(plugin, sender, notify, "-----------------------------------------");
-            for (int i = 0; i < list.size(); i++) {
-                list(plugin, sender, notify, cValue + "" + (i + 1) + cInfo + ".) " + cValue + list.get(i) + cInfo);
+            if (list.size() == 0) {
+                list(plugin, sender, notify, cPlayer + target.getDisplayName() + cInfo + " have none " + cValue + plugin.name() + cInfo + " assigned");
+            } else if (list.size() == 1) {
+                list(plugin, sender, notify, cPlayer + target.getDisplayName() + cInfo + " has only assigned " + cValue + list.get(0) + cInfo);
+            } else {
+                list(plugin, sender, notify, "List of " + cValue + plugin.name() + cInfo + " by " + cPlayer + target.getDisplayName() + cInfo + " " + cValue + count + cInfo + "/" + cValue + max);
+                list(plugin, sender, notify, "-----------------------------------------");
+                for (int i = 0; i < list.size(); i++) {
+                    list(plugin, sender, notify, cValue + "" + (i + 1) + cInfo + ".) " + cValue + list.get(i) + cInfo);
+                }
             }
         }
         list(plugin, sender, notify, "-----------------------------------------");
@@ -213,7 +227,7 @@ public class MessageManager {
         list(plugin, sender, notify, "-----------------------------------------");
     }
 
-    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites,List<String> members) {
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites, List<String> members) {
         Notify notify = Notify.info;
         Plugin plugin = Plugin.guilds;
         list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
@@ -223,11 +237,11 @@ public class MessageManager {
         if (guildMaster != null) {
             list(plugin, sender, notify, "GuildMaster: " + cPlayer + guildMaster.getName());
         }
-        list(plugin,sender,notify,"Assigned members: "+members.size());
+        list(plugin, sender, notify, "Assigned members: " + members.size());
         list(plugin, sender, notify, "Pending players: " + pending.size());
         list(plugin, sender, notify, "Invited players: " + invites.size());
         list(plugin, sender, notify, "Open to join: " + guild.isOpen());
-        list(plugin, sender, notify, "Claims: " + guild.getClaims() + "/" + guild.getMaxClaims());
+        list(plugin, sender, notify, "Claims: " + guild.getClaims() + "/" + guild.getDefaultClaims());
         list(plugin, sender, notify, "Homes set: " + guild.getHomes());
         list(plugin, sender, notify, "Spawn mobs: " + guild.isSpawnMobs());
         list(plugin, sender, notify, "Invited only: " + guild.isInvited_only());
@@ -522,76 +536,117 @@ public class MessageManager {
     }
 
     public static void guilds_set_open_success(Guild guild, boolean open) {
-        guild_notify(guild,Notify.success,"Successfully set the guild to open="+cValue+open);
+        guild_notify(guild, Notify.success, "Successfully set the guild to open=" + cValue + open);
     }
 
     public static void guilds_joined_open_guild(Player player, Guild guild) {
-        guild_notify(guild,Notify.success,"The guild is open to join; "+cPlayer+player.getName()+cSuccess+" successfully joined.");
+        guild_notify(guild, Notify.success, "The guild is open to join; " + cPlayer + player.getName() + cSuccess + " successfully joined.");
     }
 
     public static void errors_name(Plugin plugin, Player player, String name) {
-        notify(plugin,player,Notify.danger,"Invalid name "+cValue+name);
+        notify(plugin, player, Notify.danger, "Invalid name " + cValue + name);
     }
 
     public static void guilds_set_name_success(Guild guild, String name) {
-        guild_notify(guild,Notify.success,"Successfully changed name of the guild to "+cGuild+name);
+        guild_notify(guild, Notify.success, "Successfully changed name of the guild to " + cGuild + name);
     }
 
     public static void guilds_disbanded(Guild guild) {
-        guild_notify(guild,Notify.warning,"The guild has been disbanded, you are now free!");
+        guild_notify(guild, Notify.warning, "The guild has been disbanded, you are now free!");
     }
 
     public static void guilds_disband(CommandSender sender) {
-        message(Plugin.guilds,sender,Notify.warning,"You are about to disband the guild. To confirm yor action, retype the command including the name of the guild.");
+        message(Plugin.guilds, sender, Notify.warning, "You are about to disband the guild. To confirm yor action, retype the command including the name of the guild.");
     }
 
     public static void guilds_leave_last(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.warning,"The guild can't be empty, since you are the last, you must use "+cValue+"/guilds disband"+cWarning+" to perform this action.");
+        notify(Plugin.guilds, sender, Notify.warning, "The guild can't be empty, since you are the last, you must use " + cValue + "/guilds disband" + cWarning + " to perform this action.");
     }
 
     public static void guilds_leave_more(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.warning,"There is more people left in the guild, please consider giving the "+cValue+"Master"+cWarning+" role to someone else before leaving");
+        notify(Plugin.guilds, sender, Notify.warning, "There is more people left in the guild, please consider giving the " + cValue + "Master" + cWarning + " role to someone else before leaving");
     }
 
     public static void guilds_left(CommandSender sender, Guild guild) {
-        guild_notify(guild,Notify.warning,"Your guildy "+cPlayer+sender.getName()+cWarning+" left the guild");
+        guild_notify(guild, Notify.warning, "Your guildy " + cPlayer + sender.getName() + cWarning + " left the guild");
     }
 
     public static void guilds_leave(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.warning,"You left the guild!");
+        notify(Plugin.guilds, sender, Notify.warning, "You left the guild!");
     }
 
     public static void guilds_notify_pending(CommandSender sender, List<OddPlayer> pending) {
         boolean plural = pending.size() != 1;
         StringBuilder builder = new StringBuilder();
-        for (OddPlayer oddPlayer: pending) {
+        for (OddPlayer oddPlayer : pending) {
             builder.append(cPlayer).append(oddPlayer.getName()).append(cInfo).append(",");
         }
         if (!builder.isEmpty()) {
             builder.deleteCharAt(builder.lastIndexOf(","));
         }
-        message(Plugin.guilds,sender,Notify.info,"Your guild "+(plural ? "have":"has")+" "+cValue+pending.size()+cInfo+" pending requests to join the guild: "+builder.toString());
+        message(Plugin.guilds, sender, Notify.info, "Your guild " + (plural ? "have" : "has") + " " + cValue + pending.size() + cInfo + " pending requests to join the guild: " + builder.toString());
     }
 
     public static void guilds_pending_welcome(OddPlayer oddPlayer, Guild guild) {
-        notify(Plugin.guilds,Bukkit.getPlayer(oddPlayer.getUuid()),Notify.success,"Welcome to the "+cGuild+guild.getName()+cSuccess+"!");
+        notify(Plugin.guilds, Bukkit.getPlayer(oddPlayer.getUuid()), Notify.success, "Welcome to the " + cGuild + guild.getName() + cSuccess + "!");
     }
 
     public static void guilds_pending_welcome_guild(OddPlayer oddPlayer, Guild guild) {
-        guild_notify(guild,Notify.success,"Please be nice to "+cPlayer+oddPlayer.getName()+cSuccess+" as `hen` is the new meat in the guild!");
+        guild_notify(guild, Notify.success, "Please be nice to " + cPlayer + oddPlayer.getName() + cSuccess + " as `hen` is the new meat in the guild!");
     }
 
-    
 
     public static void guilds_declined_pending(Guild guild, OddPlayer oddPlayer) {
-        guild_notify(guild,Notify.warning,"Pending request to join the guild from "+cPlayer+oddPlayer.getName()+cWarning+" was "+cValue+"declined"+cWarning+"!");
-        notify(Plugin.guilds,Bukkit.getPlayer(oddPlayer.getUuid()),Notify.danger,"Your request to join "+cGuild+guild.getName()+cDanger+" was "+cValue+"declined"+cDanger+"!");
+        guild_notify(guild, Notify.warning, "Pending request to join the guild from " + cPlayer + oddPlayer.getName() + cWarning + " was " + cValue + "declined" + cWarning + "!");
+        notify(Plugin.guilds, Bukkit.getPlayer(oddPlayer.getUuid()), Notify.danger, "Your request to join " + cGuild + guild.getName() + cDanger + " was " + cValue + "declined" + cDanger + "!");
     }
 
     public static void guilds_invite_declined(CommandSender sender, OddPlayer oddPlayer) {
     }
 
     public static void guilds_max_homes_reached(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,"Sky is the limit, and you reached it.");
+        notify(Plugin.guilds, sender, Notify.danger, "Sky is the limit, and you reached it.");
+    }
+
+    public static void guilds_homes_inside(CommandSender sender) {
+        notify(Plugin.guilds, sender, Notify.danger, "Must be inside your head.");
+    }
+
+    public static void invalidNumber(Plugin plugin, CommandSender sender, String format) {
+        notify(plugin, sender, Notify.danger, "Invalid number format: " + cValue + format);
+    }
+
+    public static void warps_error_password(CommandSender sender, String name) {
+        notify(Plugin.warps, sender, Notify.danger, "Invalid password for warp: " + cValue + name);
+    }
+
+    public static void warps_added(CommandSender sender, String name) {
+        notify(Plugin.warps, sender, Notify.success, "Warp added: " + cValue + name);
+    }
+
+    public static void warps_exists(CommandSender sender, String name) {
+        notify(Plugin.warps, sender, Notify.danger, "Warp " + cValue + name + cDanger + " already exists");
+    }
+
+    public static void warps_not_exists(CommandSender sender, String name) {
+        notify(Plugin.warps, sender, Notify.danger, "Warp " + cValue + name + cDanger + " does not exists");
+    }
+
+    public static void warps_deleted(CommandSender sender, String name) {
+        notify(Plugin.warps, sender, Notify.warning, "Warp " + cValue + name + cDanger + " deleted");
+    }
+
+    public static void warps_list(CommandSender sender, List<String> warps) {
+        list(Plugin.warps, sender, Notify.info, warps, sender instanceof Player player ? player : null, warps.size(), warps.size());
+        list(Plugin.warps, sender, Notify.info, ChatColor.RED + "*" + ChatColor.RESET + "=Password protected; "
+                + ChatColor.BLUE + "$" + ChatColor.RESET + "=Not free");
+    }
+
+    public static void guilds_claims_nearby(CommandSender sender, String near) {
+        notify(Plugin.guilds,sender,Notify.warning,"To near another guild "+cGuild+near);
+    }
+
+    public static void guilds_claims_connected(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.danger,"Claims must be connected.");
     }
 }

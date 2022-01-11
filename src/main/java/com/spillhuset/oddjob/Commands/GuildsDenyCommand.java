@@ -46,21 +46,21 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
+        if (!can(sender, false, true)) {
             return;
         }
 
-        if (!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return;
         }
 
@@ -68,10 +68,10 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
         UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
         if (guild == null) {
             // Has invitations to a guild?
-            OddJob.getInstance().getGuildsManager().denyInvite(player,args.length == 1 ? null : args[1]);
+            OddJob.getInstance().getGuildsManager().denyInvite(player, args.length == 1 ? null : args[1]);
         } else {
             // Guild has pending requests?
-            OddJob.getInstance().getGuildsManager().denyPending(sender,guild,args.length == 1 ? null : args[1]);
+            OddJob.getInstance().getGuildsManager().denyPending(sender, guild, args.length == 1 ? null : args[1]);
         }
     }
 

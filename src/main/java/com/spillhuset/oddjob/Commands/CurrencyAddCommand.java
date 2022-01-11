@@ -1,0 +1,63 @@
+package com.spillhuset.oddjob.Commands;
+import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Utils.SubCommand;
+import org.bukkit.command.CommandSender;
+
+import java.util.List;
+
+public class CurrencyAddCommand extends SubCommand {
+    @Override
+    public boolean denyConsole() {
+        return false;
+    }
+
+    @Override
+    public boolean denyOp() {
+        return false;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return Plugin.currency;
+    }
+
+    @Override
+    public String getName() {
+        return "add";
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getSyntax() {
+        return "/currency add <value>";
+    }
+
+    @Override
+    public String getPermission() {
+        return "currency.admin";
+    }
+
+    @Override
+    public int minArgs() {
+        return 2;
+    }
+
+    @Override
+    public int maxArgs() {
+        return 2;
+    }
+
+    @Override
+    public void getCommandExecutor(CommandSender sender, String[] args) {
+
+    }
+
+    @Override
+    public List<String> getTabCompleter(CommandSender sender, String[] args) {
+        return null;
+    }
+}

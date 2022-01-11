@@ -8,6 +8,7 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsClaimCommand extends SubCommand {
@@ -38,7 +39,7 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds claim [guild|auto] [auto]";
     }
 
     @Override
@@ -94,6 +95,17 @@ public class GuildsClaimCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (args.length == 2 || args.length==3) {
+            list.add("auto");
+        }
+        if (args.length == 2 ) {
+            for (Guild guild:OddJob.getInstance().getGuildsManager().getGuilds().values()) {
+                if (args[1].isEmpty() || guild.getName().startsWith(args[1])) {
+                    list.add(guild.getName());
+                }
+            }
+        }
+        return list;
     }
 }

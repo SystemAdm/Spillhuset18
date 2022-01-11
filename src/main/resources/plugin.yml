@@ -22,3 +22,9 @@ commands:
     description: Auctions
   shops:
     description: Shops
+  load:
+    description: Loading
+  warps:
+    description: Warps
+  currency:
+    description: Currency

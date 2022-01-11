@@ -56,11 +56,11 @@ public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand 
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
+        if (!can(sender, false, true)) {
             return;
         }
 
-        if (!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return;
         }
 
@@ -68,10 +68,10 @@ public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand 
         UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
         if (guild == null) {
             // Has invitations to a guild?
-            OddJob.getInstance().getGuildsManager().acceptInvite(player,args.length == 1 ? null : args[1]);
+            OddJob.getInstance().getGuildsManager().acceptInvite(player, args.length == 1 ? null : args[1]);
         } else {
             // Guild has pending requests?
-            OddJob.getInstance().getGuildsManager().acceptPending(sender,guild,args.length == 1 ? null : args[1]);
+            OddJob.getInstance().getGuildsManager().acceptPending(sender, guild, args.length == 1 ? null : args[1]);
         }
     }
 

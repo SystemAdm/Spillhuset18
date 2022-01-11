@@ -21,10 +21,12 @@ public class ConfigManager {
             if (!config.isSet("enabled.homes")) config.set("enabled.homes", true);
             if (!config.isSet("enabled.currency")) config.set("enabled.currency", false);
 
+            // Currency
             if (!config.isSet("currency.initial.pocket")) config.set("currency.initial.pocket", 200D);
             if (!config.isSet("currency.initial.bank")) config.set("currency.initial.bank", 200D);
             if (!config.isSet("currency.initial.guild")) config.set("currency.initial.guild", 200D);
 
+            // SQL
             if (!config.isSet("sql.type")) config.set("sql.type", "mysql");
             if (!config.isSet("sql.prefix")) config.set("sql.prefix", "mine_");
             if (!config.isSet("sql.hostname")) config.set("sql.hostname", "localhost");
@@ -33,11 +35,23 @@ public class ConfigManager {
             if (!config.isSet("sql.username")) config.set("sql.username", "root");
             if (!config.isSet("sql.password")) config.set("sql.password", "");
 
+            // Homes
             if (!config.isSet("homes.ladder.default")) config.set("homes.ladder.default", 5);
             if (!config.isSet("homes.log.set")) config.set("homes.log.set", true);
             if (!config.isSet("homes.response")) config.set("homes.response", Response.ACTIONBAR.name());
 
+            // Guilds
             if (!config.isSet("guilds.default.list")) config.set("guilds.default.list",10);
+            if (!config.isSet("guilds.default.claims")) config.set("guilds.default.claims",10);
+            if (!config.isSet("guilds.default.homes")) config.set("guilds.default.homes",1);
+            if (!config.isSet("guilds.multiplier.members.claims")) config.set("guilds.multiplier.members.claims",5);
+            if (!config.isSet("guilds.response")) config.set("guilds.response",Response.ACTIONBAR.name());
+
+            // Teleports
+            if (!config.isSet("teleports.response")) config.set("teleports.response",Response.ACTIONBAR.name());
+
+            // Warps
+            if (!config.isSet("warps.response")) config.set("warps.response",Response.ACTIONBAR.name());
 
             save();
         }

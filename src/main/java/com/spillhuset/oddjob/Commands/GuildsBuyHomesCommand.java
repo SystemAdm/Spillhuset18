@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsBuyHomesCommand extends SubCommand {
@@ -67,6 +68,6 @@ public class GuildsBuyHomesCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }

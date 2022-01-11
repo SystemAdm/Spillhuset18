@@ -2,12 +2,14 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.GuildInterface;
+import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsLeaveCommand extends com.spillhuset.oddjob.Utils.SubCommand {
+public class GuildsLeaveCommand extends SubCommand implements GuildInterface {
     @Override
     public boolean denyConsole() {
         return false;
@@ -55,10 +57,10 @@ public class GuildsLeaveCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
+        if (!can(sender, false, true)) {
             return;
         }
-        if(!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return;
         }
         Player player = (Player) sender;

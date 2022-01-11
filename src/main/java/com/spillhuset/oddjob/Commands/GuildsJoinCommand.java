@@ -12,7 +12,7 @@ import java.util.List;
 public class GuildsJoinCommand extends SubCommand implements GuildInterface {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override

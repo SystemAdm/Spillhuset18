@@ -14,7 +14,8 @@ import java.util.UUID;
 
 public class Guild {
     private final UUID uuid;
-    private int maxClaims = ConfigManager.isSet("guilds.default.max_claims") ? ConfigManager.getInt("guilds.default.max_claims") : 10;
+    private int defaultClaims = ConfigManager.isSet("guilds.default.claims") ? ConfigManager.getInt("guilds.default.claims") : 10;
+    private int boughtClaims = 0;
     private boolean spawnMobs = false;
     private boolean open = false;
     private boolean invited_only = false;
@@ -23,7 +24,9 @@ public class Guild {
     private Role permissionInvite = Role.Members;
     private String name;
     private Zone zone = Zone.GUILD;
-    private int maxHomes = ConfigManager.isSet("guilds.default.max_homes") ? ConfigManager.getInt("guilds.default.max_homes") : 1;
+    private int defaultHomes = ConfigManager.isSet("guilds.default.homes") ? ConfigManager.getInt("guilds.default.homes") : 1;
+    private int boughtHomes = 0;
+    private int availableClaims;
 
     /**
      * Created from loading
@@ -31,12 +34,12 @@ public class Guild {
      * @param uuid UUID
      * @param name String name
      */
-    public Guild(UUID uuid, String name, Zone zone, int maxClaims,int maxHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite) {
+    public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite) {
         this.uuid = uuid;
         this.name = name;
         this.zone = zone;
-        this.maxClaims = maxClaims;
-        this.maxHomes = maxHomes;
+        this.boughtClaims = boughtClaims;
+        this.boughtHomes = boughtHomes;
         this.spawnMobs = spawnMobs;
         this.open = open;
         this.invited_only = invited_only;
@@ -83,17 +86,8 @@ public class Guild {
         this.zone = zone;
     }
 
-    public int getMaxClaims() {
-        int players = 0;
-        for (UUID uuid : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
-            if (getUuid().equals(OddJob.getInstance().getGuildsManager().getMembers().get(uuid))) {
-                players++;
-            }
-        }
-        return maxClaims + (players * 5);
-    }
-
     public Location getHome(@Nullable String name) {
+        if (name == null) name = "home";
         return HomesSQL.get(getUuid(), name);
     }
 
@@ -149,23 +143,58 @@ public class Guild {
         this.permissionInvite = permissionInvite;
     }
 
+    /**
+     * Return current claims in size
+     *
+     * @return Integer size of claims
+     */
     public int getClaims() {
         return OddJob.getInstance().getGuildsManager().getChunks().values().size();
     }
 
+    /**
+     * Returns the maximum amount of claims allowed
+     *
+     * @return Integer maximum number of claims
+     */
+    public int getMaxClaims() {
+        int players = 0;
+        int perMember = OddJob.getInstance().getConfig().getInt("guilds.multiplier.members.claims", 5);
+        for (UUID uuid : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
+            if (getUuid().equals(OddJob.getInstance().getGuildsManager().getMembers().get(uuid))) {
+                players++;
+            }
+        }
+        //          10       +       0      + (   1    *     5    ) = 15
+        return defaultClaims + boughtClaims + (players * perMember);
+    }
+
+    /**
+     * Increment number of bought claims
+     */
+    public void incMaxClaims() {
+        boughtClaims++;
+    }
+
+    /**
+     * Return current home size
+     *
+     * @return Integer size of homes
+     */
     public int getHomes() {
         return HomesSQL.getList(getUuid()).size();
     }
 
-    public void incMaxClaims() {
-        maxClaims++;
-    }
-
+    /**
+     * Returns the maximum amount of homes
+     *
+     * @return Integer maximum number of homes
+     */
     public int getMaxHomes() {
-        return maxHomes;
+        return defaultHomes + boughtHomes;
     }
 
     public void incMaxHomes() {
-        maxHomes++;
+        boughtHomes++;
     }
 }

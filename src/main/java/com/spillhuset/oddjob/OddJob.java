@@ -19,6 +19,7 @@ public class OddJob extends JavaPlugin {
     private GuildsManager guildsManager;
     private TeleportManager teleportManager;
     private CurrencyManager currencyManager;
+    private WarpManager warpManager;
 
     public static OddJob getInstance() {
         return instance;
@@ -38,6 +39,7 @@ public class OddJob extends JavaPlugin {
         historyManager = new HistoryManager();
         teleportManager = new TeleportManager();
         currencyManager = new CurrencyManager();
+        warpManager = new WarpManager();
 
         /* Listeners */
         pm.registerEvents(new OnPlayerJoinEvent(), this);
@@ -63,6 +65,9 @@ public class OddJob extends JavaPlugin {
         getCommand("enderchest").setExecutor(new EnderchestCommand());
         getCommand("auctions").setExecutor(new AuctionsCommand());
         getCommand("shops").setExecutor(new ShopsCommand());
+        getCommand("load").setExecutor(new LoadCommand());
+        getCommand("currency").setExecutor(new CurrencyCommand());
+        getCommand("warps").setExecutor(new WarpCommand());
 
     }
 
@@ -103,6 +108,10 @@ public class OddJob extends JavaPlugin {
 
     public CurrencyManager getCurrencyManager() {
         return currencyManager;
+    }
+    
+    public WarpManager getWarpManager() {
+        return warpManager;
     }
 
 

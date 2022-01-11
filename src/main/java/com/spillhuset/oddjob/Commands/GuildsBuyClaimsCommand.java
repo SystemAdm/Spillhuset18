@@ -5,7 +5,9 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface {
@@ -69,6 +71,6 @@ public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }
