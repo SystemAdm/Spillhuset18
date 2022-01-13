@@ -36,7 +36,7 @@ public class GuildsBuyHomesCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds buy homes <name>";
+        return "/guilds buy homes";
     }
 
     @Override
@@ -46,12 +46,12 @@ public class GuildsBuyHomesCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 3;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class GuildsBuyHomesCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().getGuildsManager().buyHomes(sender,args[2]);
+        OddJob.getInstance().getGuildsManager().buyHomes(sender);
     }
 
     @Override

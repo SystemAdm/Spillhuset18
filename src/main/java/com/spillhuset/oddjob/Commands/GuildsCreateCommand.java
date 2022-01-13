@@ -36,7 +36,7 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds create <name>";
     }
 
     @Override
@@ -68,11 +68,10 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
+        List<String> list = new ArrayList<>();
         if (args.length == 2) {
-            List<String> list = new ArrayList<>();
             list.add("<name>");
-            return list;
         }
-        return null;
+        return list;
     }
 }

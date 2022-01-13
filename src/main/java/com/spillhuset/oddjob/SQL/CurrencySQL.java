@@ -75,7 +75,7 @@ public class CurrencySQL extends MySQLManager {
     public static void add(UUID uuid, double amount, Account account) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET " + account.name() + " = " + account.name() + " + ? WHERE `uuid` = ?");
+            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET " + account.getType() + " = " + account.getType() + " + ? WHERE `uuid` = ?");
             preparedStatement.setDouble(1, amount);
             preparedStatement.setString(2, uuid.toString());
             preparedStatement.executeUpdate();
@@ -98,7 +98,7 @@ public class CurrencySQL extends MySQLManager {
         boolean ret = false;
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET " + account.name() + " = " + account.name() + " - ? WHERE `uuid` = ?");
+            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET " + account.getType() + " = " + account.getType() + " - ? WHERE `uuid` = ?");
             preparedStatement.setDouble(1, amount);
             preparedStatement.setString(2, uuid.toString());
             ret = preparedStatement.executeUpdate() >= 1;

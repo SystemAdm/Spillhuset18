@@ -2,10 +2,13 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsInviteCommand extends SubCommand {
@@ -69,6 +72,17 @@ public class GuildsInviteCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (args.length == 2) {
+            for (OddPlayer oddPlayer : OddJob.getInstance().getPlayerManager().getAll()) {
+                if (args[1].isEmpty() || oddPlayer.getName().startsWith(args[1])) {
+                    Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(oddPlayer.getUuid());
+                    if (guild == null) {
+                        list.add(oddPlayer.getName());
+                    }
+                }
+            }
+        }
+        return list;
     }
 }

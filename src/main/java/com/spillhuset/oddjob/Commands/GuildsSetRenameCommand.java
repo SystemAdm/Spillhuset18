@@ -1,4 +1,5 @@
 package com.spillhuset.oddjob.Commands;
+
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
@@ -55,14 +56,14 @@ public class GuildsSetRenameCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
+        if (!can(sender, false, true)) {
             return;
         }
-        if (!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return;
         }
-Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().rename(player,args[2]);
+        Player player = (Player) sender;
+        OddJob.getInstance().getGuildsManager().rename(player, args[2]);
     }
 
     @Override

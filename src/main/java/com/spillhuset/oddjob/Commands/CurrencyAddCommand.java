@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
@@ -33,7 +34,7 @@ public class CurrencyAddCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/currency add <value>";
+        return "/currency add <Account> <value>";
     }
 
     @Override
@@ -43,17 +44,24 @@ public class CurrencyAddCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        if (!argsLength(sender,args.length)) {
+            return;
+        }
+        if (!can(sender,false,true)) {
+            return;
+        }
 
+        OddJob.getInstance().getCurrencyManager().add(sender,args[1],args[2]);
     }
 
     @Override

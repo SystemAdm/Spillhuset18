@@ -155,7 +155,7 @@ public class HomesManager extends Managers {
 
         /* Check limit */
         int count = getCount(uuid);
-        int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getDefaultHomes();
+        int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getMaxHomes();
         if (count >= max) {
             MessageManager.homes_limit_reached(player, count, max);
             return;
@@ -181,7 +181,7 @@ public class HomesManager extends Managers {
             MessageManager.errors_something_somewhere(Plugin.homes, player);
             return;
         }
-        int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getDefaultHomes();
+        int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getMaxHomes();
 
         MessageManager.homes_del_success(player, name, getList(uuid).size(), max);
     }

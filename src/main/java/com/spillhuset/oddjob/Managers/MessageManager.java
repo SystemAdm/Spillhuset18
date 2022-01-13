@@ -237,15 +237,15 @@ public class MessageManager {
         if (guildMaster != null) {
             list(plugin, sender, notify, "GuildMaster: " + cPlayer + guildMaster.getName());
         }
-        list(plugin, sender, notify, "Assigned members: " + members.size());
-        list(plugin, sender, notify, "Pending players: " + pending.size());
-        list(plugin, sender, notify, "Invited players: " + invites.size());
-        list(plugin, sender, notify, "Open to join: " + guild.isOpen());
-        list(plugin, sender, notify, "Claims: " + guild.getClaims() + "/" + guild.getDefaultClaims());
-        list(plugin, sender, notify, "Homes set: " + guild.getHomes());
-        list(plugin, sender, notify, "Spawn mobs: " + guild.isSpawnMobs());
-        list(plugin, sender, notify, "Invited only: " + guild.isInvited_only());
-        list(plugin, sender, notify, "Friendly fire: " + guild.isFriendlyFire());
+        list(plugin, sender, notify, "Assigned members: " + cValue + members.size());
+        list(plugin, sender, notify, "Pending players: " + cValue + pending.size());
+        list(plugin, sender, notify, "Invited players: " + cValue + invites.size());
+        list(plugin, sender, notify, "Open to join: " + cValue + guild.isOpen());
+        list(plugin, sender, notify, "Claims: " + cValue + guild.getClaims() + cInfo + "/" + cValue + guild.getMaxClaims());
+        list(plugin, sender, notify, "Homes set: " + cValue + guild.getHomes() + cInfo + "/" + cValue + guild.getMaxHomes());
+        list(plugin, sender, notify, "Spawn mobs: " + cValue + guild.isSpawnMobs());
+        list(plugin, sender, notify, "Invited only: " + cValue + guild.isInvited_only());
+        list(plugin, sender, notify, "Friendly fire: " + cValue + guild.isFriendlyFire());
     }
 
     public static void guilds_not_found(CommandSender sender, String arg) {
@@ -511,12 +511,12 @@ public class MessageManager {
         notify(Plugin.currency, sender, Notify.warning, "The " + cGuild + guild.getName() + cWarning + " can't afford " + cValue + sum);
     }
 
-    public static void guilds_bought_homes(CommandSender sender, Guild guild, int maxHomes) {
-        guild_notify(guild, Notify.success, "We created an outpost!");
+    public static void guilds_bought_homes(CommandSender sender, Guild guild, int count, int maxHomes) {
+        guild_notify(guild, Notify.success, "You are ready to create an outpost. " + cValue + count + cSuccess + " of " + cValue + maxHomes);
     }
 
-    public static void guilds_bought_claims(CommandSender sender, Guild guild, int maxClaims) {
-        guild_notify(guild, Notify.success, "We have more land to claim!");
+    public static void guilds_bought_claims(CommandSender sender, Guild guild, int count, int maxClaims) {
+        guild_notify(guild, Notify.success, "We have more land to claim; " + cValue + count + cSuccess + "/" + cValue + maxClaims);
     }
 
     public static void guilds_no_homes_name(CommandSender sender, String name) {
@@ -643,10 +643,26 @@ public class MessageManager {
     }
 
     public static void guilds_claims_nearby(CommandSender sender, String near) {
-        notify(Plugin.guilds,sender,Notify.warning,"To near another guild "+cGuild+near);
+        notify(Plugin.guilds, sender, Notify.warning, "To near another guild " + cGuild + near);
     }
 
     public static void guilds_claims_connected(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,"Claims must be connected.");
+        notify(Plugin.guilds, sender, Notify.danger, "Claims must be connected.");
+    }
+
+    public static void currency_account_not_found(CommandSender sender, String name) {
+        notify(Plugin.currency, sender, Notify.danger, "Can't find account " + cValue + name);
+    }
+
+    public static void currency_added(CommandSender sender, String uuid, String account, double value) {
+        notify(Plugin.currency, sender, Notify.success, "We added some chips to " + uuid + " account " + account + ":  " + value);
+    }
+
+    public static void currency_auto(CommandSender sender, double value) {
+        notify(Plugin.currency, sender, Notify.info, "You have been mining a lot lately, and earned " + cValue + value + cInfo + " chips");
+    }
+
+    public static void guilds_world_disallowed(CommandSender sender, String name) {
+        notify(Plugin.guilds, sender, Notify.danger, "You can't claim land in " + cValue + name);
     }
 }

@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsInfoCommand extends SubCommand {
@@ -45,7 +46,7 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -61,12 +62,23 @@ public class GuildsInfoCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-
+        if (args.length == 1) {
+            OddJob.getInstance().getGuildsManager().info(sender, null);
+            return;
+        }
         OddJob.getInstance().getGuildsManager().info(sender, args[1]);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (args.length == 2) {
+            for (String name: OddJob.getInstance().getGuildsManager().list()) {
+                if (args[1].isEmpty() || name.startsWith(args[1])) {
+                    list.add(name);
+                }
+            }
+        }
+        return list;
     }
 }

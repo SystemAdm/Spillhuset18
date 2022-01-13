@@ -1,13 +1,19 @@
 package com.spillhuset.oddjob;
 
 import com.spillhuset.oddjob.Commands.*;
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
+import com.spillhuset.oddjob.SQL.CurrencySQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 
 public class OddJob extends JavaPlugin {
@@ -20,6 +26,7 @@ public class OddJob extends JavaPlugin {
     private TeleportManager teleportManager;
     private CurrencyManager currencyManager;
     private WarpManager warpManager;
+    public HashMap<UUID, Double> earnings;
 
     public static OddJob getInstance() {
         return instance;
@@ -69,6 +76,22 @@ public class OddJob extends JavaPlugin {
         getCommand("currency").setExecutor(new CurrencyCommand());
         getCommand("warps").setExecutor(new WarpCommand());
 
+        earnings = new HashMap<>();
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(OddJob.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                for (UUID uuid:earnings.keySet()) {
+                    double value = earnings.get(uuid);
+                    CurrencySQL.add(uuid,value, Account.bank);
+                    Player player = Bukkit.getPlayer(uuid);
+                    if (player != null && player.isOnline()) {
+                        MessageManager.currency_auto(player,value);
+                    }
+                    earnings.remove(uuid);
+                }
+            }
+        }, 0L, 6000L);
     }
 
     @Override
@@ -109,7 +132,7 @@ public class OddJob extends JavaPlugin {
     public CurrencyManager getCurrencyManager() {
         return currencyManager;
     }
-    
+
     public WarpManager getWarpManager() {
         return warpManager;
     }

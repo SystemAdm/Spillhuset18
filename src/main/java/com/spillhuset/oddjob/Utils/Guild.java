@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Guild {
@@ -196,5 +198,17 @@ public class Guild {
 
     public void incMaxHomes() {
         boughtHomes++;
+    }
+
+    public int getBoughtHomes() {
+        return boughtHomes;
+    }
+
+    public List<String> listHomes(UUID uuid) {
+        return OddJob.getInstance().getHomeManager().getList(uuid);
+    }
+
+    public int getBoughtClaims() {
+        return boughtClaims;
     }
 }
