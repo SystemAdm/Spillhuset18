@@ -2,10 +2,12 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsHomesRelocateCommand extends SubCommand {
@@ -71,6 +73,15 @@ public class GuildsHomesRelocateCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (sender instanceof Player player && args.length == 3) {
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByUuid(player.getUniqueId());
+            for (String name: guild.listHomes(guild.getUuid())) {
+                if (args[2].isEmpty() || name.startsWith(args[2])) {
+                    list.add(name);
+                }
+            }
+        }
+        return list;
     }
 }

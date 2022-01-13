@@ -2,11 +2,13 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsJoinCommand extends SubCommand implements GuildInterface {
@@ -72,6 +74,16 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (args.length == 2) {
+            for (Guild guild : OddJob.getInstance().getGuildsManager().getGuilds().values()) {
+                if (guild.isOpen() && !guild.isInvited_only()) {
+                    if (args[1].isEmpty() || guild.getName().startsWith(args[1])) {
+                        list.add(guild.getName());
+                    }
+                }
+            }
+        }
+        return list;
     }
 }

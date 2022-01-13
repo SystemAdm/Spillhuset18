@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plu;
+import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
 import org.bukkit.Material;
@@ -15,15 +16,16 @@ public class CurrencyManager {
     public void initiatePlayer(UUID uuid) {
         boolean has = CurrencySQL.has(uuid);
         if (!has) {
-            give_start(uuid,false);
+            give_start(uuid, false);
         }
     }
 
-    private void give_start(UUID uuid,boolean guild) {
+    private void give_start(UUID uuid, boolean guild) {
         if (guild) {
             CurrencySQL.initializeGuild(uuid);
         } else {
-        CurrencySQL.initializePlayer(uuid); }
+            CurrencySQL.initializePlayer(uuid);
+        }
     }
 
     public void earnBlockBrake(Player player, Block block) {
@@ -36,7 +38,9 @@ public class CurrencyManager {
         }
         if (plu == null)
             plu = Plu.DEFAULT;
-        CurrencySQL.add(player.getUniqueId(), plu, Account.pocket);
+
+        double value = OddJob.getInstance().earnings.getOrDefault(player.getUniqueId(),0d) + plu.getValue();
+        OddJob.getInstance().earnings.put(player.getUniqueId(), value);
     }
 
     /**
@@ -61,7 +65,44 @@ public class CurrencyManager {
     public void initiateGuild(UUID uuid) {
         boolean has = CurrencySQL.has(uuid);
         if (!has) {
-            give_start(uuid,true);
+            give_start(uuid, true);
         }
+    }
+
+    public void add(CommandSender sender, String accountString, String valueString) {
+        Account account = null;
+        for (Account a : Account.values()) {
+            if (a.name().equalsIgnoreCase(accountString)) {
+                account = a;
+            }
+        }
+        if (account == null) {
+            MessageManager.currency_account_not_found(sender, accountString);
+            return;
+        }
+
+        double value = 0d;
+        value = Double.parseDouble(valueString);
+        if (value == 0d) {
+            MessageManager.invalidNumber(Plugin.currency, sender, valueString);
+            return;
+        }
+        Player player = (Player) sender;
+        UUID uuid = null;
+        if (account == Account.guild) {
+            uuid = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
+        } else {
+            uuid = player.getUniqueId();
+        }
+
+        if (uuid == null) {
+            MessageManager.currency_account_not_found(sender, account.name());
+            return;
+        }
+        if (!CurrencySQL.has(uuid))
+            CurrencySQL.initializeGuild(uuid);
+
+        CurrencySQL.add(uuid, value, account);
+        MessageManager.currency_added(sender, uuid.toString(), account.name(), value);
     }
 }

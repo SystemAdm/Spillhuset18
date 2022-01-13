@@ -54,12 +54,12 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -75,6 +75,19 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+
+        // List commands
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.can(sender, false, false)) {
+                if (args.length == 0 || (args.length == 1 && subCommand.getName().startsWith(args[0]))) {
+                    list.add(subCommand.getName());
+                } else if (subCommand.getName().equalsIgnoreCase(args[0])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+            }
+        }
+
+        return list;
     }
 }

@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,6 +78,6 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }

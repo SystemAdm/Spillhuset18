@@ -248,4 +248,8 @@ public class PlayerManager {
         OddJob.getInstance().log("Spirit gone!");
         removeSpirit(spirit.getUniqueId());
     }
+
+    public List<OddPlayer> getAll() {
+        return oddPlayers.values().stream().toList();
+    }
 }
