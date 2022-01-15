@@ -14,6 +14,7 @@ public class GuildsSetCommand extends SubCommand {
     public GuildsSetCommand() {
         subCommands.add(new GuildsSetOpenCommand());
         subCommands.add(new GuildsSetRenameCommand());
+        subCommands.add(new GuildsSetAreaCommand());
     }
     @Override
     public boolean denyConsole() {

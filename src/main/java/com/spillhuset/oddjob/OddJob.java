@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob;
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.spillhuset.oddjob.Commands.*;
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
@@ -27,6 +28,7 @@ public class OddJob extends JavaPlugin {
     private CurrencyManager currencyManager;
     private WarpManager warpManager;
     public HashMap<UUID, Double> earnings;
+    private LocksManager locksManager;
 
     public static OddJob getInstance() {
         return instance;
@@ -47,6 +49,7 @@ public class OddJob extends JavaPlugin {
         teleportManager = new TeleportManager();
         currencyManager = new CurrencyManager();
         warpManager = new WarpManager();
+        locksManager = new LocksManager();
 
         /* Listeners */
         pm.registerEvents(new OnPlayerJoinEvent(), this);
@@ -61,6 +64,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerDeathEvent(), this);
         pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
         pm.registerEvents(new OnPlayerInventoryCloseEvent(), this);
+        pm.registerEvents(new OnPlayerInteractEvent(),this);
 
         /* Commands */
         getCommand("homes").setExecutor(new HomesCommand());
@@ -137,6 +141,16 @@ public class OddJob extends JavaPlugin {
         return warpManager;
     }
 
+    public WorldEditPlugin getWorldEdit() {
+        org.bukkit.plugin.Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        if (plugin instanceof WorldEditPlugin) {
+            return (WorldEditPlugin) plugin;
+        } else return null;
 
+    }
+
+    public LocksManager getLocksManager() {
+        return locksManager;
+    }
 }
 

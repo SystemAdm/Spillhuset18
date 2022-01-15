@@ -1,5 +1,8 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.Region;
 import com.spillhuset.oddjob.Enums.*;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.GuildSQL;
@@ -13,10 +16,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GuildsManager extends Managers {
     public HashMap<UUID, UUID> autoClaim = new HashMap<>();
@@ -308,7 +308,7 @@ public class GuildsManager extends Managers {
 
         // Has no claims from earlier
         if (!chunks.containsValue(guild.getUuid())) {
-            claim(guild, chunk);
+            claim(guild, chunk, true);
             return;
         }
 
@@ -328,7 +328,7 @@ public class GuildsManager extends Managers {
                 }
             }
             if (valid) {
-                claim(guild, chunk);
+                claim(guild, chunk, true);
             } else {
                 MessageManager.guilds_claims_connected(player);
             }
@@ -417,7 +417,7 @@ public class GuildsManager extends Managers {
 
         // Has no claims from earlier
         if (!chunks.containsValue(guild.getUuid())) {
-            claim(guild, chunk);
+            claim(guild, chunk, true);
             return;
         }
 
@@ -434,7 +434,7 @@ public class GuildsManager extends Managers {
                 }
             }
             if (valid) {
-                claim(guild, chunk);
+                claim(guild, chunk, true);
             } else {
                 MessageManager.guilds_claims_connected(player);
             }
@@ -442,7 +442,7 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_claims_nearby(player, sb.toString());
         }
 
-        claim(guild, chunk);
+        claim(guild, chunk, true);
         saveChunks();
     }
 
@@ -484,13 +484,13 @@ public class GuildsManager extends Managers {
 
     /**
      * Force claim
-     *
-     * @param guild Guild
+     *  @param guild Guild
      * @param chunk Chunk
+     * @param response Boolean response to the guild?
      */
-    private void claim(Guild guild, Chunk chunk) {
+    private void claim(Guild guild, Chunk chunk, boolean response) {
         chunks.put(chunk, guild.getUuid());
-        MessageManager.guilds_claims_claimed(guild, chunk);
+        if (response) MessageManager.guilds_claims_claimed(guild, chunk);
         saveChunks();
     }
 
@@ -565,7 +565,7 @@ public class GuildsManager extends Managers {
     public void autoClaim(Player player, UUID guild) {
         if (!autoClaim.containsKey(player.getUniqueId())) {
             autoClaim.put(player.getUniqueId(), guild);
-            claim(getGuild(guild), player.getLocation().getChunk());
+            claim(getGuild(guild), player.getLocation().getChunk(), true);
         } else {
             autoClaim.remove(player.getUniqueId());
         }
@@ -917,7 +917,7 @@ public class GuildsManager extends Managers {
 
         if (trans) {
             guild.incMaxClaims();
-            MessageManager.guilds_bought_claims(sender, guild, count,max+1);
+            MessageManager.guilds_bought_claims(sender, guild, count, max + 1);
             saveGuild(guild);
         }
     }
@@ -951,7 +951,7 @@ public class GuildsManager extends Managers {
         boolean trans = OddJob.getInstance().getCurrencyManager().sub(sender, Account.guild, guild.getUuid(), sum);
         if (trans) {
             guild.incMaxHomes();
-            MessageManager.guilds_bought_homes(sender, guild, count, max+1);
+            MessageManager.guilds_bought_homes(sender, guild, count, max + 1);
             saveGuild(guild);
         }
 
@@ -1211,7 +1211,7 @@ public class GuildsManager extends Managers {
         // Check chunk
         UUID owner = getGuildByChunk(chunk).getUuid();
         if (owner != guild.getUuid()) {
-            claim(player,guild);
+            claim(player, guild);
             MessageManager.guilds_homes_inside(player);
             return;
         }
@@ -1249,9 +1249,42 @@ public class GuildsManager extends Managers {
 
     public List<String> list() {
         List<String> list = new ArrayList<>();
-        for (Guild guild: guilds.values()) {
+        for (Guild guild : guilds.values()) {
             list.add(guild.getName());
         }
         return list;
+    }
+
+    public void setArea(CommandSender sender, String type) {
+        Player player = (Player) sender;
+
+        Zone guildType = null;
+        for (Zone t : Zone.values()) {
+            if (t.name().equalsIgnoreCase(type)) {
+                guildType = t;
+            }
+        }
+
+        if (guildType == null) {
+            MessageManager.errors_guild_type(sender, type);
+            return;
+        }
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByZone(guildType);
+
+        try {
+            Region selection = OddJob.getInstance().getWorldEdit().getSession(player).getSelection();
+
+            Set<BlockVector2> chs = selection.getChunks();
+            World world = Bukkit.getWorld(player.getWorld().getUID());
+            if (world != null) {
+                for (BlockVector2 ch : chs) {
+                    Chunk chunk = world.getChunkAt(ch.getX(), ch.getZ());
+                    claim(guild, chunk,false);
+                }
+            }
+        } catch (IncompleteRegionException ignored) {
+            MessageManager.guilds_errors_set_area(sender);
+        }
+
     }
 }

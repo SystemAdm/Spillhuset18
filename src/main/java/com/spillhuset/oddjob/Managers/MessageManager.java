@@ -665,4 +665,12 @@ public class MessageManager {
     public static void guilds_world_disallowed(CommandSender sender, String name) {
         notify(Plugin.guilds, sender, Notify.danger, "You can't claim land in " + cValue + name);
     }
+
+    public static void errors_guild_type(CommandSender sender, String type) {
+        notify(Plugin.guilds,sender,Notify.danger,"Can't find guild type: "+cValue+type);
+    }
+
+    public static void guilds_errors_set_area(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.danger,"Error while setting");
+    }
 }

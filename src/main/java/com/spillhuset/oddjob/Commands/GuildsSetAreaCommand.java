@@ -3,11 +3,10 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class LocksLockCommand extends SubCommand {
+public class GuildsSetAreaCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -20,43 +19,48 @@ public class LocksLockCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.locks;
+        return Plugin.guilds;
     }
 
     @Override
     public String getName() {
-        return "lock";
+        return "area";
     }
 
     @Override
     public String getDescription() {
-        return "Locks an object to you";
-    }
-
-    @Override
-    public String getSyntax() {
         return null;
     }
 
     @Override
+    public String getSyntax() {
+        return "/guilds set area <area>";
+    }
+
+    @Override
     public String getPermission() {
-        return "locks";
+        return "guilds.admin";
     }
 
     @Override
     public int minArgs() {
-        return 0;
+        return 3;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 3;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        OddJob.getInstance().getLocksManager().giveLockTool(player);
+        if (!can(sender,false,true)) {
+            return;
+        }
+        if (!argsLength(sender,args.length)) {
+            return;
+        }
+        OddJob.getInstance().getGuildsManager().setArea(sender,args[2]);
     }
 
     @Override

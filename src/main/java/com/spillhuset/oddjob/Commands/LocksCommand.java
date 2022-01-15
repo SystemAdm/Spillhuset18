@@ -32,7 +32,7 @@ public class LocksCommand extends SubCommandInterface implements CommandExecutor
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.locks;
     }
 
     @Override
