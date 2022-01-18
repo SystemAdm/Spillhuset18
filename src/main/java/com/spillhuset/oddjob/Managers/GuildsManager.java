@@ -534,7 +534,7 @@ public class GuildsManager extends Managers {
      */
     public Guild getGuildByChunk(@Nonnull Chunk chunk) {
         if (chunks.containsKey(chunk)) return getGuildByUuid(chunks.get(chunk));
-        else return getGuildByZone(Zone.WILD);
+        else return null;
     }
 
     /**
@@ -1100,7 +1100,8 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_disband(player);
             disband.add(guild.getUuid());
         } else {
-            if (name.equals(guild.getName())) {
+            if (name.equals(guild.getName()) && disband.contains(guild.getUuid())) {
+                disband.remove(guild.getUuid());
                 MessageManager.guilds_disbanded(guild);
                 disband(guild);
             }

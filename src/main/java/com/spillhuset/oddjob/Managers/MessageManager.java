@@ -667,10 +667,34 @@ public class MessageManager {
     }
 
     public static void errors_guild_type(CommandSender sender, String type) {
-        notify(Plugin.guilds,sender,Notify.danger,"Can't find guild type: "+cValue+type);
+        notify(Plugin.guilds, sender, Notify.danger, "Can't find guild type: " + cValue + type);
     }
 
     public static void guilds_errors_set_area(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,"Error while setting");
+        notify(Plugin.guilds, sender, Notify.danger, "Error while setting");
+    }
+
+    public static void locks_only_world(CommandSender sender) {
+        notify(Plugin.locks, sender, Notify.danger, "You are only able to lock blocks a " + cValue + "world");
+    }
+
+    public static void locks_inside_another_guild(CommandSender sender, Guild guildChunk) {
+        notify(Plugin.locks, sender, Notify.danger, "This block is inside a chunk owned by " + cGuild + guildChunk.getName());
+    }
+
+    public static void locks_already_locked_you(CommandSender sender) {
+        notify(Plugin.locks, sender, Notify.warning, "You have already locked this block.");
+    }
+
+    public static void locks_already_locked_someone(CommandSender sender) {
+        notify(Plugin.locks, sender, Notify.danger, "Block is locked by someone else.");
+    }
+
+    public static void locks_now_locked(CommandSender sender) {
+        notify(Plugin.locks, sender, Notify.success, "Block is now locked!");
+    }
+
+    public static void locks_broken(CommandSender sender) {
+        notify(Plugin.locks,sender,Notify.warning,"Lock broken!");
     }
 }

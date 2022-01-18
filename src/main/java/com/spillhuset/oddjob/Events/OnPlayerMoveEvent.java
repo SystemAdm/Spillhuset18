@@ -41,6 +41,7 @@ public class OnPlayerMoveEvent implements Listener {
         if (event.getTo() != null) {
             Chunk chunk = event.getTo().getChunk();
             visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
+            if (visitingGuild == null) visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD);
             if (!PlayerManager.playerTracker.containsKey(uuid)) {
                 PlayerManager.playerTracker.put(uuid, new ChunkCord(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ(), visitingGuild.getUuid()));
                 notify = true;

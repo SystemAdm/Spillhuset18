@@ -2,13 +2,12 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class LocksLockCommand extends SubCommand {
+public class LocksUnlockCommand extends com.spillhuset.oddjob.Utils.SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -26,17 +25,17 @@ public class LocksLockCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "lock";
+        return "unlock";
     }
 
     @Override
     public String getDescription() {
-        return "Locks an object to you";
+        return null;
     }
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/locks unlock";
     }
 
     @Override
@@ -63,7 +62,7 @@ public class LocksLockCommand extends SubCommand {
             return;
         }
         Player player = (Player) sender;
-        OddJob.getInstance().getLocksManager().giveLockTool(player);
+        OddJob.getInstance().getLocksManager().giveUnlockTool(player);
     }
 
     @Override

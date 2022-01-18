@@ -24,6 +24,15 @@ public class OnBlockBreakEvent implements Listener {
         Guild chunkGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
         UUID playerGuild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
 
+        // <-- Private -->
+        UUID ownerOfBlock =OddJob.getInstance().getLocksManager().isLocked(block);
+        if (ownerOfBlock != null && ownerOfBlock.equals(player.getUniqueId())) {
+            OddJob.getInstance().getLocksManager().breakLock(block);
+            MessageManager.locks_broken(player);
+        }
+
+        // <-- Guild -->
+
         // Zone is WILD
         if (chunkGuild == null || chunkGuild.getZone() == Zone.WILD) {
             return;
