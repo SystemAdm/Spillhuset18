@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.ScoreBoard;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,9 @@ public class OddPlayer {
     private List<UUID> blackList = new ArrayList<>();
     private boolean denyTpa;
     private boolean denyTrade;
-    private int maxHomes;
     private ScoreBoard scoreBoard = ScoreBoard.None;
+    private int boughtHomes = 0;
+    private int defaultHomes = ConfigManager.isSet("players.default.homes") ? ConfigManager.getInt("players.default.homes") : 1;
 
     /**
      * Created from join
@@ -51,10 +53,9 @@ public class OddPlayer {
      * @param blackList  List
      * @param denyTpa    Boolean
      * @param denyTrade  Boolean
-     * @param maxHomes   Integer
      * @param scoreBoard ScoreBoard
      */
-    public OddPlayer(UUID uuid, String name, long joined, List<UUID> whiteList, List<UUID> blackList, boolean denyTpa, boolean denyTrade, int maxHomes, ScoreBoard scoreBoard) {
+    public OddPlayer(UUID uuid, String name, long joined, List<UUID> whiteList, List<UUID> blackList, boolean denyTpa, boolean denyTrade, ScoreBoard scoreBoard, int boughtHomes) {
         this.uuid = uuid;
         this.name = name;
         this.joined = joined;
@@ -62,8 +63,8 @@ public class OddPlayer {
         this.blackList = blackList;
         this.denyTpa = denyTpa;
         this.denyTrade = denyTrade;
-        this.maxHomes = maxHomes;
         this.scoreBoard = scoreBoard;
+        this.boughtHomes = boughtHomes;
     }
 
     public String getName() {
@@ -91,7 +92,7 @@ public class OddPlayer {
     }
 
     public int getMaxHomes() {
-        return this.maxHomes;
+        return defaultHomes + boughtHomes;
     }
 
     public ScoreBoard getScoreBoard() {
@@ -100,6 +101,14 @@ public class OddPlayer {
 
     public String getDisplayName() {
         return this.name;
+    }
+
+    public int getBoughtHomes() {
+        return this.boughtHomes;
+    }
+
+    public void incBoughtHomes() {
+        boughtHomes++;
     }
 }
 

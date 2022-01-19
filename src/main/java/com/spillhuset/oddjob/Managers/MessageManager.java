@@ -659,7 +659,7 @@ public class MessageManager {
     }
 
     public static void currency_auto(CommandSender sender, double value) {
-        notify(Plugin.currency, sender, Notify.info, "You have been mining a lot lately, and earned " + cValue + value + cInfo + " chips");
+        message(Plugin.currency, sender, Notify.info, "You have been mining a lot lately, and earned " + cValue + value + cInfo + " chips");
     }
 
     public static void guilds_world_disallowed(CommandSender sender, String name) {
@@ -695,6 +695,34 @@ public class MessageManager {
     }
 
     public static void locks_broken(CommandSender sender) {
-        notify(Plugin.locks,sender,Notify.warning,"Lock broken!");
+        notify(Plugin.locks, sender, Notify.warning, "Lock broken!");
+    }
+
+    public static void locks_owned(CommandSender sender) {
+        notify(Plugin.locks, sender, Notify.danger, "This block is owned by someone else!");
+    }
+
+    public static void locks_owned_by(CommandSender sender, OddPlayer oddPlayer) {
+        notify(Plugin.locks, sender, Notify.info, "Lock is owned by " + cPlayer + oddPlayer.getName());
+    }
+
+    public static void shops_sell(CommandSender sender, Material material, int count, double amount) {
+        notify(Plugin.shops, sender, Notify.success, "You have sold " + cValue + count + cSuccess + "x " + cValue + material.name() + cSuccess + " for " + cValue + amount);
+    }
+
+    public static void currency_show_player(CommandSender sender, double pocket, double bank) {
+        message(Plugin.currency, sender, Notify.info, "You have " + cValue + pocket + cInfo + " in your " + cValue + "pocket" + cInfo + " and " + cValue + bank + cInfo + " in your " + cValue + "bank" + cInfo + " account");
+    }
+
+    public static void currency_show_guild(CommandSender sender, Guild guild, double bank) {
+        message(Plugin.currency, sender, Notify.info, "Your guild " + cGuild + guild.getName() + cInfo + " has " + cValue + bank + cInfo + " in the " + cValue + "bank" + cInfo + " account");
+    }
+
+    public static void insufficient_funds(CommandSender sender, double sum) {
+        notify(Plugin.currency, sender, Notify.warning, "You can't afford " + cValue + sum);
+    }
+
+    public static void homes_bought(CommandSender sender, int maxHomes, double sum) {
+        notify(Plugin.homes, sender, Notify.success, "You have successfully bought one more " + cValue + "home" + cSuccess + " slot, you have now a total of " + cValue + maxHomes + cSuccess + ", paid " + cValue + sum);
     }
 }

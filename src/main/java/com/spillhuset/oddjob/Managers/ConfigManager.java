@@ -41,8 +41,7 @@ public class ConfigManager {
             if (!config.isSet("sql.password")) config.set("sql.password", "");
 
             // Homes
-            if (!config.isSet("homes.ladder.default")) config.set("homes.ladder.default", 5);
-            if (!config.isSet("homes.log.set")) config.set("homes.log.set", true);
+            if (!config.isSet("homes.default")) config.set("homes.default", 5);
             if (!config.isSet("homes.response")) config.set("homes.response", Response.ACTIONBAR.name());
             if (!config.isSet("homes.world")) {
                 List<String> list = new ArrayList<>();
@@ -72,6 +71,24 @@ public class ConfigManager {
             if (!config.isSet("teleports.response")) config.set("teleports.response", Response.ACTIONBAR.name());
 
             // Warps
+            if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
+
+            // Currency
+            if (!config.isSet("currency.response")) config.set("currency.response", Response.ACTIONBAR.name());
+
+            // Player
+            if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
+
+            // Locks
+            if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
+
+            // Shops
+            if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
+
+            // Auctions
+            if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
+
+            // Deaths
             if (!config.isSet("warps.response")) config.set("warps.response", Response.ACTIONBAR.name());
 
             save();

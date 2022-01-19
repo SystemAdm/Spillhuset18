@@ -5,7 +5,8 @@ public enum Plu {
     TELEPORT_REQUEST(50, 1),
     DEFAULT(0.10, 1),
     GUILDS_CLAIMS(1000, 0.1),
-    GUILDS_HOMES(5000, 0.5);
+    GUILDS_HOMES(5000, 0.5),
+    PLAYER_HOMES(1000,0.5);
 
     public final double value;
     public final double multiplier;

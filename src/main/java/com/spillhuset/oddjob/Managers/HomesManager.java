@@ -169,6 +169,7 @@ public class HomesManager extends Managers {
 
         MessageManager.homes_set_success(player, name, getList(uuid).size(), max);
     }
+
     public void delGuild(Player player, UUID uuid, String name) {
         /* Check existing */
         if (!HomesSQL.exists(name, uuid)) {
@@ -184,5 +185,18 @@ public class HomesManager extends Managers {
         int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getMaxHomes();
 
         MessageManager.homes_del_success(player, name, getList(uuid).size(), max);
+    }
+
+    public void buy(Player player) {
+        OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
+
+        Plu plu = Plu.PLAYER_HOMES;
+        double sum = plu.getMultiplier() * oddPlayer.getBoughtHomes() * plu.getValue();
+
+        if (OddJob.getInstance().getCurrencyManager().sub(player, Account.pocket, player.getUniqueId(), sum)) {
+            oddPlayer.incBoughtHomes();
+            OddJob.getInstance().getPlayerManager().save(oddPlayer);
+            MessageManager.homes_bought(player,oddPlayer.getMaxHomes(),sum);
+        }
     }
 }

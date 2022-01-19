@@ -31,14 +31,15 @@ public class PlayerSQL extends MySQLManager {
                     "denytpa = ?, " +
                     "denytrade = ?, " +
                     "scoreboard = ?, " +
-                    "maxhomes = ? " +
+                    "boughthomes = ? " +
                     "WHERE uuid = ?");
             preparedStatement.setString(1, whiteList);
             preparedStatement.setString(2, blackList);
             preparedStatement.setInt(3, denyTpa);
             preparedStatement.setInt(4, denyTrade);
             preparedStatement.setString(5, oddPlayer.getScoreBoard().name());
-            preparedStatement.setInt(6, oddPlayer.getMaxHomes());
+            preparedStatement.setInt(6, oddPlayer.getBoughtHomes());
+            preparedStatement.setString(7, oddPlayer.getUuid().toString());
             preparedStatement.executeUpdate();
             set = true;
         } catch (SQLException ex) {
@@ -60,7 +61,7 @@ public class PlayerSQL extends MySQLManager {
         List<UUID> blackList = new ArrayList<>();
         boolean denyTpa = false;
         boolean denyTrade = false;
-        int maxHomes = 0;
+        int boughtHomes = 0;
         ScoreBoard scoreBoard = ScoreBoard.None;
 
         OddPlayer oddPlayer = null;
@@ -77,8 +78,9 @@ public class PlayerSQL extends MySQLManager {
                 blackList = deAssemble(resultSet.getString("blacklist"));
                 denyTpa = resultSet.getInt("denytpa") == 1;
                 denyTrade = resultSet.getInt("denytrade") == 1;
+                boughtHomes = resultSet.getInt("boughthomes");
             }
-            oddPlayer = new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, maxHomes, scoreBoard);
+            oddPlayer = new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, scoreBoard, boughtHomes);
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -94,8 +96,8 @@ public class PlayerSQL extends MySQLManager {
         List<UUID> blackList = new ArrayList<>();
         boolean denyTpa = false;
         boolean denyTrade = false;
-        int maxHomes = 0;
         ScoreBoard scoreBoard = ScoreBoard.None;
+        int boughtHomes = 0;
 
         OddPlayer oddPlayer = null;
         try {
@@ -111,8 +113,9 @@ public class PlayerSQL extends MySQLManager {
                 blackList = deAssemble(resultSet.getString("blacklist"));
                 denyTpa = resultSet.getInt("denytpa") == 1;
                 denyTrade = resultSet.getInt("denytrade") == 1;
+                boughtHomes = resultSet.getInt("boughthomes");
             }
-            oddPlayer = new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, maxHomes, scoreBoard);
+            oddPlayer = new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, scoreBoard, boughtHomes);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

@@ -3,19 +3,21 @@ package com.spillhuset.oddjob.Enums;
 import org.bukkit.ChatColor;
 
 public enum Zone {
-    SAFE(ChatColor.DARK_GREEN, "Better safe than sorry, no worry!"),
-    WILD(ChatColor.YELLOW, "Welcome to the WILD!"),
-    GUILD(ChatColor.DARK_BLUE, "Here lives "),
-    WAR(ChatColor.DARK_RED, "This means WAR!"),
-    ARENA(ChatColor.RED, "Game on!"),
-    JAIL(ChatColor.YELLOW, "Take your time.");
+    SAFE(ChatColor.DARK_GREEN, "00FF00", "Better safe than sorry, no worry!"),
+    WILD(ChatColor.YELLOW, "00FFFF", "Welcome to the WILD!"),
+    GUILD(ChatColor.DARK_BLUE, "0000FF", "Here lives "),
+    WAR(ChatColor.DARK_RED, "FF0000", "This means WAR!"),
+    ARENA(ChatColor.RED, "FF0000", "Game on!"),
+    JAIL(ChatColor.YELLOW, "00FFFF", "Take your time.");
 
     private final ChatColor color;
     private final String string;
+    private final String code;
 
-    Zone(ChatColor color, String string) {
+    Zone(ChatColor color, String code, String string) {
         this.color = color;
         this.string = string;
+        this.code = code;
     }
 
     public ChatColor getColor() {
@@ -32,5 +34,8 @@ public enum Zone {
 
     public String getColoredString(String name) {
         return getColor() + getString() + name;
+    }
+    public String getColorCode() {
+        return code;
     }
 }

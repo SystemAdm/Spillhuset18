@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -39,7 +40,7 @@ public class CurrencyManager {
         if (plu == null)
             plu = Plu.DEFAULT;
 
-        double value = OddJob.getInstance().earnings.getOrDefault(player.getUniqueId(),0d) + plu.getValue();
+        double value = OddJob.getInstance().earnings.getOrDefault(player.getUniqueId(), 0d) + plu.getValue();
         OddJob.getInstance().earnings.put(player.getUniqueId(), value);
     }
 
@@ -57,7 +58,9 @@ public class CurrencyManager {
             CurrencySQL.sub(account, uuid, sum);
             return true;
         } else {
-            MessageManager.insufficient_funds_guild(sender, sum, OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid));
+            if (account == Account.guild)
+                MessageManager.insufficient_funds_guild(sender, sum, OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid));
+            else MessageManager.insufficient_funds(sender, sum);
             return false;
         }
     }
@@ -104,5 +107,17 @@ public class CurrencyManager {
 
         CurrencySQL.add(uuid, value, account);
         MessageManager.currency_added(sender, uuid.toString(), account.name(), value);
+    }
+
+    public void showPlayer(Player player) {
+        MessageManager.currency_show_player(player, get(player.getUniqueId(), Account.pocket), get(player.getUniqueId(), Account.bank));
+    }
+
+    private double get(UUID player, Account account) {
+        return CurrencySQL.get(player, account);
+    }
+
+    public void showGuild(Player player, Guild guild) {
+        MessageManager.currency_show_guild(player, guild, get(guild.getUuid(), Account.guild));
     }
 }

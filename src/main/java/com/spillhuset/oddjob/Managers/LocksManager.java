@@ -93,7 +93,7 @@ public class LocksManager {
             clear(player);
     }
 
-    private void clear(Player player) {
+    public void clear(Player player) {
         isLocking.remove(player.getUniqueId());
         isUnlocking.remove(player.getUniqueId());
         isInfo.remove(player.getUniqueId());

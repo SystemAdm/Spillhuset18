@@ -151,4 +151,23 @@ public class CurrencySQL extends MySQLManager {
             close();
         }
     }
+
+    public static double get(UUID uuid, Account account) {
+        double value = 0;
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT "+account.getType()+" FROM `mine_balances` WHERE uuid = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                value = resultSet.getDouble(account.getType());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return value;
+    }
 }

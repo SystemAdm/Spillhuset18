@@ -13,6 +13,7 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.dynmap.markers.AreaMarker;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -68,7 +69,22 @@ public class GuildsManager extends Managers {
 
     public void loadChunks() {
         this.chunks = GuildSQL.loadChunks();
+        renderChunks();
         OddJob.getInstance().log("loaded guild-chunks: " + this.chunks.size());
+    }
+
+    private void renderChunks() {
+        if (OddJob.getInstance().markerSet != null) {
+            for (Chunk chunk : chunks.keySet()) {
+                Guild guild = getGuild(chunks.get(chunk));
+                double[] x = new double[]{chunk.getX() * 16, (chunk.getX() * 16) + 16};
+                double[] z = new double[]{chunk.getZ() * 16, (chunk.getZ() * 16) + 16};
+                AreaMarker marker = OddJob.getInstance().markerSet.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
+                marker.setFillStyle(.5, Integer.parseInt(guild.getZone().getColorCode(), 16));
+                marker.setLineStyle(1, 1, Integer.parseInt(guild.getZone().getColorCode(), 16));
+                marker.setCornerLocations(x, z);
+            }
+        }
     }
 
     public void loadMembers() {
@@ -484,13 +500,15 @@ public class GuildsManager extends Managers {
 
     /**
      * Force claim
-     *  @param guild Guild
-     * @param chunk Chunk
+     *
+     * @param guild    Guild
+     * @param chunk    Chunk
      * @param response Boolean response to the guild?
      */
     private void claim(Guild guild, Chunk chunk, boolean response) {
         chunks.put(chunk, guild.getUuid());
         if (response) MessageManager.guilds_claims_claimed(guild, chunk);
+        renderChunks();
         saveChunks();
     }
 
@@ -503,6 +521,7 @@ public class GuildsManager extends Managers {
     private void unClaim(Guild guild, Chunk chunk) {
         chunks.remove(chunk);
         GuildSQL.removeChunk(guild, chunk);
+        renderChunks();
         MessageManager.guilds_claims_claimed(guild, chunk);
     }
 
@@ -1280,12 +1299,18 @@ public class GuildsManager extends Managers {
             if (world != null) {
                 for (BlockVector2 ch : chs) {
                     Chunk chunk = world.getChunkAt(ch.getX(), ch.getZ());
-                    claim(guild, chunk,false);
+                    claim(guild, chunk, false);
                 }
             }
         } catch (IncompleteRegionException ignored) {
             MessageManager.guilds_errors_set_area(sender);
         }
 
+    }
+
+    public void saveGuilds() {
+        for (Guild guild:guilds.values()) {
+            saveGuild(guild);
+        }
     }
 }

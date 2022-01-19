@@ -1,9 +1,9 @@
 package com.spillhuset.oddjob.Commands;
 
-import com.spillhuset.oddjob.Commands.CurrencySetCommand;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.Bukkit;
@@ -23,6 +23,7 @@ public class CurrencyCommand extends SubCommandInterface implements CommandExecu
         subCommands.add(new CurrencyAddCommand());
         subCommands.add(new CurrencySubCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return false;
@@ -69,14 +70,9 @@ public class CurrencyCommand extends SubCommandInterface implements CommandExecu
         }
         if (args.length == 0) {
             if (sender instanceof Player player) {
-                UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
-                if (guild != null) {
-                    MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-                } else {
-                    Bukkit.dispatchCommand(sender, "currency help");
-                }
-            } else {
-                MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
+                OddJob.getInstance().getCurrencyManager().showPlayer(player);
+                Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+                if (guild != null) OddJob.getInstance().getCurrencyManager().showGuild(player,guild);
             }
             return true;
         }

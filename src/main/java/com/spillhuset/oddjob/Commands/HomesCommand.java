@@ -27,6 +27,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         subCommands.add(new HomesRenameCommand());
         subCommands.add(new HomesChangeCommand());
         subCommands.add(new HomesTpCommand());
+        subCommands.add(new HomesBuyCommand());
     }
 
     @Override

@@ -2,6 +2,9 @@ name: Spillhuset
 main: com.spillhuset.oddjob.OddJob
 version: 0.4
 api-version: 1.18
+depend:
+  - dynmap
+  - WorldEdit
 
 commands:
   homes:
@@ -28,3 +31,5 @@ commands:
     description: Warps
   currency:
     description: Currency
+  players:
+    description: Players
