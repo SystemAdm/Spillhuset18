@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 
 public enum Zone {
     SAFE(ChatColor.DARK_GREEN, "00FF00", "Better safe than sorry, no worry!"),
+    SHOP(ChatColor.GOLD,"00FF00","Sell it!"),
+    AUCTION(ChatColor.GOLD,"00FF00","Money is business!"),
+    BANK(ChatColor.GOLD,"00FF00","Money is life."),
     WILD(ChatColor.YELLOW, "00FFFF", "Welcome to the WILD!"),
     GUILD(ChatColor.DARK_BLUE, "0000FF", "Here lives "),
     WAR(ChatColor.DARK_RED, "FF0000", "This means WAR!"),

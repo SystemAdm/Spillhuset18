@@ -16,6 +16,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.A;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerSet;
 
@@ -40,6 +41,7 @@ public class OddJob extends JavaPlugin {
     public BossBar bossbar;
     private ShopsManager shopsManager;
     private HashMap<UUID,BossBar> bars = new HashMap<>();
+    private AuctionsManager auctionsManager;
 
     public static OddJob getInstance() {
         return instance;
@@ -68,6 +70,7 @@ public class OddJob extends JavaPlugin {
         warpManager = new WarpManager();
         locksManager = new LocksManager();
         shopsManager = new ShopsManager();
+        auctionsManager = new AuctionsManager();
 
         /* Listeners */
         pm.registerEvents(new OnPlayerJoinEvent(), this);
@@ -190,5 +193,10 @@ public class OddJob extends JavaPlugin {
     public ShopsManager getShopsManager() {
         return shopsManager;
     }
+
+    public AuctionsManager getAuctionsManager() {
+        return auctionsManager;
+    }
+
 }
 

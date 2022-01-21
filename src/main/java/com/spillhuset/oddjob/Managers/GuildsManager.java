@@ -56,12 +56,15 @@ public class GuildsManager extends Managers {
 
     public void loadGuilds() {
         int i = GuildSQL.loadGuild(null);
-        if (i < 5) {
+        if (i < 7) {
             create(Bukkit.getConsoleSender(), "SafeZone", Zone.SAFE);
             create(Bukkit.getConsoleSender(), "WarZone", Zone.WAR);
             create(Bukkit.getConsoleSender(), "WildZone", Zone.WILD);
             create(Bukkit.getConsoleSender(), "ArenaZone", Zone.ARENA);
             create(Bukkit.getConsoleSender(), "JailZone", Zone.JAIL);
+            create(Bukkit.getConsoleSender(), "Bank", Zone.BANK);
+            create(Bukkit.getConsoleSender(), "Shop", Zone.SHOP);
+            create(Bukkit.getConsoleSender(), "Auction", Zone.AUCTION);
             i++;
         }
         OddJob.getInstance().log("loaded guilds: " + i);

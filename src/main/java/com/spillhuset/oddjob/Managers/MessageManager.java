@@ -725,4 +725,7 @@ public class MessageManager {
     public static void homes_bought(CommandSender sender, int maxHomes, double sum) {
         notify(Plugin.homes, sender, Notify.success, "You have successfully bought one more " + cValue + "home" + cSuccess + " slot, you have now a total of " + cValue + maxHomes + cSuccess + ", paid " + cValue + sum);
     }
+
+    public static void auctions_not_area(Player seller) {
+    }
 }

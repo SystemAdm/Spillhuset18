@@ -1,15 +1,30 @@
 package com.spillhuset.oddjob.Commands;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
+import com.spillhuset.oddjob.Utils.Tool;
+import org.bukkit.FireworkEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
 
 public class AuctionsCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
+    public AuctionsCommand() {
+        subCommands.add(new AuctionsSellCommand());
+    }
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,12 +42,12 @@ public class AuctionsCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.auctions;
     }
 
     @Override
     public String getPermission() {
-        return null;
+        return "auctions";
     }
 
     @Override
@@ -47,7 +62,12 @@ public class AuctionsCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return false;
+        Player player = (Player) sender;
+        ItemStack itemStack = player.getInventory().getItemInMainHand().clone();
+
+        Tool.jsonEncode(itemStack);
+
+        return true;
     }
 
     @Override
