@@ -1,6 +1,8 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.CountdownSpeed;
+import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.OddPlayer;
@@ -75,10 +77,11 @@ public class TeleportManager {
         Player destination = Bukkit.getPlayer(target);
         if (destination != null) {
             OddPlayer oddDestination = OddJob.getInstance().getPlayerManager().get(destination.getUniqueId());
+
+            // Check white-/blacklist
             boolean blacklist = oddDestination.getBlackList().contains(requester.getUniqueId());
             boolean denied = oddDestination.getDenyTpa();
             boolean whitelist = oddDestination.getWhiteList().contains(requester.getUniqueId());
-
             if (blacklist || (denied && !whitelist)) {
                 new BukkitRunnable() {
                     @Override
@@ -86,17 +89,24 @@ public class TeleportManager {
                         MessageManager.teleports_request_denied(requester, destination);
                     }
                 }.runTaskLater(OddJob.getInstance(), 40);
-
                 return;
             }
-            OddJob.getInstance().log("b" + (destination == requester));
+
+            // Already sent?
             if (requests.get(requester.getUniqueId()) == destination.getUniqueId()) {
                 MessageManager.teleports_request_already_sent(requester, destination);
                 return;
             }
+
             BukkitTask reset = requestsReset.get(requester.getUniqueId());
             if (reset != null) reset.cancel();
-            //TODO CostManager.transaction(Account.POCKET,requester.getUniqueId(), Plu.TELEPORT_REQUEST);
+
+            // Can afford?
+            if (!OddJob.getInstance().getCurrencyManager().sub(requester, Account.pocket,requester.getUniqueId(),Plu.TELEPORT_REQUEST.value)) {
+                return;
+            }
+
+            // Set request
             requests.put(requester.getUniqueId(), destination.getUniqueId());
             requestsReset.put(requester.getUniqueId(), new BukkitRunnable() {
 
@@ -128,6 +138,7 @@ public class TeleportManager {
     }
 
     public void accept(Player destination) {
+        // Finding requests
         List<UUID> requestList = new ArrayList<>();
         for (UUID requester : requests.keySet()) {
             if (requests.get(requester) == destination.getUniqueId()) {
@@ -145,6 +156,7 @@ public class TeleportManager {
     }
 
     public void deny(Player destination) {
+        // Finding requests
         List<UUID> requestList = new ArrayList<>();
         for (UUID requester : requests.keySet()) {
             if (requests.get(requester) == destination.getUniqueId()) {
@@ -162,6 +174,7 @@ public class TeleportManager {
     }
 
     public void accept(Player destination, String requesterName) {
+        // Performing accept
         Player requester = Bukkit.getPlayer(requesterName);
         if (requester == null) {
             MessageManager.errors_find_player(Plugin.teleports, requesterName, destination);
@@ -175,6 +188,7 @@ public class TeleportManager {
     }
 
     public void deny(Player destination, String requesterName) {
+        // Performing deny
         Player requester = Bukkit.getPlayer(requesterName);
         if (requester == null) {
             MessageManager.errors_find_player(Plugin.teleports, requesterName, destination);
@@ -188,12 +202,14 @@ public class TeleportManager {
     }
 
     public void accept(Player destination, Player requester) {
+        // Cleaning up
         MessageManager.teleports_request_accepted(destination, requester);
         removeRequests(requester.getUniqueId());
         teleport(requester, destination.getLocation(), Plugin.teleports);
     }
 
     public void deny(Player destination, Player requester) {
+        // Cleaning up
         MessageManager.teleports_request_denied(destination, requester);
         removeRequests(requester.getUniqueId());
     }

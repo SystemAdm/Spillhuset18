@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HomesTpCommand extends SubCommand {
+public class HomesTeleportCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return true;

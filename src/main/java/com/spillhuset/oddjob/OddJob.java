@@ -10,23 +10,24 @@ import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.Utils.Tool;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.A;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerSet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
 public class OddJob extends JavaPlugin {
 
     private static OddJob instance;
+    public List<Location> entrances;
     private HomesManager homesManager;
     private PlayerManager playerManager;
     private HistoryManager historyManager;
@@ -104,6 +105,7 @@ public class OddJob extends JavaPlugin {
         getCommand("players").setExecutor(new PlayersCommand());
 
         earnings = new HashMap<>();
+        entrances = new ArrayList<>();
 /*
         bossbar = Bukkit.createBossBar("Next payment in:", BarColor.BLUE, BarStyle.SOLID);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(OddJob.getInstance(), () -> {

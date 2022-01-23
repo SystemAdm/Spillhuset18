@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.LocksSQL;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.LockUtil;
+import io.papermc.paper.event.player.PlayerItemFrameChangeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,17 +21,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class OnPlayerInteractEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteractEvent(PlayerInteractEvent event) {
+
         Player player = event.getPlayer();
         Action action = event.getAction();
         Block clickedBlock = event.getClickedBlock();
         //TODO EquipmentSlot hand = event.getHand(); KEY!!!
         ItemStack item = event.getItem();
+        Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+
         boolean door = false;
         boolean chest = false;
         if (item != null && OddJob.getInstance().getLocksManager().getTools().contains(item)) {
@@ -39,7 +44,9 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         if (clickedBlock != null) {
-            OddJob.getInstance().log("locking " + clickedBlock.getX() + "," + clickedBlock.getY() + "," + clickedBlock.getZ() + ",");
+            Guild guildClicked = OddJob.getInstance().getGuildsManager().getGuildByChunk(clickedBlock.getChunk());
+
+
             if (!LocksSQL.isLockable(clickedBlock.getType())) {
                 return;
             }
@@ -84,7 +91,6 @@ public class OnPlayerInteractEvent implements Listener {
                 // Chunk owner
                 Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByChunk(location.getChunk());
                 if (guildChunk != null) OddJob.getInstance().log("chunk:" + guildChunk.getName());
-                Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
                 if (guildPlayer != null) OddJob.getInstance().log("player:" + guildPlayer.getName());
                 if (guildChunk != null && guildChunk != guildPlayer) {
                     MessageManager.locks_inside_another_guild(player, guildChunk);

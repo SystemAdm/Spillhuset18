@@ -1,23 +1,25 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.Managers.PlayerManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.ChunkCord;
 import com.spillhuset.oddjob.Utils.Guild;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.structure.Structure;
 
 import java.util.UUID;
 
 public class OnPlayerMoveEvent implements Listener {
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClaim(PlayerMoveEvent event) {
         Player player = event.getPlayer();

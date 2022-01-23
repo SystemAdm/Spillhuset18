@@ -19,6 +19,16 @@ public class OnEntityDamageEvent implements Listener {
     public void onDamageByMonster(EntityDamageByEntityEvent event) {
         Entity target = event.getEntity();
         Entity damager = event.getDamager();
+        if (damager instanceof Player && target instanceof ItemFrame itemFrame) {
+            Guild guildClicked = OddJob.getInstance().getGuildsManager().getGuildByChunk(target.getLocation().getChunk());
+            Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(damager.getUniqueId());
+            if (guildClicked != null) {
+                if (guildPlayer != null && guildPlayer == guildClicked) {
+                    return;
+                }
+                event.setCancelled(true);
+            }
+        }
         if (damager instanceof Player && target instanceof ArmorStand armorStand) {
             UUID stand = armorStand.getUniqueId();
             Inventory inventory = OddJob.getInstance().getPlayerManager().getSpiritInventory(stand);

@@ -1,8 +1,11 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Account;
+import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.SQL.ShopsSQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.PLU;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,6 +13,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class ShopsManager {
     public void sell(Player player) {
+        Guild shop = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.SHOP);
+        Guild store = OddJob.getInstance().getGuildsManager().getGuildByChunk(player.getLocation().getChunk());
+
+        if (store != shop) {
+            MessageManager.shops_inside(player);
+            return;
+        }
         ItemStack itemStack = player.getInventory().getItemInMainHand();
         Material material = itemStack.getType();
         //    8

@@ -82,10 +82,14 @@ public class GuildsManager extends Managers {
                 Guild guild = getGuild(chunks.get(chunk));
                 double[] x = new double[]{chunk.getX() * 16, (chunk.getX() * 16) + 16};
                 double[] z = new double[]{chunk.getZ() * 16, (chunk.getZ() * 16) + 16};
-                AreaMarker marker = OddJob.getInstance().markerSet.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
-                marker.setFillStyle(.5, Integer.parseInt(guild.getZone().getColorCode(), 16));
-                marker.setLineStyle(1, 1, Integer.parseInt(guild.getZone().getColorCode(), 16));
-                marker.setCornerLocations(x, z);
+                if (OddJob.getInstance().markerSet != null) {
+                    AreaMarker marker = OddJob.getInstance().markerSet.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
+                    if (marker != null) {
+                        marker.setFillStyle(.5, Integer.parseInt(guild.getZone().getColorCode(), 16));
+                        marker.setLineStyle(1, 1, Integer.parseInt(guild.getZone().getColorCode(), 16));
+                        marker.setCornerLocations(x, z);
+                    }
+                }
             }
         }
     }
@@ -1312,7 +1316,7 @@ public class GuildsManager extends Managers {
     }
 
     public void saveGuilds() {
-        for (Guild guild:guilds.values()) {
+        for (Guild guild : guilds.values()) {
             saveGuild(guild);
         }
     }

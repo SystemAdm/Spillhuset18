@@ -584,7 +584,7 @@ public class MessageManager {
         if (!builder.isEmpty()) {
             builder.deleteCharAt(builder.lastIndexOf(","));
         }
-        message(Plugin.guilds, sender, Notify.info, "Your guild " + (plural ? "have" : "has") + " " + cValue + pending.size() + cInfo + " pending requests to join the guild: " + builder.toString());
+        message(Plugin.guilds, sender, Notify.info, "Your guild " + (plural ? "have" : "has") + " " + cValue + pending.size() + cInfo + " pending requests to join the guild: " + builder);
     }
 
     public static void guilds_pending_welcome(OddPlayer oddPlayer, Guild guild) {
@@ -726,6 +726,18 @@ public class MessageManager {
         notify(Plugin.homes, sender, Notify.success, "You have successfully bought one more " + cValue + "home" + cSuccess + " slot, you have now a total of " + cValue + maxHomes + cSuccess + ", paid " + cValue + sum);
     }
 
-    public static void auctions_not_area(Player seller) {
+    public static void auctions_not_area(CommandSender sender) {
+    }
+
+    public static void guilds_no_stealing(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.danger,"You can't steal this book!");
+    }
+
+    public static void shops_inside(CommandSender sender) {
+        notify(Plugin.shops,sender,Notify.warning,"You have to be inside a shopping area.");
+    }
+
+    public static void fortress(CommandSender sender) {
+        notify(Plugin.guilds,sender,Notify.danger,ChatColor.BOLD+""+"Area 51 is closed.");
     }
 }
