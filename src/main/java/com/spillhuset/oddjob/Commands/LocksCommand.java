@@ -60,6 +60,11 @@ public class LocksCommand extends SubCommandInterface implements CommandExecutor
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!can(sender, false, true)) {
             return true;
@@ -68,30 +73,9 @@ public class LocksCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        if (args.length == 0) {
-            if (sender instanceof Player player) {
-                UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
-                if (guild != null) {
-                    MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-                } else {
-                    Bukkit.dispatchCommand(sender, "locks help");
-                }
-            } else {
-                MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            }
-            return true;
-        }
-
-        boolean sub = subCommand(sender, args, false);
-        if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
-            args[0] = null;
-            MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            return true;
-        }
-        OddJob.getInstance().log("sub:" + (sub ? "ok" : "n"));
-
-
+        finder(sender,args);
         return true;
+
     }
 
     @Override

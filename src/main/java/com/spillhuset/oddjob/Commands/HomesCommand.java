@@ -66,6 +66,11 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if (!can(sender, false, true)) {
             return true;
@@ -74,32 +79,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-
-        if (args.length == 0) {
-            if (sender instanceof Player player) {
-                Bukkit.dispatchCommand(player, "homes list");
-            }
-            MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            return true;
-        }
-
-        boolean sub = subCommand(sender, args, false);
-        if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
-            MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            return true;
-        }
-
-        if (args.length == 1 && sender instanceof Player player && !sub) {
-            String name = args[0].toLowerCase();
-            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
-            Location home = OddJob.getInstance().getHomeManager().find(oddPlayer, name);
-            if (home != null) {
-                redirect(sender, getPlugin(), "tp " + name);
-            } else {
-                MessageManager.homes_not_found(sender, name);
-            }
-        }
-
+        finder(sender,args);
         return true;
     }
 

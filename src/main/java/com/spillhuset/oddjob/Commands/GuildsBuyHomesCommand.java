@@ -55,6 +55,11 @@ public class GuildsBuyHomesCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 2;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
             return;
@@ -63,11 +68,12 @@ public class GuildsBuyHomesCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().getGuildsManager().buyHomes(sender);
+        OddJob.getInstance().log("We are here!");
+        //OddJob.getInstance().getGuildsManager().buyHomes(sender);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        return tabs(sender,args);
     }
 }

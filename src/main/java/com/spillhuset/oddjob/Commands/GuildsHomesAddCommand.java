@@ -56,6 +56,11 @@ public class GuildsHomesAddCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 2;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
             return;
@@ -63,7 +68,7 @@ public class GuildsHomesAddCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-
+        OddJob.getInstance().log("add");
         String name = "home";
         if (args.length == 3) {
             name = args[2];

@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.HomesSQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.Managers;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
@@ -47,7 +48,16 @@ public class HomesManager extends Managers {
      */
     public boolean add(@Nonnull CommandSender sender, @Nonnull OddPlayer target, @Nonnull String name, @Nonnull Location location) {
         UUID uuid = target.getUuid();
-        // TODO Check if is inside a guild
+
+        /* Check guild*/
+        Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByChunk(location.getChunk());
+        Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(target.getUuid());
+        if (guildChunk != null) {
+            if (guildPlayer != null && guildChunk != guildPlayer) {
+                MessageManager.errors_chunk_is_owned(sender, guildChunk.getName());
+                return false;
+            }
+        }
 
         /* Check existing */
         if (HomesSQL.exists(name, uuid)) {
@@ -105,6 +115,10 @@ public class HomesManager extends Managers {
         return HomesSQL.get(player.getUuid(), name);
     }
 
+    public Location find(@Nonnull Guild guild, @Nonnull String name) {
+        return HomesSQL.get(guild.getUuid(), name);
+    }
+
     public void teleport(CommandSender sender, OddPlayer target, String name) {
         Location location = HomesSQL.get(target.getUuid(), name);
         if (!teleport) {
@@ -116,9 +130,7 @@ public class HomesManager extends Managers {
     }
 
     public int getMax(@Nonnull UUID uuid) {
-        int playerManager = OddJob.getInstance().getPlayerManager().get(uuid).getMaxHomes();
-        int configManager = ConfigManager.get("homes.ladder.default");
-        return playerManager + configManager;
+        return OddJob.getInstance().getPlayerManager().get(uuid).getMaxHomes();
     }
 
     public void rename(UUID guild, String oldName, String newName) {
@@ -146,28 +158,14 @@ public class HomesManager extends Managers {
         HomesSQL.change(guild, name, player.getLocation());
     }
 
-    public void addGuild(Player player, UUID uuid, String name) {
-        /* Check existing */
-        if (HomesSQL.exists(name, uuid)) {
-            MessageManager.guilds_homes_name_already_exist(player, name);
-            return;
-        }
-
-        /* Check limit */
-        int count = getCount(uuid);
-        int max = OddJob.getInstance().getGuildsManager().getGuildByUuid(uuid).getMaxHomes();
-        if (count >= max) {
-            MessageManager.homes_limit_reached(player, count, max);
-            return;
-        }
-
+    public void addGuild(Player player, UUID uuid, String name, int maxHomes) {
         /* Adding */
         if (!HomesSQL.add(uuid, player.getLocation(), name)) {
             MessageManager.errors_something_somewhere(Plugin.homes, player);
             return;
         }
 
-        MessageManager.homes_set_success(player, name, getList(uuid).size(), max);
+        MessageManager.homes_set_success(player, name, getList(uuid).size(), maxHomes);
     }
 
     public void delGuild(Player player, UUID uuid, String name) {
@@ -196,7 +194,7 @@ public class HomesManager extends Managers {
         if (OddJob.getInstance().getCurrencyManager().sub(player, Account.pocket, player.getUniqueId(), sum)) {
             oddPlayer.incBoughtHomes();
             OddJob.getInstance().getPlayerManager().save(oddPlayer);
-            MessageManager.homes_bought(player,oddPlayer.getMaxHomes(),sum);
+            MessageManager.homes_bought(player, oddPlayer.getMaxHomes(), sum);
         }
     }
 }

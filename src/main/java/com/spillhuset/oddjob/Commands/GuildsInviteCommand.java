@@ -58,6 +58,11 @@ public class GuildsInviteCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
             return;

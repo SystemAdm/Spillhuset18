@@ -53,6 +53,11 @@ public class EnderchestCommand extends SubCommandInterface implements CommandExe
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!can(sender,true,true)) {
             return true;

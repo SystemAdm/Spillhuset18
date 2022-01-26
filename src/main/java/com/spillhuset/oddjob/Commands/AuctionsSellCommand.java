@@ -59,6 +59,11 @@ public class AuctionsSellCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         double bid = Double.parseDouble(args[1]);
         double buyout = 0.0d;

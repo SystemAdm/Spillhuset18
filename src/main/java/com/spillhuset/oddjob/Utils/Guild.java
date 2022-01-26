@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class Guild {
     private final UUID uuid;
-    private int defaultClaims = ConfigManager.isSet("guilds.default.claims") ? ConfigManager.getInt("guilds.default.claims") : 10;
+    private final int defaultClaims = ConfigManager.isSet("guilds.default.claims") ? ConfigManager.getInt("guilds.default.claims") : 10;
     private int boughtClaims = 0;
     private boolean spawnMobs = false;
     private boolean open = false;
@@ -26,7 +26,7 @@ public class Guild {
     private Role permissionInvite = Role.Members;
     private String name;
     private Zone zone = Zone.GUILD;
-    private int defaultHomes = ConfigManager.isSet("guilds.default.homes") ? ConfigManager.getInt("guilds.default.homes") : 1;
+    private final int defaultHomes = ConfigManager.isSet("guilds.default.homes") ? ConfigManager.getInt("guilds.default.homes") : 1;
     private int boughtHomes = 0;
     private int availableClaims;
 
@@ -63,7 +63,6 @@ public class Guild {
 
         if (player != null) {
             OddJob.getInstance().getCurrencyManager().initiateGuild(uuid);
-            OddJob.getInstance().getHomeManager().addGuild(player, uuid, "spawn");
         }
     }
 
@@ -151,7 +150,13 @@ public class Guild {
      * @return Integer size of claims
      */
     public int getClaims() {
-        return OddJob.getInstance().getGuildsManager().getChunks().values().size();
+        int i = 0;
+        for (UUID uuid : OddJob.getInstance().getGuildsManager().getChunks().values()) {
+            if (uuid.equals(getUuid())) {
+                i++;
+            }
+        }
+        return i;
     }
 
     /**

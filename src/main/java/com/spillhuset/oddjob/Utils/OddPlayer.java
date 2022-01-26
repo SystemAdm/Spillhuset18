@@ -17,7 +17,7 @@ public class OddPlayer {
     private boolean denyTrade;
     private ScoreBoard scoreBoard = ScoreBoard.None;
     private int boughtHomes = 0;
-    private int defaultHomes = ConfigManager.isSet("players.default.homes") ? ConfigManager.getInt("players.default.homes") : 1;
+    private final int defaultHomes = ConfigManager.isSet("homes.default") ? ConfigManager.getInt("homes.default") : 1;
 
     /**
      * Created from join

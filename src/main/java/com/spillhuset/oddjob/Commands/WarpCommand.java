@@ -59,16 +59,20 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        OddJob.getInstance().log("warp");
-        boolean sub = subCommand(sender, args, false);
-        OddJob.getInstance().log("subs");
-        if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
-            args[0] = null;
-            MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
+        if (!can(sender, false, true)) {
             return true;
         }
-        OddJob.getInstance().log("sub:" + (sub ? "ok" : "n"));
+
+        if (!argsLength(sender, args.length)) {
+            return true;
+        }
+        finder(sender,args);
         return true;
     }
 

@@ -43,7 +43,7 @@ public class GuildsHomesRenameCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return null;
+        return "guilds";
     }
 
     @Override
@@ -54,6 +54,11 @@ public class GuildsHomesRenameCommand extends SubCommand {
     @Override
     public int maxArgs() {
         return 4;
+    }
+
+    @Override
+    public int depth() {
+        return 2;
     }
 
     @Override

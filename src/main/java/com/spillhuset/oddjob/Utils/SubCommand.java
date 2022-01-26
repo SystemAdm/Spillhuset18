@@ -2,13 +2,9 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
-import com.spillhuset.oddjob.OddJob;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +29,13 @@ public abstract class SubCommand {
 
     public abstract int maxArgs();
 
+    public abstract int depth();
+
     public abstract void getCommandExecutor(CommandSender sender, String[] args);
 
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
 
     public boolean can(CommandSender sender, boolean others, boolean response) {
-        OddJob.getInstance().log("player " + ((sender instanceof Player) ? 1 : 0));
-        OddJob.getInstance().log("permission " + ((sender.hasPermission(getPermission())) ? 1 : 0));
-        OddJob.getInstance().log("player " + ((sender.isOp()) ? 1 : 0));
         if (denyConsole() && !(sender instanceof Player)) {
             if (response) MessageManager.errors_denied_console(getPlugin(), sender);
             return false;
@@ -80,70 +75,42 @@ public abstract class SubCommand {
         return true;
     }
 
-    /**
-     * @param sender CommandSender
-     * @param args   Strings
-     * @param errors Boolean - Stop after no subcommand found?
-     * @return Boolean
-     */
-    public boolean subCommand(@Nonnull CommandSender sender, @Nonnull String[] args, boolean errors) {
-        // Checking /homes <subcommand>
-        StringBuilder sub = builder(sender, args);
-        // set != null && args.length == 1
-        //       false  &&  true  =  false
-
-        // tp  == null && args.length == 1
-        //       true   &&  true  =  true
-        boolean subcommand = sub == null && args.length != 0;
-        if (args.length == 0 && sub != null) {
-            if (!(sender instanceof Player)) {
-                if (sub.isEmpty()) {
-                    if (errors) {
-                        MessageManager.errors_no_subcommands(getPlugin(), sender);
-                        return false;
-                    }
-                } else {
-                    if (errors) {
-                        MessageManager.sendSyntax(getPlugin(), sub.toString(), sender);
-                        return false;
+    public void finder(CommandSender sender, String[] args) {
+        if (args.length >= depth()) {
+            for (SubCommand subCommand : subCommands) {
+                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                    if (subCommand.can(sender, false, true)) {
+                        subCommand.getCommandExecutor(sender, args);
+                        return;
                     }
                 }
-                return false;
             }
-            redirect(sender, getPlugin(), "list");
-            return true;
         }
-        return subcommand;
+        MessageManager.sendSyntax(getPlugin(), list(sender), sender);
     }
 
-    public void redirect(CommandSender sender, Plugin plugin, String subcommand) {
-        Bukkit.dispatchCommand(sender, plugin.name() + " " + subcommand);
-    }
-
-    /**
-     * Listing subcommands as a comma separated String,
-     * will return NULL if a subcommand is triggered,
-     * returns an empty String if no subcommands exists
-     *
-     * @param sender CommandSender
-     * @param args   Strings
-     * @return NULL or String
-     */
-    public StringBuilder builder(CommandSender sender, String[] args) {
-        StringBuilder sub = new StringBuilder();
+    public String list(CommandSender sender) {
+        StringBuilder stringBuilder = new StringBuilder();
         for (SubCommand subCommand : subCommands) {
-            String name = subCommand.getName();
-            if (subCommand.can(sender, false, false)) {
-                if (args.length >= 1 && name.equalsIgnoreCase(args[0]) && !args[0].equals("help")) {
-                    subCommand.getCommandExecutor(sender, args);
-                    // found a subcommand return 'null'
-                    return null;
-                }
-                sub.append(ChatColor.GRAY).append(name).append(ChatColor.RESET).append(",");
+            if (can(sender, false, false)) {
+                stringBuilder.append(subCommand.getName()).append(",");
             }
         }
-        if (!sub.isEmpty()) sub.deleteCharAt(sub.lastIndexOf(","));
-        // not found subcommand, sub will be an empty string
-        return sub;
+        if (!stringBuilder.isEmpty()) stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
+        return stringBuilder.toString();
+    }
+
+    public List<String> tabs(CommandSender sender, String[] args) {
+        List<String> list = new ArrayList<>();
+        for (SubCommand subCommand : subCommands) {
+            if (can(sender, false, false)) {
+                if (args.length >= depth() && subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                    subCommand.getTabCompleter(sender, args);
+                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
+                    list.add(subCommand.getName());
+                }
+            }
+        }
+        return list;
     }
 }

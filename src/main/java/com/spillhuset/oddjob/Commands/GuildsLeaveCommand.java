@@ -56,6 +56,11 @@ public class GuildsLeaveCommand extends SubCommand implements GuildInterface {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
             return;

@@ -1,7 +1,12 @@
 package com.spillhuset.oddjob.Commands;
+
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,6 +15,7 @@ import java.util.List;
 
 public class GuildsHomesCommand extends SubCommand {
     private final List<SubCommand> subCommands = new ArrayList<>();
+
     public GuildsHomesCommand() {
         subCommands.add(new GuildsHomesAddCommand());
         subCommands.add(new GuildsHomesRelocateCommand());
@@ -17,6 +23,7 @@ public class GuildsHomesCommand extends SubCommand {
         subCommands.add(new GuildsHomesTeleportCommand());
         subCommands.add(new GuildsHomesRemoveCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return false;
@@ -44,7 +51,7 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return null;
+        return "/guilds homes <name>";
     }
 
     @Override
@@ -54,40 +61,33 @@ public class GuildsHomesCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 4;
+    }
+
+    @Override
+    public int depth() {
+        return 1;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (sender instanceof Player player) {
-            String name = "home";
-            if (args.length == 2 && !args[1].equals("")) {
-                name = args[1];
-            }
-            OddJob.getInstance().getGuildsManager().home(player, name);
+        if (!can(sender, false, true)) {
+            return;
         }
+        if (!argsLength(sender, args.length)) {
+            return;
+        }
+
+        finder(sender,args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-
-        // List commands
-        for (SubCommand subCommand : subCommands) {
-            if (subCommand.can(sender, false, false)) {
-                if (args.length == 0 || (args.length == 1 && subCommand.getName().startsWith(args[0]))) {
-                    list.add(subCommand.getName());
-                } else if (subCommand.getName().equalsIgnoreCase(args[0])) {
-                    return subCommand.getTabCompleter(sender, args);
-                }
-            }
-        }
-
-        return list;
+        return tabs(sender,args);
     }
 }

@@ -50,6 +50,11 @@ public class InvseeCommand extends SubCommandInterface implements CommandExecuto
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!can(sender,true,true)) {
             return true;

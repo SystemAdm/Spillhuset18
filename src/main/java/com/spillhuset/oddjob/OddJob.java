@@ -10,11 +10,14 @@ import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.Utils.Tool;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerSet;
 
@@ -41,8 +44,10 @@ public class OddJob extends JavaPlugin {
     public MarkerSet markerSet = null;
     public BossBar bossbar;
     private ShopsManager shopsManager;
-    private HashMap<UUID,BossBar> bars = new HashMap<>();
+    private final HashMap<UUID, BossBar> bars = new HashMap<>();
     private AuctionsManager auctionsManager;
+    int counter = 0;
+    int time = 300;
 
     public static OddJob getInstance() {
         return instance;
@@ -106,26 +111,52 @@ public class OddJob extends JavaPlugin {
 
         earnings = new HashMap<>();
         entrances = new ArrayList<>();
-/*
-        bossbar = Bukkit.createBossBar("Next payment in:", BarColor.BLUE, BarStyle.SOLID);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(OddJob.getInstance(), () -> {
-            long time = Bukkit.getServer().getWorlds().get(0).getTime() +12000;
-            if (time >= 24000)time -= 24000;
-            bossbar.setProgress(((double) time / 24000));
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                UUID uuid = player.getUniqueId();
-                if (earnings.containsKey(uuid) && !bossbar.getPlayers().contains(player)) {
-                    bossbar.addPlayer(player);
+
+        bossbar = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SOLID);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                String minS = "";
+                String secS = "";
+                int min = 0;
+                int sec = 0;
+                if (counter > 59) {
+                    min = (int) Math.floor(counter / 60d);
+                    sec = counter - (min * 60);
+                } else
+                    sec = counter;
+
+                if (min == 1) {
+                    minS = min + "min ";
+                } else if (min != 0) {
+                    minS = min + "mins ";
                 }
-                if (time >= 12000 && time <12021) {
-                    double value = Tool.round(earnings.get(uuid));
-                    CurrencySQL.add(uuid, value, Account.bank);
-                    MessageManager.currency_auto(player, value);
-                    earnings.remove(uuid);
-                    bossbar.removePlayer(player);
+
+                if (sec == 1) {
+                    secS = sec + "sec ";
+                } else if (sec != 0) {
+                    secS = sec + "secs ";
                 }
+
+                bossbar.setTitle("Next payment in: " + minS + secS);
+                bossbar.setProgress((double) counter / (double) time);
+                if (counter <= 0) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        UUID uuid = player.getUniqueId();
+                        if (earnings.containsKey(uuid)) {
+                            double value = Math.round(earnings.getOrDefault(uuid, 0d));
+                            CurrencySQL.add(uuid, value, Account.bank);
+                            MessageManager.currency_auto(player, value);
+                            earnings.remove(uuid);
+                            bossbar.removePlayer(player);
+                        }
+                    }
+
+                }
+                if (counter == 0) counter = time;
+                counter--;
             }
-        }, 20L, 20L);*/
+        }.runTaskTimerAsynchronously(OddJob.getInstance(), 20, 20);
     }
 
     @Override

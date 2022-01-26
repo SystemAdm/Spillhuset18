@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-
-public class LocksInfoCommand extends com.spillhuset.oddjob.Utils.SubCommand {
+import com.spillhuset.oddjob.Utils.SubCommand;
+public class LocksInfoCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -50,6 +50,11 @@ public class LocksInfoCommand extends com.spillhuset.oddjob.Utils.SubCommand {
 
     @Override
     public int maxArgs() {
+        return 1;
+    }
+
+    @Override
+    public int depth() {
         return 1;
     }
 

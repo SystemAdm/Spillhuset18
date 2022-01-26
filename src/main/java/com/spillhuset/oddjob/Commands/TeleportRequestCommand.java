@@ -55,6 +55,11 @@ public class TeleportRequestCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         OddJob.getInstance().log("le");
         if (!argsLength(sender, args.length)) {

@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand {
+public class GuildsAcceptCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return true;
@@ -53,6 +54,11 @@ public class GuildsAcceptCommand extends com.spillhuset.oddjob.Utils.SubCommand 
     @Override
     public int maxArgs() {
         return 2;
+    }
+
+    @Override
+    public int depth() {
+        return 1;
     }
 
     @Override

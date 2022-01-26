@@ -30,6 +30,8 @@ public class CurrencyManager {
     }
 
     public void earnBlockBrake(Player player, Block block) {
+        if (!OddJob.getInstance().bossbar.getPlayers().contains(player))
+            OddJob.getInstance().bossbar.addPlayer(player);
         Material material = block.getBlockData().getMaterial();
         Plu plu = null;
         for (Plu test : Plu.values()) {
@@ -119,5 +121,43 @@ public class CurrencyManager {
 
     public void showGuild(Player player, Guild guild) {
         MessageManager.currency_show_guild(player, guild, get(guild.getUuid(), Account.guild));
+    }
+
+    public void sub(CommandSender sender, String accountString, String valueString) {
+        Account account = null;
+        for (Account a : Account.values()) {
+            if (a.name().equalsIgnoreCase(accountString)) {
+                account = a;
+            }
+        }
+        if (account == null) {
+            MessageManager.currency_account_not_found(sender, accountString);
+            return;
+        }
+
+        double value = 0d;
+        value = Double.parseDouble(valueString);
+        if (value == 0d) {
+            MessageManager.invalidNumber(Plugin.currency, sender, valueString);
+            return;
+        }
+
+        Player player = (Player) sender;
+        UUID uuid = null;
+        if (account == Account.guild) {
+            uuid = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
+        } else {
+            uuid = player.getUniqueId();
+        }
+
+        if (uuid == null) {
+            MessageManager.currency_account_not_found(sender, account.name());
+            return;
+        }
+        if (!CurrencySQL.has(uuid))
+            CurrencySQL.initializeGuild(uuid);
+
+        CurrencySQL.sub(account,uuid, value);
+        MessageManager.currency_subbed(sender, uuid.toString(), account.name(), value);
     }
 }

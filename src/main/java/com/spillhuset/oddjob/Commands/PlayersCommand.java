@@ -49,6 +49,11 @@ public class PlayersCommand extends SubCommandInterface implements CommandExecut
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
         sender.sendMessage("MaxHomes: "+ OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes());

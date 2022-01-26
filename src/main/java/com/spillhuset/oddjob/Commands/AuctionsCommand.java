@@ -61,6 +61,11 @@ public class AuctionsCommand extends SubCommandInterface implements CommandExecu
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
         ItemStack itemStack = player.getInventory().getItemInMainHand().clone();

@@ -33,7 +33,7 @@ public class HomesTeleportCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "tp";
+        return "teleport";
     }
 
     @Override
@@ -59,6 +59,11 @@ public class HomesTeleportCommand extends SubCommand {
     @Override
     public int maxArgs() {
         return 2;
+    }
+
+    @Override
+    public int depth() {
+        return 1;
     }
 
     @Override
@@ -94,7 +99,7 @@ public class HomesTeleportCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().debug(getPlugin(), "tp", destinationPlayer.getDisplayName() + " " + destinationName);
+        OddJob.getInstance().debug(getPlugin(), "teleport", destinationPlayer.getDisplayName() + " " + destinationName);
         OddJob.getInstance().getHomeManager().teleport(sender, destinationPlayer, destinationName);
         HistoryManager.add(destinationPlayer.getUuid(), Changed.homes_teleported, "", destinationName);
 

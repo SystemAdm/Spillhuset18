@@ -59,6 +59,11 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
     }
 
     @Override
+    public int depth() {
+        return 0;
+    }
+
+    @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (!argsLength(sender, args.length)) {
             return true;
@@ -66,26 +71,7 @@ public class TeleportCommand extends SubCommandInterface implements CommandExecu
         if (!can(sender, true, true)) {
             return true;
         }
-        if (args.length == 0) {
-            if (sender instanceof Player) {
-                Bukkit.dispatchCommand(sender, "teleport help");
-            } else {
-                MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            }
-            return true;
-        }
-
-        boolean c = subCommand(sender, args, false);
-        if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
-            MessageManager.sendSyntax(getPlugin(), builder(sender, args).toString(), sender);
-            return true;
-        } else if (args.length == 1 && sender instanceof Player player && !c) {
-            OddJob.getInstance().getTeleportManager().teleport(player, args[0], Plugin.teleports);
-            return true;
-        } else if (args.length == 2 && !c) {
-            OddJob.getInstance().getTeleportManager().teleport(sender, args[0], args[1]);
-            return true;
-        }
+        finder(sender,args);
         return true;
     }
 

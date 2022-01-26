@@ -62,6 +62,11 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
             return;
@@ -93,9 +98,10 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
 
 
         if (sender instanceof Player player) {
-            OddJob.getInstance().getHomeManager().add(sender, target, name, player.getLocation());
-            OddJob.getInstance().debug(getPlugin(), "add", target.getDisplayName() + " " + name);
-            HistoryManager.add(target.getUuid(), Changed.homes_added, "", name);
+            if (OddJob.getInstance().getHomeManager().add(sender, target, name, player.getLocation())) {
+                OddJob.getInstance().debug(getPlugin(), "add", target.getDisplayName() + " " + name);
+                HistoryManager.add(target.getUuid(), Changed.homes_added, "", name);
+            }
         }
     }
 

@@ -415,4 +415,32 @@ public class GuildSQL extends MySQLManager {
             close();
         }
     }
+
+    public static void saveChunk(Chunk chunk, Guild guild) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_chunks` WHERE `server` = ? AND `world` = ? AND `x` = ? AND `z` = ?");
+            preparedStatement.setString(1, server);
+            preparedStatement.setString(2, chunk.getWorld().getUID().toString());
+            preparedStatement.setInt(3, chunk.getX());
+            preparedStatement.setInt(4, chunk.getZ());
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_guilds_chunks` SET `uuid` = ? WHERE `server` = ? AND `world` = ? AND `x` = ? AND `z` = ?");
+            } else {
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds_chunks` (`uuid`,`server`,`world`,`x`,`z`) VALUES (?,?,?,?,?)");
+            }
+            preparedStatement.setString(1, guild.getUuid().toString());
+            preparedStatement.setString(2, server);
+            preparedStatement.setString(3, chunk.getWorld().getUID().toString());
+            preparedStatement.setInt(4, chunk.getX());
+            preparedStatement.setInt(5, chunk.getZ());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
 }

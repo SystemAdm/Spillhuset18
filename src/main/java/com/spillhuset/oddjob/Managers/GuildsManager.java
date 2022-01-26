@@ -13,6 +13,7 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.markers.AreaMarker;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class GuildsManager extends Managers {
+    private static List<Chunk> autoChunk = new ArrayList<>();
     public HashMap<UUID, UUID> autoClaim = new HashMap<>();
     public HashMap<UUID, UUID> autoUnclaim = new HashMap<>();
     /**
@@ -1250,7 +1252,7 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        OddJob.getInstance().getHomeManager().addGuild(player, guild.getUuid(), name);
+        OddJob.getInstance().getHomeManager().addGuild(player, guild.getUuid(), name,guild.getMaxHomes());
     }
 
     public void homeRemove(Player player, String name) {
@@ -1306,12 +1308,23 @@ public class GuildsManager extends Managers {
             if (world != null) {
                 for (BlockVector2 ch : chs) {
                     Chunk chunk = world.getChunkAt(ch.getX(), ch.getZ());
-                    claim(guild, chunk, false);
+                    GuildsManager.autoChunk.add(chunk);
                 }
             }
         } catch (IncompleteRegionException ignored) {
             MessageManager.guilds_errors_set_area(sender);
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int c = autoChunk.size() - 1; c > 0; c--) {
+                    GuildSQL.saveChunk(autoChunk.get(c), guild);
+                    chunks.put(autoChunk.get(c), guild.getUuid());
+                }
+                renderChunks();
+            }
+        }.runTaskAsynchronously(OddJob.getInstance());
 
     }
 

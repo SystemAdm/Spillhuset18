@@ -740,4 +740,11 @@ public class MessageManager {
     public static void fortress(CommandSender sender) {
         notify(Plugin.guilds,sender,Notify.danger,ChatColor.BOLD+""+"Area 51 is closed.");
     }
+
+    public static void errors_chunk_is_owned(CommandSender sender, String name) {
+        notify(Plugin.homes,sender,Notify.danger,ChatColor.BOLD+""+"Chunk is claimed by "+cGuild+name);
+    }
+
+    public static void currency_subbed(CommandSender sender, String toString, String name, double value) {
+    }
 }

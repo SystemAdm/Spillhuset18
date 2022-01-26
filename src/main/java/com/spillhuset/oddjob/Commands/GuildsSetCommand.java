@@ -62,6 +62,11 @@ public class GuildsSetCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 1;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         StringBuilder sub = new StringBuilder();
 

@@ -47,7 +47,7 @@ public class HomesDelCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "homes.del";
+        return "homes";
     }
 
     @Override
@@ -58,6 +58,11 @@ public class HomesDelCommand extends SubCommand {
     @Override
     public int maxArgs() {
         return 3;
+    }
+
+    @Override
+    public int depth() {
+        return 1;
     }
 
     @Override

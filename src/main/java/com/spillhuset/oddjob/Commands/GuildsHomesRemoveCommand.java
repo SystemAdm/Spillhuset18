@@ -57,6 +57,11 @@ public class GuildsHomesRemoveCommand extends SubCommand {
     }
 
     @Override
+    public int depth() {
+        return 2;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
             return;
