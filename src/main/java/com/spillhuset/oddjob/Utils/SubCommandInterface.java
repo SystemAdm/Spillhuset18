@@ -102,7 +102,7 @@ public abstract class SubCommandInterface {
         for (SubCommand subCommand : subCommands) {
             if (can(sender, false, false)) {
                 if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    subCommand.getTabCompleter(sender,args);
+                    return subCommand.getTabCompleter(sender,args);
                 } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
                     list.add(subCommand.getName());
                 }

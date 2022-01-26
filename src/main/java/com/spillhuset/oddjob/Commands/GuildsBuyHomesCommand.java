@@ -74,6 +74,6 @@ public class GuildsBuyHomesCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return tabs(sender,args);
+        return new ArrayList<>();
     }
 }

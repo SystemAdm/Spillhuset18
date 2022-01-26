@@ -82,6 +82,19 @@ public class GuildsBuyCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return tabs(sender,args);
+        List<String> list = new ArrayList<>();
+
+        for (SubCommand subCommand : subCommands) {
+            String name = subCommand.getName();
+            if (args.length == depth()) {
+                if (name.equalsIgnoreCase(args[depth()-1])) {
+                    return subCommand.getTabCompleter(sender,args);
+                } else if (args[depth()-1].isEmpty() || name.startsWith(args[depth()-1])) {
+                    list.add(name);
+                }
+            }
+        }
+
+        return list;
     }
 }

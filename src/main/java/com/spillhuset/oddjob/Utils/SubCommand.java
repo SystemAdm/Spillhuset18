@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -100,17 +101,5 @@ public abstract class SubCommand {
         return stringBuilder.toString();
     }
 
-    public List<String> tabs(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        for (SubCommand subCommand : subCommands) {
-            if (can(sender, false, false)) {
-                if (args.length >= depth() && subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    subCommand.getTabCompleter(sender, args);
-                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
-                    list.add(subCommand.getName());
-                }
-            }
-        }
-        return list;
-    }
+
 }
