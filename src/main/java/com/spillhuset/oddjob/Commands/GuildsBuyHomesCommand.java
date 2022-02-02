@@ -68,8 +68,7 @@ public class GuildsBuyHomesCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().log("We are here!");
-        //OddJob.getInstance().getGuildsManager().buyHomes(sender);
+        OddJob.getInstance().getGuildsManager().buyHomes(sender);
     }
 
     @Override

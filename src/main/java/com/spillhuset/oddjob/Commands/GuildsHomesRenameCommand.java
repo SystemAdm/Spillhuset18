@@ -70,7 +70,7 @@ public class GuildsHomesRenameCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-
+        OddJob.getInstance().log("rename");
         Player player = (Player) sender;
 
         OddJob.getInstance().getGuildsManager().setHomeRename(player, args[2], args[3]);

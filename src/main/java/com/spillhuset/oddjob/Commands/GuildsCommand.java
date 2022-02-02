@@ -3,13 +3,14 @@ package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
+import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
@@ -81,6 +82,16 @@ public class GuildsCommand extends SubCommandInterface implements CommandExecuto
             return true;
         }
 
+        if (sender instanceof Player player && args.length == depth()) {
+            OddJob.getInstance().getGuildsManager().info(player);
+            OddJob.getInstance().log("player: x:"+player.getLocation().getChunk().getX()+" z:"+player.getLocation().getChunk().getZ()+" w:"+player.getWorld().getName());
+            for (Chunk chunk : OddJob.getInstance().getGuildsManager().getChunks().keySet()) {
+                OddJob.getInstance().log("chunk: x:"+chunk.getX()+" z:"+chunk.getZ()+" w:"+chunk.getWorld().getName());
+            }
+
+            OddJob.getInstance().log("Standing on: "+OddJob.getInstance().getGuildsManager().getGuildByChunk(player.getLocation().getChunk()));
+        }
+
         // guilds buy homes
         finder(sender, args);
 
@@ -89,6 +100,6 @@ public class GuildsCommand extends SubCommandInterface implements CommandExecuto
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        return tabs(sender,args);
+        return tabs(sender, args);
     }
 }

@@ -4,6 +4,7 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -101,10 +102,12 @@ public abstract class SubCommandInterface {
         List<String> list = new ArrayList<>();
         for (SubCommand subCommand : subCommands) {
             if (can(sender, false, false)) {
-                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    return subCommand.getTabCompleter(sender,args);
-                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
-                    list.add(subCommand.getName());
+                if (subCommand.hasGuild(sender,false)) {
+                    if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                        return subCommand.getTabCompleter(sender, args);
+                    } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
+                        list.add(subCommand.getName());
+                    }
                 }
             }
         }
@@ -115,7 +118,7 @@ public abstract class SubCommandInterface {
         StringBuilder stringBuilder = new StringBuilder();
         for (SubCommand subCommand : subCommands) {
             if (can(sender,false,false)) {
-                stringBuilder.append(subCommand.getName()).append(",");
+                stringBuilder.append(ChatColor.GRAY).append(subCommand.getName()).append(ChatColor.RESET).append(",");
             }
         }
         if (!stringBuilder.isEmpty()) stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));

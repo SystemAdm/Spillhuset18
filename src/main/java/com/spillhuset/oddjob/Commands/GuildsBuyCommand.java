@@ -86,10 +86,11 @@ public class GuildsBuyCommand extends SubCommand {
 
         for (SubCommand subCommand : subCommands) {
             String name = subCommand.getName();
-            if (args.length == depth()) {
-                if (name.equalsIgnoreCase(args[depth()-1])) {
-                    return subCommand.getTabCompleter(sender,args);
-                } else if (args[depth()-1].isEmpty() || name.startsWith(args[depth()-1])) {
+            if (args.length == depth() + 1) {
+                if (name.equalsIgnoreCase(args[depth()])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+                if (args[depth()].isEmpty() || name.startsWith(args[depth()])) {
                     list.add(name);
                 }
             }

@@ -3,17 +3,15 @@ package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsHomesCommand extends SubCommand {
+public class GuildsHomesCommand extends SubCommand implements GuildInterface {
     private final List<SubCommand> subCommands = new ArrayList<>();
 
     public GuildsHomesCommand() {
@@ -82,12 +80,42 @@ public class GuildsHomesCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
+        if (!hasGuild(sender,true)) {
+            return;
+        }
 
-        finder(sender,args);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (SubCommand subCommand : subCommands) {
+            String name = subCommand.getName();
+            if (args.length > depth() && name.equalsIgnoreCase(args[depth()])) {
+                if (subCommand.can(sender,false,true)) {
+                    subCommand.getCommandExecutor(sender,args);
+                    return;
+                }
+            } else if (subCommand.can(sender,false,false)) {
+                stringBuilder.append(ChatColor.GRAY).append(name).append(ChatColor.RESET).append(",");
+            }
+        }
+        if (!stringBuilder.isEmpty()) stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
+        MessageManager.sendSyntax(getPlugin(), stringBuilder.toString(), sender);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return tabs(sender,args);
+        List<String> list = new ArrayList<>();
+
+        for (SubCommand subCommand : subCommands) {
+            String name = subCommand.getName();
+            if (args.length == depth() + 1) {
+                if (name.equalsIgnoreCase(args[depth()])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+                if (args[depth()].isEmpty() || name.startsWith(args[depth()])) {
+                    list.add(name);
+                }
+            }
+        }
+
+        return list;
     }
 }

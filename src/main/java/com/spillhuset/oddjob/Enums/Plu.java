@@ -6,7 +6,9 @@ public enum Plu {
     DEFAULT(1, 1),
     GUILDS_CLAIMS(1000, 0.1),
     GUILDS_HOMES(5000, 0.5),
+    // 1000 (n^2 + 5)
     PLAYER_HOMES(1000,0.5);
+    // 250 (n + 3)
 
     public final double value;
     public final double multiplier;

@@ -46,7 +46,7 @@ public class GuildsDisbandCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class GuildsDisbandCommand extends SubCommand {
             return;
         }
         Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().disband(player,args[0]);
+        OddJob.getInstance().getGuildsManager().disband(player,args[1]);
     }
 
     @Override

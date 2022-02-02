@@ -69,6 +69,7 @@ public class GuildsHomesTeleportCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
+        OddJob.getInstance().log("tp");
         String name = "home";
         if (args.length == 3) {
             name = args[2];

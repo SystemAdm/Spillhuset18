@@ -32,6 +32,7 @@ public abstract class SubCommand {
 
     public abstract int depth();
 
+
     public abstract void getCommandExecutor(CommandSender sender, String[] args);
 
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
@@ -101,5 +102,16 @@ public abstract class SubCommand {
         return stringBuilder.toString();
     }
 
-
+    public boolean hasGuild(CommandSender sender, boolean response) {
+        if (sender instanceof Player player) {
+            if (OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()) != null) {
+                return true;
+            } else {
+                if (response) MessageManager.guilds_not_associated(sender);
+                return false;
+            }
+        }
+        if (response) MessageManager.guilds_not_associated(sender);
+        return false;
+    }
 }

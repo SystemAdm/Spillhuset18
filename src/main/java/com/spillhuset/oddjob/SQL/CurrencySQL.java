@@ -4,6 +4,7 @@ import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MySQLManager;
+import com.spillhuset.oddjob.OddJob;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -127,7 +128,7 @@ public class CurrencySQL extends MySQLManager {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                ret = resultSet.getDouble(account.name()) >= amount;
+                ret = resultSet.getDouble(account.getType()) >= amount;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

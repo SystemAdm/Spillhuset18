@@ -70,6 +70,7 @@ public class GuildsHomesRemoveCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
+        OddJob.getInstance().log("remove");
         String name = "home";
         Player player = (Player) sender;
         if (args.length == 3) {
