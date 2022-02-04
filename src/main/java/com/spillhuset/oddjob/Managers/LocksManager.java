@@ -30,8 +30,8 @@ public class LocksManager {
         ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
+            meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "LOCKING TOOL");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "LOCKING TOOL");
             lore.add("Use this tool to lock your item.");
             lore.add("Right click to protect your stuff!");
             meta.setLore(lore);
@@ -43,8 +43,8 @@ public class LocksManager {
         item = new ItemStack(Material.TRIPWIRE_HOOK);
         meta = item.getItemMeta();
         if (meta != null) {
+            meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "UNLOCKING TOOL");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "UNLOCKING TOOL");
             lore.add("Use this tool to unlock your item.");
             lore.add("Right click to unprotect your stuff!");
             meta.setLore(lore);
@@ -56,8 +56,8 @@ public class LocksManager {
         item = new ItemStack(Material.MAP);
         meta = item.getItemMeta();
         if (meta != null) {
+            meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "INFO TOOL");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "INFO TOOL");
             lore.add("Use this tool to know whom locked your item.");
             lore.add("Right click to look at the locks signature!");
             meta.setLore(lore);

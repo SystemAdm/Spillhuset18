@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Events;
 
+import com.spillhuset.oddjob.Managers.LocksManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.LocksSQL;
@@ -13,12 +14,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.type.Door;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +45,7 @@ public class OnPlayerInteractEvent implements Listener {
         if (item != null && OddJob.getInstance().getLocksManager().getTools().contains(item)) {
             event.setUseItemInHand(Event.Result.DENY);
             event.setUseInteractedBlock(Event.Result.DENY);
+            event.setCancelled(true);
         }
 
         if (clickedBlock != null) {
@@ -116,8 +121,20 @@ public class OnPlayerInteractEvent implements Listener {
             } else {
                 if (OddJob.getInstance().getLocksManager().getTools().contains(item)) {
                     event.setCancelled(true);
+                } else {
+                    if (owned != null && owned.equals(player.getUniqueId()) && action == Action.RIGHT_CLICK_BLOCK && clickedBlock instanceof Door) {
+                        LockUtil.toggleDoor(clickedBlock,player,player.getLocation());
+                    }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void drop(PlayerDropItemEvent event) {
+        ItemStack item = event.getItemDrop().getItemStack();
+        if (OddJob.getInstance().getLocksManager().getTools().contains(item)) {
+            event.setCancelled(true);
         }
     }
 }

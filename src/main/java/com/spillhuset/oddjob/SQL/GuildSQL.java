@@ -117,6 +117,7 @@ public class GuildSQL extends MySQLManager {
                 if (world != null) {
                     Chunk chunk = world.getChunkAt(resultSet.getInt("x"), resultSet.getInt("z"));
                     UUID guild = UUID.fromString(resultSet.getString("uuid"));
+                    chunk.load();
                     chunks.put(chunk, guild);
                 }
             }

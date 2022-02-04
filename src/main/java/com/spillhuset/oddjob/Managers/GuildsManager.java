@@ -582,6 +582,11 @@ public class GuildsManager extends Managers {
      * @return Guild
      */
     public Guild getGuildByChunk(@Nonnull Chunk chunk) {
+        for(Chunk c : chunks.keySet()) {
+            if (c.getX() == chunk.getX() && c.getZ() == chunk.getZ() && c.getWorld() == chunk.getWorld()) {
+                return getGuildByUuid(chunks.get(c));
+            }
+        }
         if (chunks.containsKey(chunk)) {
             return getGuildByUuid(chunks.get(chunk));
         } else {
