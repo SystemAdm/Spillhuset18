@@ -395,7 +395,7 @@ public class GuildsManager extends Managers {
      *
      * @param player Player (Location and Guild)
      */
-    public void claim(Player player) {
+    public void claim(Player player, boolean outpost) {
         Chunk chunk = player.getLocation().getChunk();
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = roles.get(player.getUniqueId());
@@ -403,19 +403,19 @@ public class GuildsManager extends Managers {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
-        // Check has guild
+        // Check has guild | Player must have a guild to claim a chunk
         if (guild == null) {
             MessageManager.guilds_not_associated(player);
             return;
         }
 
-        // Check has role
+        // Check has role | Only guildMaster may claim a chunk
         if (role != Role.Master) {
             MessageManager.guilds_need_permission(player, role);
             return;
         }
 
-        // Check chunk
+        // Check chunk | The chunk must not have been claimed by anyone before
         UUID owned = chunks.get(chunk);
         OddJob.getInstance().log("owned:" + chunks.size());
         if (owned != null) {
@@ -426,7 +426,10 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_claims_by_else(player);
             return;
         }
+
         boolean allowed = false;
+
+        // Check world | Is it possible to claim a chunk in this world?
         World world = chunk.getWorld();
         for (String a : OddJob.getInstance().getConfig().getStringList("guilds.world")) {
             UUID b = UUID.fromString(a);
@@ -439,7 +442,7 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        // Check limit
+        // Check limit | There is a claim limit per guild, has it reached max?
         if (guild.getMaxClaims() <= guild.getClaims()) {
             MessageManager.guilds_claims_too_many(player);
             return;
@@ -448,11 +451,9 @@ public class GuildsManager extends Managers {
         boolean valid = true;
         StringBuilder sb = new StringBuilder();
 
-        // Checking if any other guild is near
+        // Checking if any other guild is near | There must be at least 2 chunks between each guild
         for (int x = chunkX - 2; x <= chunkX + 2; x++) {
-            OddJob.getInstance().log("x:" + x);
             for (int z = chunkZ - 2; z <= chunkZ + 2; z++) {
-                OddJob.getInstance().log("z:" + z);
                 Chunk test = world.getChunkAt(x, z);
                 Guild own = null;
                 if (chunks.containsKey(test) && !chunks.get(test).equals(guild.getUuid())) {
@@ -460,12 +461,12 @@ public class GuildsManager extends Managers {
                     sb.append(own.getName()).append(",");
                     valid = false;
                 }
-                OddJob.getInstance().log("x:" + x + "; z:" + z + "; owned by " + (own != null ? own.getName() : "null"));
             }
         }
 
-        // Has no claims from earlier
-        if (!chunks.containsValue(guild.getUuid())) {
+        // Are we claiming an outpost chunk, or do we not have any claims from earlier?
+        if (valid && (outpost || !chunks.containsValue(guild.getUuid()))) {
+            OddJob.getInstance().log("outpost | none");
             claim(guild, chunk, true);
             return;
         }
@@ -473,21 +474,31 @@ public class GuildsManager extends Managers {
 
         if (valid) {
             valid = false;
-            // Are the claims connected
-            for (int x = chunkX - 1; x <= chunkX + 1; x++) {
-                for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
-                    Chunk test = world.getChunkAt(x, z);
-                    if (chunks.containsKey(test) && chunks.get(test).equals(guild.getUuid())) {
-                        valid = true;
-                    }
-                }
+            // Are the claims connected | Claims must be connected
+            Chunk testX1 = world.getChunkAt(chunkX + 1, chunkZ);
+            if (chunks.containsKey(testX1) && chunks.get(testX1).equals(guild.getUuid())) {
+                valid = true;
             }
+            Chunk testXn1 = world.getChunkAt(chunkX - 1, chunkZ);
+            if (chunks.containsKey(testXn1) && chunks.get(testXn1).equals(guild.getUuid())) {
+                valid = true;
+            }
+            Chunk testZ1 = world.getChunkAt(chunkX, chunkZ + 1);
+            if (chunks.containsKey(testZ1) && chunks.get(testZ1).equals(guild.getUuid())) {
+                valid = true;
+            }
+            Chunk testZn1 = world.getChunkAt(chunkX, chunkZ - 1);
+            if (chunks.containsKey(testZn1) && chunks.get(testZn1).equals(guild.getUuid())) {
+                valid = true;
+            }
+
             if (valid) {
                 claim(guild, chunk, true);
             } else {
                 MessageManager.guilds_claims_connected(player);
             }
         } else {
+            if (!sb.isEmpty()) sb.deleteCharAt(sb.lastIndexOf(","));
             MessageManager.guilds_claims_nearby(player, sb.toString());
         }
     }
@@ -582,7 +593,7 @@ public class GuildsManager extends Managers {
      * @return Guild
      */
     public Guild getGuildByChunk(@Nonnull Chunk chunk) {
-        for(Chunk c : chunks.keySet()) {
+        for (Chunk c : chunks.keySet()) {
             if (c.getX() == chunk.getX() && c.getZ() == chunk.getZ() && c.getWorld() == chunk.getWorld()) {
                 return getGuildByUuid(chunks.get(c));
             }

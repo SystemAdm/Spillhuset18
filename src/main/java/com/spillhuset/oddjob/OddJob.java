@@ -93,6 +93,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerInventoryCloseEvent(), this);
         pm.registerEvents(new OnPlayerInteractEvent(), this);
         pm.registerEvents(new OnBlockFromToEvent(), this);
+        pm.registerEvents(new OnPlayerDropItemEvent(),this);
 
         /* Commands */
         getCommand("homes").setExecutor(new HomesCommand());

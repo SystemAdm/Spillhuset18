@@ -75,10 +75,14 @@ public class GuildsClaimCommand extends SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            OddJob.getInstance().getGuildsManager().claim(player);
+            OddJob.getInstance().getGuildsManager().claim(player,false);
             return;
         }
+        //guilds claim outpost
         if (args.length >= 2) {
+            if (args[1].equalsIgnoreCase("outpost")) {
+                OddJob.getInstance().getGuildsManager().claim(player,true);
+            }
             if (args[1].equalsIgnoreCase("auto")) {
                 OddJob.getInstance().getGuildsManager().autoClaim(player, OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
                 return;
@@ -101,11 +105,19 @@ public class GuildsClaimCommand extends SubCommand {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 2 || args.length==3) {
+        if (args.length == 2 && sender instanceof Player player) {
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+            if (guild != null) {
+                if (OddJob.getInstance().getGuildsManager().getChunks().containsValue(guild.getUuid())) {
+                    list.add("outpost");
+                }
+            }
+        }
+        if (args.length == 2 || args.length == 3) {
             list.add("auto");
         }
-        if (args.length == 2 ) {
-            for (Guild guild:OddJob.getInstance().getGuildsManager().getGuilds().values()) {
+        if (args.length == 2) {
+            for (Guild guild : OddJob.getInstance().getGuildsManager().getGuilds().values()) {
                 if (args[1].isEmpty() || guild.getName().startsWith(args[1])) {
                     list.add(guild.getName());
                 }

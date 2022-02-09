@@ -62,6 +62,13 @@ public class WarpTpCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        switch (args[1]) {
+            case "north" -> OddJob.getInstance().getWarpManager().north((Player) sender);
+            case "south" -> OddJob.getInstance().getWarpManager().south((Player) sender);
+            case "east" -> OddJob.getInstance().getWarpManager().east((Player) sender);
+            case "west" -> OddJob.getInstance().getWarpManager().west((Player) sender);
+        }
+        /*
         if (!argsLength(sender, args.length)) {
             return;
         }
@@ -76,7 +83,7 @@ public class WarpTpCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        OddJob.getInstance().getWarpManager().teleport(player, name, passwd);
+        OddJob.getInstance().getWarpManager().teleport(player, name, passwd);*/
     }
 
     @Override

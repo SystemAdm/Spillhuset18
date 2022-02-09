@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -15,6 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WarpManager {
+    public void west(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
+        player.teleport(new Location(player.getWorld(), -20000, 300, 0));
+    }
+
+    public void east(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
+        player.teleport(new Location(player.getWorld(), 20000, 300, 0));
+    }
+
+    public void north(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
+        player.teleport(new Location(player.getWorld(), 0, 300, -20000));
+    }
+
+    public void south(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
+        player.teleport(new Location(player.getWorld(), 0, 300, 20000));
+    }
+
     public void add(Player player, String name, double cost, String passwd) {
         if (WarpSQL.exists(name)) {
             MessageManager.warps_exists(player, name);
@@ -36,7 +57,7 @@ public class WarpManager {
         }
 
         OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation(), Plugin.warps, CountdownSpeed.warp);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 1000,true,true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 1000, true, true));
     }
 
     public List<String> getList() {
@@ -67,6 +88,6 @@ public class WarpManager {
             }
             w.add(sb.toString());
         }
-        MessageManager.warps_list(sender,w);
+        MessageManager.warps_list(sender, w);
     }
 }

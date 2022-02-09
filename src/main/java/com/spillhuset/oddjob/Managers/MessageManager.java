@@ -285,7 +285,7 @@ public class MessageManager {
     }
 
     public static void guilds_not_allowed(CommandSender sender, Guild guild) {
-        notify(Plugin.guilds, sender, Notify.warning, "You are worthy of this action inside " + cGuild + guild.getName());
+        notify(Plugin.guilds, sender, Notify.warning, "You are not worthy of this action inside " + cGuild + guild.getName());
     }
 
     public static void guilds_warn_empty_bucket(CommandSender sender, Guild guild) {
@@ -746,5 +746,9 @@ public class MessageManager {
     }
 
     public static void currency_subbed(CommandSender sender, String toString, String name, double value) {
+    }
+
+    public static void locks_nope(CommandSender sender) {
+        notify(Plugin.locks,sender,Notify.warning,"Object is not locked");
     }
 }
