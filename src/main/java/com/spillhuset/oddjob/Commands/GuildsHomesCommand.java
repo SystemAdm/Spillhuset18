@@ -2,7 +2,6 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.ChatColor;
@@ -19,7 +18,7 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
         subCommands.add(new GuildsHomesRelocateCommand());
         subCommands.add(new GuildsHomesRenameCommand());
         subCommands.add(new GuildsHomesTeleportCommand());
-        subCommands.add(new GuildsHomesRemoveCommand());
+        subCommands.add(new GuildsHomesDeleteCommand());
     }
 
     @Override

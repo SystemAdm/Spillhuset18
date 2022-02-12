@@ -135,13 +135,12 @@ public class OnPlayerInteractEvent implements Listener {
                     event.setCancelled(true);
                 } else {
                     // Not using a tool
-
+                    OddJob.getInstance().log("here");
                     // Block is locked, and lock is owned by you, and right-clicked, and is a door!
-                    if (owned != null && owned.equals(player.getUniqueId()) && action == Action.RIGHT_CLICK_BLOCK && clickedBlock instanceof Door) {
+                    if (owned != null && owned.equals(player.getUniqueId()) && action == Action.RIGHT_CLICK_BLOCK && clickedBlock.getBlockData() instanceof Door) {
                         LockUtil.toggleDoor(clickedBlock, player, player.getLocation());
                         return;
                     }
-
                 }
             }
         }
@@ -149,6 +148,6 @@ public class OnPlayerInteractEvent implements Listener {
 }
 
 /*
-* Guild member interact locked object
-* Other members interact
-* */
+ * Guild member interact locked object
+ * Other members interact
+ * */

@@ -1,11 +1,16 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
+import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -66,7 +71,14 @@ public class CurrencyCommand extends SubCommandInterface implements CommandExecu
         if (!argsLength(sender, args.length)) {
             return true;
         }
+
+        if (sender instanceof Player player && args.length == depth()) {
+            OddJob.getInstance().getCurrencyManager().showPlayer(player);
+            return true;
+        }
+
         finder(sender, args);
+
         return true;
     }
 

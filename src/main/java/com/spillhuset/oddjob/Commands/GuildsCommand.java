@@ -90,6 +90,7 @@ public class GuildsCommand extends SubCommandInterface implements CommandExecuto
             }
 
             OddJob.getInstance().log("Standing on: "+OddJob.getInstance().getGuildsManager().getGuildByChunk(player.getLocation().getChunk()));
+            return true;
         }
 
         // guilds buy homes

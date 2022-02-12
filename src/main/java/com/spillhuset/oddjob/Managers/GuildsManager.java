@@ -476,19 +476,19 @@ public class GuildsManager extends Managers {
             valid = false;
             // Are the claims connected | Claims must be connected
             Chunk testX1 = world.getChunkAt(chunkX + 1, chunkZ);
-            if (chunks.containsKey(testX1) && chunks.get(testX1).equals(guild.getUuid())) {
+            if (chunks.containsKey(testX1) && chunks.get(testX1) == (guild.getUuid())) {
                 valid = true;
             }
             Chunk testXn1 = world.getChunkAt(chunkX - 1, chunkZ);
-            if (chunks.containsKey(testXn1) && chunks.get(testXn1).equals(guild.getUuid())) {
+            if (chunks.containsKey(testXn1) && chunks.get(testXn1) == (guild.getUuid())) {
                 valid = true;
             }
             Chunk testZ1 = world.getChunkAt(chunkX, chunkZ + 1);
-            if (chunks.containsKey(testZ1) && chunks.get(testZ1).equals(guild.getUuid())) {
+            if (chunks.containsKey(testZ1) && chunks.get(testZ1) == (guild.getUuid())) {
                 valid = true;
             }
             Chunk testZn1 = world.getChunkAt(chunkX, chunkZ - 1);
-            if (chunks.containsKey(testZn1) && chunks.get(testZn1).equals(guild.getUuid())) {
+            if (chunks.containsKey(testZn1) && chunks.get(testZn1) == (guild.getUuid())) {
                 valid = true;
             }
 
@@ -509,7 +509,8 @@ public class GuildsManager extends Managers {
      * @param player Player (Location and Guild)
      */
     public void unClaim(Player player) {
-        Chunk chunk = player.getLocation().getChunk();
+        World world = player.getWorld();
+        Chunk chunk = world.getChunkAt(player.getLocation().getChunk().getX(),player.getLocation().getChunk().getZ());
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = roles.get(player.getUniqueId());
 
@@ -526,9 +527,9 @@ public class GuildsManager extends Managers {
         }
 
         // Check owner
-        UUID owned = chunks.get(chunk);
+        Guild owned = getGuildByChunk(chunk);
         if (owned != null) {
-            if (owned.equals(guild.getUuid())) {
+            if (owned.equals(guild)) {
                 unClaim(guild, chunk);
                 return;
             }

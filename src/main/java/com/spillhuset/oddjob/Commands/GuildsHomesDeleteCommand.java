@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsHomesRemoveCommand extends SubCommand {
+public class GuildsHomesDeleteCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -28,7 +28,7 @@ public class GuildsHomesRemoveCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "remove";
+        return "delete";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class GuildsHomesRemoveCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds homes remove <name>";
+        return "/guilds homes delete <name>";
     }
 
     @Override
@@ -70,7 +70,6 @@ public class GuildsHomesRemoveCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-        OddJob.getInstance().log("remove");
         String name = "home";
         Player player = (Player) sender;
         if (args.length == 3) {

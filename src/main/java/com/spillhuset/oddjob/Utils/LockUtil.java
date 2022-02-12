@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.*;
 import org.bukkit.block.data.Bisected.Half;
@@ -154,6 +155,9 @@ public class LockUtil {
         if (upperRight != null) doorBlades.add(upperRight);
 
         for (Block bl : doorBlades) {
+            if (bl == null || bl.getType() == Material.AIR) {
+                continue;
+            }
             Openable openable = (Openable) bl.getBlockData();
             if (open) {
                 player.playSound(location, Sound.BLOCK_WOODEN_DOOR_CLOSE,1f,8f);
