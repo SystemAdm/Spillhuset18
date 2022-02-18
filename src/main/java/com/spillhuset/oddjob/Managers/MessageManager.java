@@ -52,7 +52,7 @@ public class MessageManager {
     }
 
     private static void notify(Plugin plugin, CommandSender sender, Notify notify, String message) {
-        Response response = Response.valueOf(OddJob.getInstance().getConfig().getString(plugin.name() + ".response", "CHAT"));
+        Response response = Response.valueOf(OddJob.getInstance().getConfig().getString(plugin.name() + ".response", "ACTIONBAR"));
         String prefixed = plugin.getString() + notify.getColor() + message;
         if ((response == Response.ACTIONBAR) && (sender instanceof Player player)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefixed));
@@ -730,25 +730,29 @@ public class MessageManager {
     }
 
     public static void guilds_no_stealing(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,"You can't steal this book!");
+        notify(Plugin.guilds, sender, Notify.danger, "You can't steal this book!");
     }
 
     public static void shops_inside(CommandSender sender) {
-        notify(Plugin.shops,sender,Notify.warning,"You have to be inside a shopping area.");
+        notify(Plugin.shops, sender, Notify.warning, "You have to be inside a shopping area.");
     }
 
     public static void fortress(CommandSender sender) {
-        notify(Plugin.guilds,sender,Notify.danger,ChatColor.BOLD+""+"Area 51 is closed.");
+        notify(Plugin.guilds, sender, Notify.danger, ChatColor.BOLD + "" + "Area 51 is closed.");
     }
 
     public static void errors_chunk_is_owned(CommandSender sender, String name) {
-        notify(Plugin.homes,sender,Notify.danger,ChatColor.BOLD+""+"Chunk is claimed by "+cGuild+name);
+        notify(Plugin.homes, sender, Notify.danger, ChatColor.BOLD + "" + "Chunk is claimed by " + cGuild + name);
     }
 
     public static void currency_subbed(CommandSender sender, String toString, String name, double value) {
     }
 
     public static void locks_nope(CommandSender sender) {
-        notify(Plugin.locks,sender,Notify.warning,"Object is not locked");
+        notify(Plugin.locks, sender, Notify.warning, "Object is not locked");
+    }
+
+    public static void currency_transferred(CommandSender sender, String from, String to, double value) {
+        notify(Plugin.currency, sender, Notify.success, "Transferred " + cValue + value + cSuccess + " from " + cValue + from + cSuccess + " to " + cValue + to);
     }
 }

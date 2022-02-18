@@ -157,7 +157,18 @@ public class CurrencyManager {
         if (!CurrencySQL.has(uuid))
             CurrencySQL.initializeGuild(uuid);
 
-        CurrencySQL.sub(account,uuid, value);
+        CurrencySQL.sub(account, uuid, value);
         MessageManager.currency_subbed(sender, uuid.toString(), account.name(), value);
+    }
+
+    public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double amount) {
+        if (CurrencySQL.has(fromAccount, fromUUID, amount)) {
+            CurrencySQL.sub(fromAccount,fromUUID,amount);
+            CurrencySQL.add(toUUID,amount,toAccount);
+            return true;
+        } else {
+            MessageManager.insufficient_funds(sender,amount);
+            return false;
+        }
     }
 }

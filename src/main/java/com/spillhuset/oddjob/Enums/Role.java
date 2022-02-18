@@ -1,5 +1,5 @@
 package com.spillhuset.oddjob.Enums;
 
 public enum Role {
-    Master,Members
+    Master, guest, Members
 }
