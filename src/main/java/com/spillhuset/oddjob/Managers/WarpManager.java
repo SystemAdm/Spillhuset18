@@ -4,7 +4,6 @@ import com.spillhuset.oddjob.Enums.CountdownSpeed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
-import com.spillhuset.oddjob.Utils.AdvancedPortal;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,7 +23,6 @@ public class WarpManager {
     public HashMap<String, Long> joinCooldown = new HashMap<>();
     public HashMap<String, HashMap<String, Long>> cooldown = new HashMap<>();
     public boolean portalsActive = false;
-    public AdvancedPortal[] portals = new AdvancedPortal[0];
     private boolean showBungeeMessage;
     private double throwback;
     private Sound portalSound;

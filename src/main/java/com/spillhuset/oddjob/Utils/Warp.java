@@ -11,7 +11,7 @@ public class Warp {
     String passwd;
     String name;
 
-    public Warp(UUID uuid, Location location, double cost, String passwd,String name) {
+    public Warp(UUID uuid, Location location, double cost, String passwd, String name) {
         this.uuid = uuid;
         this.location = location;
         this.cost = cost;
@@ -33,7 +33,7 @@ public class Warp {
     }
 
     public boolean isProtected() {
-        return  !passwd.isEmpty();
+        return !passwd.isEmpty();
     }
 
     public boolean hasCost() {

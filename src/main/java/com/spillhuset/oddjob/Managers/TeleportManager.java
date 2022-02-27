@@ -105,7 +105,7 @@ public class TeleportManager {
             if (reset != null) reset.cancel();
 
             // Can afford?
-            if (!OddJob.getInstance().getCurrencyManager().sub(requester, Account.pocket,requester.getUniqueId(),Plu.TELEPORT_REQUEST.value)) {
+            if (!OddJob.getInstance().getCurrencyManager().sub(requester, Account.pocket, requester.getUniqueId(), Plu.TELEPORT_REQUEST.value)) {
                 return;
             }
 

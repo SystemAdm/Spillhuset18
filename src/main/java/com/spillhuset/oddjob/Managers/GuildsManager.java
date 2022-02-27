@@ -993,7 +993,7 @@ public class GuildsManager extends Managers {
         int bought = guild.getBoughtClaims();
         int max = guild.getMaxClaims();
 
-        double sum = Math.pow(plu.getMultiplier(), bought) * plu.getValue();
+        double sum = plu.getMultiplier() * bought * plu.getValue();
         boolean trans = OddJob.getInstance().getCurrencyManager().sub(sender, Account.guild, guild.getUuid(), sum);
 
         if (trans) {
@@ -1208,7 +1208,7 @@ public class GuildsManager extends Managers {
         }
         for (Chunk chunk : rem) {
             chunks.remove(chunk);
-            GuildSQL.removeChunk(guild,chunk);
+            GuildSQL.removeChunk(guild, chunk);
         }
 
         saveChunks();
@@ -1274,7 +1274,7 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        if (OddJob.getInstance().getCurrencyManager().sub(player,Account.pocket,player.getUniqueId(),Plu.TELEPORT_REQUEST.value)) {
+        if (OddJob.getInstance().getCurrencyManager().sub(player, Account.pocket, player.getUniqueId(), Plu.TELEPORT_REQUEST.value)) {
             OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.guilds);
         }
     }
