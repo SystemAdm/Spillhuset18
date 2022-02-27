@@ -15,28 +15,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.UUID;
 
 public class OnBlockBreakEvent implements Listener {
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onStronghold(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-        Location entrance = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.STRONGHOLD, 100, false);
-        if (entrance == null) return;
-
-        World world = player.getWorld();
-        Chunk chunk = entrance.getChunk();
-        int maxX = chunk.getX() + 5;
-        int minX = chunk.getX() - 5;
-        int maxZ = chunk.getZ() + 5;
-        int minZ = chunk.getZ() - 5;
-
-        Chunk pChunk = player.getLocation().getChunk();
-        if ((pChunk.getX() < maxX && pChunk.getX() > minX) && (pChunk.getZ() < maxZ && pChunk.getZ() > minZ)) {
-            MessageManager.fortress(player);
-            event.setCancelled(true);
-        }
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
+
         Player player = event.getPlayer();
         Block block = event.getBlock();
         Chunk chunk = block.getChunk();
@@ -46,7 +28,7 @@ public class OnBlockBreakEvent implements Listener {
         // <-- Private -->
         UUID ownerOfBlock = OddJob.getInstance().getLocksManager().isLocked(block);
         if (ownerOfBlock != null && ownerOfBlock.equals(player.getUniqueId())) {
-            OddJob.getInstance().getLocksManager().breakLock(block);
+            OddJob.getInstance().getLocksManager().breakLock(player, block);
             MessageManager.locks_broken(player);
         }
 
@@ -70,6 +52,7 @@ public class OnBlockBreakEvent implements Listener {
         //TODO check for `trust` guilds
         event.setCancelled(true);
         MessageManager.guilds_not_allowed(player, chunkGuild);
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

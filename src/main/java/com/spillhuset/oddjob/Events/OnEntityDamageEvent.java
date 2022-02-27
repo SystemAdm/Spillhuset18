@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import java.util.UUID;
 
 public class OnEntityDamageEvent implements Listener {
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamageByMonster(EntityDamageByEntityEvent event) {
         Entity target = event.getEntity();
@@ -59,7 +60,7 @@ public class OnEntityDamageEvent implements Listener {
         } else if (target instanceof Player && damager instanceof Monster) {
             Chunk chunk = target.getLocation().getChunk();
             Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
-            if (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.AUCTION || guild.getZone() == Zone.SHOP || guild.getZone() == Zone.BANK) {
+            if (guild != null && (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.AUCTION || guild.getZone() == Zone.SHOP || guild.getZone() == Zone.BANK)) {
                 event.setDamage(0);
                 event.setCancelled(true);
                 damager.remove();
@@ -73,7 +74,7 @@ public class OnEntityDamageEvent implements Listener {
         if (target instanceof Player) {
             Chunk chunk = target.getLocation().getChunk();
             Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
-            if (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.AUCTION || guild.getZone() == Zone.SHOP || guild.getZone() == Zone.BANK) {
+            if (guild != null && (guild.getZone() == Zone.SAFE || guild.getZone() == Zone.AUCTION || guild.getZone() == Zone.SHOP || guild.getZone() == Zone.BANK)) {
                 event.setCancelled(true);
             }
         }

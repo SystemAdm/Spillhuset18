@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
@@ -61,7 +62,20 @@ public class GuildsListCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+    @Override
+    public boolean noGuild() {
+        return false;
+    }
 
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
+    }
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {

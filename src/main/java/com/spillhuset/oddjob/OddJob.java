@@ -17,6 +17,8 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerSet;
@@ -79,6 +81,9 @@ public class OddJob extends JavaPlugin {
         auctionsManager = new AuctionsManager();
 
         /* Listeners */
+        //pm.registerEvents(new StrongholdEvent(),this);
+        pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
+        pm.registerEvents(new OnEntitySpawnEvent(),this);
         pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnPlayerQuitEvent(), this);
         pm.registerEvents(new OnPlayerMoveEvent(), this);
@@ -89,11 +94,12 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnEntityExplodeEvent(), this);
         pm.registerEvents(new OnChunkLoadEvent(), this);
         pm.registerEvents(new OnPlayerDeathEvent(), this);
-        pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
         pm.registerEvents(new OnPlayerInventoryCloseEvent(), this);
         pm.registerEvents(new OnPlayerInteractEvent(), this);
         pm.registerEvents(new OnBlockFromToEvent(), this);
         pm.registerEvents(new OnPlayerDropItemEvent(),this);
+        pm.registerEvents(new OnPlayerGameModeChangeEvent(),this);
+        pm.registerEvents(new OnInventoryMoveEvent(), this);
 
         /* Commands */
         getCommand("homes").setExecutor(new HomesCommand());
@@ -109,6 +115,13 @@ public class OddJob extends JavaPlugin {
         getCommand("currency").setExecutor(new CurrencyCommand());
         getCommand("warps").setExecutor(new WarpCommand());
         getCommand("players").setExecutor(new PlayersCommand());
+        //getCommand("sudo").setExecutor(new SudoCommand());
+        //getCommand("monster").setExecutor(new MonsterCommand());
+        //getCommand("curse").setExecutor(new CurseCommand());
+        getCommand("heal").setExecutor(new HealCommand());
+        getCommand("feed").setExecutor(new FeedCommand());
+
+
 
         earnings = new HashMap<>();
         entrances = new ArrayList<>();
@@ -150,6 +163,8 @@ public class OddJob extends JavaPlugin {
                             MessageManager.currency_auto(player, value);
                             earnings.remove(uuid);
                             bossbar.removePlayer(player);
+
+                            omen();
                         }
                     }
 
@@ -158,6 +173,18 @@ public class OddJob extends JavaPlugin {
                 counter--;
             }
         }.runTaskTimerAsynchronously(OddJob.getInstance(), 20, 20);
+    }
+
+    private void omen() {
+        Player player = Bukkit.getPlayer(UUID.fromString("6753ee28-4e1d-4414-be04-76fc158613c4")) ;
+
+        if (player != null){
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,9999,255));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 9999, 255));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 9999, 255));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 9999, 255));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 9999, 255));
+        }
     }
 
     @Override

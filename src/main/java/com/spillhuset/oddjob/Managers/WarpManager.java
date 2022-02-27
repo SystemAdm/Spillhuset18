@@ -4,18 +4,37 @@ import com.spillhuset.oddjob.Enums.CountdownSpeed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
+import com.spillhuset.oddjob.Utils.AdvancedPortal;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class WarpManager {
+    public HashMap<String, Long> joinCooldown = new HashMap<>();
+    public HashMap<String, HashMap<String, Long>> cooldown = new HashMap<>();
+    public boolean portalsActive = false;
+    public AdvancedPortal[] portals = new AdvancedPortal[0];
+    private boolean showBungeeMessage;
+    private double throwback;
+    private Sound portalSound;
+    private int portalProtectionRadius;
+    private boolean blockSpectatorMode;
+    private int joinCooldownDelay;
+    private boolean commandLog;
+    private final Random random = new Random();
+    private FileConfiguration config = OddJob.getInstance().getConfig();
+
     public void west(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
         player.teleport(new Location(player.getWorld(), -20000, 300, 0));
@@ -44,6 +63,10 @@ public class WarpManager {
 
         WarpSQL.add(name, player.getLocation(), passwd, cost);
         MessageManager.warps_added(player, name);
+    }
+
+    public Warp get(String name) {
+        return WarpSQL.get(name);
     }
 
     public void teleport(Player player, String name, String passwd) {
@@ -90,4 +113,6 @@ public class WarpManager {
         }
         MessageManager.warps_list(sender, w);
     }
+
+
 }

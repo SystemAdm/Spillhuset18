@@ -1,7 +1,9 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
+public class GuildsDenyCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -58,6 +60,21 @@ public class GuildsDenyCommand extends com.spillhuset.oddjob.Utils.SubCommand {
     @Override
     public int depth() {
         return 1;
+    }
+
+    @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
     }
 
     @Override

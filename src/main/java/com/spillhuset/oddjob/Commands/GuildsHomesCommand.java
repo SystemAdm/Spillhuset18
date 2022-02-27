@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
@@ -72,6 +73,21 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
     }
 
     @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
             return;
@@ -102,9 +118,9 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-
         for (SubCommand subCommand : subCommands) {
             String name = subCommand.getName();
+
             if (args.length == depth() + 1) {
                 if (name.equalsIgnoreCase(args[depth()])) {
                     return subCommand.getTabCompleter(sender, args);

@@ -124,7 +124,10 @@ public class HomesManager extends Managers {
         if (!teleport) {
             Player player = Bukkit.getPlayer(target.getUuid());
             if (player != null && player.isOnline())
-                player.teleport(location);
+                if (OddJob.getInstance().getCurrencyManager().sub(sender,Account.pocket,player.getUniqueId(),Plu.TELEPORT_REQUEST.value)) {
+                    OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.homes);
+                }
+                //player.teleport(location);
             MessageManager.teleports_to_home(sender, name);
         }
     }

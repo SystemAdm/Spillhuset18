@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
@@ -44,7 +45,7 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getPermission() {
-        return "guild";
+        return "guilds";
     }
 
     @Override
@@ -60,6 +61,20 @@ public class GuildsJoinCommand extends SubCommand implements GuildInterface {
     @Override
     public int depth() {
         return 1;
+    }
+    @Override
+    public boolean noGuild() {
+        return true;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
     }
 
     @Override

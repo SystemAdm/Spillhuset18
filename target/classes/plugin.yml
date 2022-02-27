@@ -33,3 +33,7 @@ commands:
     description: Currency
   players:
     description: Players
+  heal:
+    description: Heals a player
+  feed:
+    description: Feeds a player

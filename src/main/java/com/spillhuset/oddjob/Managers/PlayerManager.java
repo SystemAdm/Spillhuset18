@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Changed;
+import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.ChunkCord;
@@ -8,6 +9,7 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,10 +19,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerManager {
     public static List<UUID> spiritIgnore = new ArrayList<>();
@@ -29,6 +28,8 @@ public class PlayerManager {
     private final HashMap<UUID, BukkitTask> spiritTask = new HashMap<>();
     private final HashMap<UUID, Inventory> spiritInventories = new HashMap<>();
     private final HashMap<UUID, UUID> spiritOwner = new HashMap<>();
+    private static final HashMap<UUID, BukkitTask> combat = new HashMap<>();
+
     /**
      * Player UUID | Entity UUID
      */
@@ -40,8 +41,24 @@ public class PlayerManager {
     }
 
     public static boolean inCombat(UUID uniqueId) {
-        //Todo
-        return false;
+        return combat.get(uniqueId) != null;
+    }
+    public static void setCombat(UUID uniqueId, boolean set) {
+        if (set) {
+            OddJob.getInstance().log("set");
+            if (combat.get(uniqueId) != null) combat.get(uniqueId).cancel();
+            combat.put(uniqueId,new BukkitRunnable() {
+                @Override
+                public void run() {
+                    PlayerManager.setCombat(uniqueId, false);
+                    MessageManager.in_combat(uniqueId);
+                }
+            }.runTaskLater(OddJob.getInstance(), 600));
+        } else {
+            OddJob.getInstance().log("unset");
+            combat.remove(uniqueId);
+            MessageManager.no_combat(uniqueId);
+        }
     }
 
     public static OddPlayer getPlayerByName(String arg) {
@@ -251,5 +268,75 @@ public class PlayerManager {
 
     public List<OddPlayer> getAll() {
         return oddPlayers.values().stream().toList();
+    }
+
+    public void healOne(CommandSender sender) {
+        Player player = (Player) sender;
+        heal(player);
+    }
+
+    public void heal(Player player) {
+        player.setHealth(20d);
+    }
+
+    public void healOne(String arg, CommandSender sender) {
+        Player player = Bukkit.getPlayer(arg);
+        if (player == null) {
+            MessageManager.errors_find_player(Plugin.essentials, arg, sender);
+        } else {
+            heal(player);
+        }
+    }
+
+    public void healAll() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            heal(player);
+        }
+    }
+
+    public void healMany(String[] args, CommandSender sender) {
+        for (String arg : args) {
+            Player player = Bukkit.getPlayer(arg);
+            if (player == null) {
+                MessageManager.errors_find_player(Plugin.essentials, arg, sender);
+            } else {
+                heal(player);
+            }
+        }
+    }
+
+    public void feedOne(CommandSender sender) {
+        Player player = (Player) sender;
+        feed(player);
+    }
+
+    public void feed(Player player) {
+        player.setFoodLevel(20);
+    }
+
+    public void feedOne(String arg, CommandSender sender) {
+        Player player = Bukkit.getPlayer(arg);
+        if (player == null) {
+            MessageManager.errors_find_player(Plugin.essentials, arg, sender);
+        } else{
+        feed(player);}
+    }
+
+    public void feedAll() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            feed(player);
+        }
+    }
+
+    public void feedMany(String[] args, CommandSender sender) {
+        for (String arg : args) {
+            Player player = Bukkit.getPlayer(arg);
+            if (player == null) {
+                MessageManager.errors_find_player(Plugin.essentials, arg, sender);
+            } else {
+                feed(player);
+            }
+
+        }
     }
 }

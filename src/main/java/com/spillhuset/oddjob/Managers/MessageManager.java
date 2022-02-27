@@ -246,6 +246,7 @@ public class MessageManager {
         list(plugin, sender, notify, "Spawn mobs: " + cValue + guild.isSpawnMobs());
         list(plugin, sender, notify, "Invited only: " + cValue + guild.isInvited_only());
         list(plugin, sender, notify, "Friendly fire: " + cValue + guild.isFriendlyFire());
+        list(plugin, sender, notify, "Currency: " + cValue + guild.getCurrency());
     }
 
     public static void guilds_not_found(CommandSender sender, String arg) {
@@ -754,5 +755,17 @@ public class MessageManager {
 
     public static void currency_transferred(CommandSender sender, String from, String to, double value) {
         notify(Plugin.currency, sender, Notify.success, "Transferred " + cValue + value + cSuccess + " from " + cValue + from + cSuccess + " to " + cValue + to);
+    }
+
+    public static void guilds_disband_info(CommandSender sender) {
+        message(Plugin.guilds, sender, Notify.info, "To verify a guild disband, " + cValue + "/guilds disband confirm");
+    }
+
+    public static void in_combat(UUID uniqueId) {
+
+    }
+
+    public static void no_combat(UUID uniqueId) {
+        notify(Plugin.teleports,Bukkit.getPlayer(uniqueId),Notify.success,"No longer in combat");
     }
 }

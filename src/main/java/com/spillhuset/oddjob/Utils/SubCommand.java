@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
@@ -32,10 +33,24 @@ public abstract class SubCommand {
 
     public abstract int depth();
 
+    public abstract boolean noGuild();
+
+    public abstract boolean needGuild();
+
+    public abstract Role guildRole();
 
     public abstract void getCommandExecutor(CommandSender sender, String[] args);
 
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
+
+    public Role getRole(CommandSender sender) {
+        if (sender instanceof Player player ) {
+            Role role = OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
+            if (role == null) return Role.guest;
+            return OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
+        }
+        return Role.guest;
+    }
 
     public boolean can(CommandSender sender, boolean others, boolean response) {
         if (denyConsole() && !(sender instanceof Player)) {
@@ -104,14 +119,19 @@ public abstract class SubCommand {
 
     public boolean hasGuild(CommandSender sender, boolean response) {
         if (sender instanceof Player player) {
-            if (OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()) != null) {
-                return true;
-            } else {
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+            if (needGuild() && guild == null) {
                 if (response) MessageManager.guilds_not_associated(sender);
                 return false;
+            } else if (noGuild() && guild != null) {
+                if (response) MessageManager.guilds_already_associated(sender, guild.getName());
+                return false;
+            } else {
+                return true;
             }
         }
         if (response) MessageManager.guilds_not_associated(sender);
         return false;
     }
+
 }

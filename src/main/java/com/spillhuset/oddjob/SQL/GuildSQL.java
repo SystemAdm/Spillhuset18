@@ -445,4 +445,39 @@ public class GuildSQL extends MySQLManager {
             close();
         }
     }
+
+    public static String guildChunk(String string, int x, int z) {
+        String s = null;
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_chunks` WHERE `world` = ? AND `x` = ? AND `z` = ?");
+            preparedStatement.setString(1,string);
+            preparedStatement.setInt(2,x);
+            preparedStatement.setInt(3,z);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                s = resultSet.getString("uuid");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+        return s;
+    }
+
+    public static void removeRole(UUID uuid) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `uuid` = ?");
+            preparedStatement.setString(1,uuid.toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
@@ -59,7 +60,20 @@ public class GuildsUnclaimCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+    @Override
+    public boolean noGuild() {
+        return false;
+    }
 
+    @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
+    public Role guildRole() {
+        return Role.Master;
+    }
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender,args.length)) {

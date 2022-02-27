@@ -16,7 +16,8 @@ public enum Plugin {
     locks(ChatColor.YELLOW, "L"),
     players(ChatColor.DARK_GREEN, "P"),
     warps(ChatColor.DARK_BLUE, "W"),
-    shops(ChatColor.YELLOW, "S");
+    shops(ChatColor.YELLOW, "S"),
+    essentials(ChatColor.BLUE, "E");
 
     private final String string;
     private final ChatColor color;

@@ -1,5 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -46,7 +48,7 @@ public class GuildsDisbandCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -60,6 +62,21 @@ public class GuildsDisbandCommand extends SubCommand {
     }
 
     @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
+    public Role guildRole() {
+        return Role.Master;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender,false,true)) {
             return;
@@ -67,8 +84,15 @@ public class GuildsDisbandCommand extends SubCommand {
         if(!argsLength(sender,args.length)) {
             return;
         }
-        Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().disband(player,args[1]);
+        if (args.length == 1) {
+            MessageManager.guilds_disband_info(sender);
+            return;
+        }
+        if (args.length == 2 && args[1].equalsIgnoreCase("confirm")){
+            Player player = (Player) sender;
+            OddJob.getInstance().getGuildsManager().disband(player);
+            return;
+        }
     }
 
     @Override

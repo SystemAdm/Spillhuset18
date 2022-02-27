@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
@@ -59,6 +60,21 @@ public class GuildsHomesTeleportCommand extends SubCommand {
     @Override
     public int depth() {
         return 2;
+    }
+
+    @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
+    public Role guildRole() {
+        return Role.Members;
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -43,7 +44,9 @@ public class TeleportManager {
                     }
                     if (PlayerManager.inCombat(player.getUniqueId())) {
                         MessageManager.teleports_in_combat(player);
+                        player.removePotionEffect(PotionEffectType.CONFUSION);
                         cancel();
+                        return;
                     }
                     if (i > 0) {
                         MessageManager.teleports_countdown(i, player);

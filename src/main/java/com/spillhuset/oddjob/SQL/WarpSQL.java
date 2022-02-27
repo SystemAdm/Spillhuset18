@@ -7,9 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class WarpSQL extends MySQLManager {
 
@@ -146,5 +144,9 @@ public class WarpSQL extends MySQLManager {
             warps.add(get(string));
         }
         return warps;
+    }
+
+    public static Set<String> loadPortals() {
+        return new HashSet<>();
     }
 }

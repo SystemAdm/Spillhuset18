@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
@@ -65,7 +66,20 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     public int depth() {
         return 1;
     }
+    @Override
+    public boolean noGuild() {
+        return false;
+    }
 
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
+    }
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {

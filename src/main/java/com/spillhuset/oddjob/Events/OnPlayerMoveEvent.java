@@ -1,20 +1,19 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
-import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.Managers.PlayerManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.ChunkCord;
 import com.spillhuset.oddjob.Utils.Guild;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.structure.Structure;
 
 import java.util.UUID;
 
@@ -43,7 +42,8 @@ public class OnPlayerMoveEvent implements Listener {
         if (event.getTo() != null) {
             Chunk chunk = event.getTo().getChunk();
             visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
-            if (visitingGuild == null) visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD);
+            if (visitingGuild == null)
+                visitingGuild = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD);
             if (!PlayerManager.playerTracker.containsKey(uuid)) {
                 PlayerManager.playerTracker.put(uuid, new ChunkCord(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ(), visitingGuild.getUuid()));
                 notify = true;

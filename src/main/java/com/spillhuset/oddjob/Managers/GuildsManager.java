@@ -38,7 +38,6 @@ public class GuildsManager extends Managers {
      * Player UUID | Guild UUID
      */
     public HashMap<UUID, UUID> members = new HashMap<>();
-    private final List<UUID> disband = new ArrayList<>();
 
     public HashMap<Chunk, UUID> getChunks() {
         return chunks;
@@ -87,7 +86,7 @@ public class GuildsManager extends Managers {
                 Guild guild = getGuild(chunks.get(chunk));
                 double[] x = new double[]{chunk.getX() * 16, (chunk.getX() * 16) + 16};
                 double[] z = new double[]{chunk.getZ() * 16, (chunk.getZ() * 16) + 16};
-                if (OddJob.getInstance().markerSet != null) {
+                if (OddJob.getInstance().markerSet != null && guild != null) {
                     AreaMarker marker = OddJob.getInstance().markerSet.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
                     if (marker != null) {
                         marker.setFillStyle(.5, Integer.parseInt(guild.getZone().getColorCode(), 16));
@@ -124,7 +123,7 @@ public class GuildsManager extends Managers {
     public void create(CommandSender sender, String name, Zone zone) {
         Player owner = null;
         name = ChatColor.stripColor(name.toLowerCase().trim());
-        name = (name.length() > 15) ? name.substring(0, 15) : name;
+        name = (name.length() > 31) ? name.substring(0, 31) : name;
 
         // Check if already has guild
         if (sender instanceof Player player) {
@@ -341,7 +340,8 @@ public class GuildsManager extends Managers {
                 World world = Bukkit.getWorld(player.getWorld().getUID());
                 if (world != null) {
                     Chunk test = world.getChunkAt(x, z);
-                    if (chunks.containsKey(test) && !chunks.get(chunk).equals(guild.getUuid())) {
+                    test.load();
+                    if (chunks.get(test) != null && !chunks.get(test).equals(guild.getUuid())) {
                         sb.append(getGuildByChunk(test).getName()).append(",");
                         valid = false;
                     }
@@ -357,20 +357,26 @@ public class GuildsManager extends Managers {
 
 
         if (valid || guild.getZone() != Zone.GUILD) {
+            World world = player.getWorld();
             valid = false;
             // Are the claims connected
-            for (int x = chunkX - 1; x <= chunkX + 1; x++) {
-                for (int z = chunkZ - 1; z <= chunkX + 1; z++) {
-                    World world = Bukkit.getWorld(player.getWorld().getUID());
-                    if (world != null) {
-                        Chunk test = world.getChunkAt(x, z);
-                        if (chunks.containsKey(test) && chunks.get(chunk).equals(guild.getUuid())) {
-                            valid = true;
-                        }
-                    }
-                }
+            Chunk testX1 = world.getChunkAt(chunkX + 1, chunkZ);
+            if (chunks.containsKey(testX1) && chunks.get(testX1) == (guild.getUuid())) {
+                valid = true;
             }
-            if (valid || guild.getZone() != Zone.GUILD) {
+            Chunk testXn1 = world.getChunkAt(chunkX - 1, chunkZ);
+            if (chunks.containsKey(testXn1) && chunks.get(testXn1) == (guild.getUuid())) {
+                valid = true;
+            }
+            Chunk testZ1 = world.getChunkAt(chunkX, chunkZ + 1);
+            if (chunks.containsKey(testZ1) && chunks.get(testZ1) == (guild.getUuid())) {
+                valid = true;
+            }
+            Chunk testZn1 = world.getChunkAt(chunkX, chunkZ - 1);
+            if (chunks.containsKey(testZn1) && chunks.get(testZn1) == (guild.getUuid())) {
+                valid = true;
+            }
+            if (valid) {
                 claim(guild, chunk, true);
             } else {
                 MessageManager.guilds_claims_connected(player);
@@ -432,8 +438,7 @@ public class GuildsManager extends Managers {
         // Check world | Is it possible to claim a chunk in this world?
         World world = chunk.getWorld();
         for (String a : OddJob.getInstance().getConfig().getStringList("guilds.world")) {
-            UUID b = UUID.fromString(a);
-            if (b.equals(world.getUID())) {
+            if (a.equalsIgnoreCase(world.getUID().toString())) {
                 allowed = true;
             }
         }
@@ -474,27 +479,34 @@ public class GuildsManager extends Managers {
 
         if (valid) {
             valid = false;
+
+            String x = GuildSQL.guildChunk(chunk.getWorld().getUID().toString(), chunk.getX() + 1, chunk.getZ());
+            String nx = GuildSQL.guildChunk(chunk.getWorld().getUID().toString(), chunk.getX() - 1, chunk.getZ());
+            String z = GuildSQL.guildChunk(chunk.getWorld().getUID().toString(), chunk.getX(), chunk.getZ() + 1);
+            String nz = GuildSQL.guildChunk(chunk.getWorld().getUID().toString(), chunk.getX(), chunk.getZ() - 1);
+            OddJob.getInstance().log(x + " " + nx + " " + z + " " + nz);
             // Are the claims connected | Claims must be connected
-            Chunk testX1 = world.getChunkAt(chunkX + 1, chunkZ);
-            if (chunks.containsKey(testX1) && chunks.get(testX1) == (guild.getUuid())) {
+            if (x != null && x.equals(guild.getUuid().toString())) {
+                OddJob.getInstance().log("x1");
                 valid = true;
             }
-            Chunk testXn1 = world.getChunkAt(chunkX - 1, chunkZ);
-            if (chunks.containsKey(testXn1) && chunks.get(testXn1) == (guild.getUuid())) {
+            if (nx != null && nx.equals(guild.getUuid().toString())) {
+                OddJob.getInstance().log("xn1");
                 valid = true;
             }
-            Chunk testZ1 = world.getChunkAt(chunkX, chunkZ + 1);
-            if (chunks.containsKey(testZ1) && chunks.get(testZ1) == (guild.getUuid())) {
+            if (z != null && z.equals(guild.getUuid().toString())) {
+                OddJob.getInstance().log("z1");
                 valid = true;
             }
-            Chunk testZn1 = world.getChunkAt(chunkX, chunkZ - 1);
-            if (chunks.containsKey(testZn1) && chunks.get(testZn1) == (guild.getUuid())) {
+            if (nz != null && nz.equals(guild.getUuid().toString())) {
+                OddJob.getInstance().log("zn1");
                 valid = true;
             }
 
             if (valid) {
                 claim(guild, chunk, true);
             } else {
+                OddJob.getInstance().log("neither");
                 MessageManager.guilds_claims_connected(player);
             }
         } else {
@@ -510,7 +522,7 @@ public class GuildsManager extends Managers {
      */
     public void unClaim(Player player) {
         World world = player.getWorld();
-        Chunk chunk = world.getChunkAt(player.getLocation().getChunk().getX(),player.getLocation().getChunk().getZ());
+        Chunk chunk = world.getChunkAt(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = roles.get(player.getUniqueId());
 
@@ -1151,7 +1163,7 @@ public class GuildsManager extends Managers {
         MessageManager.guilds_set_name_success(guild, name);
     }
 
-    public void disband(Player player, String name) {
+    public void disband(Player player) {
         Guild guild = getGuildByMember(player.getUniqueId());
         Role role = getRoles().get(player.getUniqueId());
 
@@ -1166,34 +1178,37 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_error_role(player);
             return;
         }
-
-        if (name == null) {
-            MessageManager.guilds_disband(player);
-            disband.add(guild.getUuid());
-        } else {
-            if (name.equals(guild.getName()) && disband.contains(guild.getUuid())) {
-                disband.remove(guild.getUuid());
-                MessageManager.guilds_disbanded(guild);
-                disband(guild);
-            }
-        }
+        MessageManager.guilds_disbanded(guild);
+        disband(guild);
     }
 
     private void disband(Guild guild) {
         // Remove members and roles
+        List<UUID> removing = new ArrayList<>();
         for (UUID uuid : members.keySet()) {
-            if (members.get(uuid).equals(guild.getUuid())) {
-                members.remove(uuid);
-                roles.remove(uuid);
+            if (members.get(uuid) == guild.getUuid()) {
+                removing.add(uuid);
             }
+            OddJob.getInstance().log(" " + (members.get(uuid) == guild.getUuid()));
         }
+        for (UUID uuid : removing) {
+            roles.remove(uuid);
+            GuildSQL.removeRole(uuid);
+            members.remove(uuid);
+        }
+
         saveMembersRoles();
 
         // Remove chunks
+        List<Chunk> rem = new ArrayList<>();
         for (Chunk chunk : chunks.keySet()) {
-            if (chunks.get(chunk).equals(guild.getUuid())) {
-                chunks.remove(chunk);
+            if (chunks.get(chunk) == (guild.getUuid())) {
+                rem.add(chunk);
             }
+        }
+        for (Chunk chunk : rem) {
+            chunks.remove(chunk);
+            GuildSQL.removeChunk(guild,chunk);
         }
 
         saveChunks();
@@ -1259,7 +1274,9 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.guilds);
+        if (OddJob.getInstance().getCurrencyManager().sub(player,Account.pocket,player.getUniqueId(),Plu.TELEPORT_REQUEST.value)) {
+            OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.guilds);
+        }
     }
 
     public void homeAdd(Player player, String name) {

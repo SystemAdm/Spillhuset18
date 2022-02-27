@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -66,8 +67,22 @@ public class GuildsBuyCommand extends SubCommand {
     }
 
     @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
+    public Role guildRole() {
+        return Role.Master;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("guilds buy");
         if (!can(sender, false, true)) {
             return;
         }

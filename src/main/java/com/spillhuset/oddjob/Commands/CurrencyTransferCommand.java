@@ -66,6 +66,21 @@ public class CurrencyTransferCommand extends SubCommand {
     }
 
     @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
             return;
@@ -110,6 +125,8 @@ public class CurrencyTransferCommand extends SubCommand {
                 }
                 if (toAccount == Account.pocket || toAccount == Account.bank) {
                     toUUID = player.getUniqueId();
+                } else {
+                    toUUID = guild.getUuid();
                 }
             }
         } else if (args.length == 5) {

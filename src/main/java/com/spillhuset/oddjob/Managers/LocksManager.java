@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class LocksManager {
-    private final HashMap<String, ItemStack> tools = new HashMap<>();
+    public final HashMap<String, ItemStack> tools = new HashMap<>();
     private final List<UUID> isLocking = new ArrayList<>();
     private final List<UUID> isUnlocking = new ArrayList<>();
     private final List<UUID> isInfo = new ArrayList<>();
@@ -126,7 +126,7 @@ public class LocksManager {
         return null;
     }
 
-    public void breakLock(Block block) {
+    public void breakLock(Player player, Block block) {
         Location location = block.getLocation();
         if (block.getState() instanceof Chest) {
             location = LockUtil.getChestLeft(block.getLocation());
@@ -136,5 +136,6 @@ public class LocksManager {
         World world = location.getWorld();
         if (world != null)
             LocksSQL.unlock(location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        clear(player);
     }
 }

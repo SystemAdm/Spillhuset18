@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
@@ -64,6 +65,21 @@ public class AuctionsSellCommand extends SubCommand {
     }
 
     @Override
+    public boolean noGuild() {
+        return false;
+    }
+
+    @Override
+    public boolean needGuild() {
+        return false;
+    }
+
+    @Override
+    public Role guildRole() {
+        return null;
+    }
+
+    @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         double bid = Double.parseDouble(args[1]);
         double buyout = 0.0d;
@@ -86,6 +102,8 @@ public class AuctionsSellCommand extends SubCommand {
         if (args.length == 4) timeout = Integer.parseInt(args[3]);
 
         OddJob.getInstance().getAuctionsManager().sell(seller,itemStack,bid,buyout,timeout);
+        // auction sell <bid> <buyout> <timeout>
+        //           0    1       2        3
     }
 
     @Override
