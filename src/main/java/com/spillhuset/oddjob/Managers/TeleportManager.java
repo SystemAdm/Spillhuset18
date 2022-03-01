@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -33,6 +34,7 @@ public class TeleportManager {
         if (speed == CountdownSpeed.instant) {
             player.teleport(location);
         } else {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 200, true, true));
             timers.put(player.getUniqueId(), new BukkitRunnable() {
                 int i = 10;
 
@@ -51,7 +53,19 @@ public class TeleportManager {
                     if (i > 0) {
                         MessageManager.teleports_countdown(i, player);
                     } else {
-                        player.teleport(location);
+                        Plu plu = switch (plugin) {
+                            case guilds -> Plu.TELEPORT_REQUEST;
+                            case homes -> Plu.TELEPORT_REQUEST;
+                            case warps -> Plu.TELEPORT_REQUEST;
+                            default -> Plu.TELEPORT_REQUEST;
+                        };
+
+                        if (OddJob.getInstance().getCurrencyManager().sub(player,Account.pocket,player.getUniqueId(),plu.getValue())) {
+                            player.teleport(location);
+                        } else {
+                            MessageManager.insufficient_funds(player, plu.getValue());
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS,1200,200));
+                        }
                         cancel();
                     }
                     i--;
@@ -116,7 +130,6 @@ public class TeleportManager {
                 @Override
                 public void run() {
                     if (requestsReset.containsKey(requester.getUniqueId())) {
-                        OddJob.getInstance().log("c" + (destination == requester));
                         removeRequests(requester.getUniqueId());
                         requestsReset.remove(requester.getUniqueId());
                         if (!destination.isOnline()) {

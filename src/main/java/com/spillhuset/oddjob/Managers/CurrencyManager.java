@@ -171,4 +171,8 @@ public class CurrencyManager {
             return false;
         }
     }
+
+    public boolean can(CommandSender sender, Account pocket, UUID uniqueId, double value) {
+        return CurrencySQL.has(pocket, uniqueId, value);
+    }
 }

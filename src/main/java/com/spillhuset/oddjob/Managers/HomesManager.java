@@ -73,14 +73,6 @@ public class HomesManager extends Managers {
             return false;
         }
 
-        /* Make transaction */
-        if (currency) {
-            if (!CostManager.transaction(Account.pocket, uuid, Plu.HOMES_SET)) {
-                MessageManager.errors_currency_expensive(Plugin.homes, sender);
-                return false;
-            }
-        }
-
         /* Adding */
         if (!HomesSQL.add(uuid, location, name)) {
             MessageManager.errors_something_somewhere(Plugin.homes, sender);
@@ -124,7 +116,7 @@ public class HomesManager extends Managers {
         if (!teleport) {
             Player player = Bukkit.getPlayer(target.getUuid());
             if (player != null && player.isOnline())
-                if (OddJob.getInstance().getCurrencyManager().sub(sender, Account.pocket, player.getUniqueId(), Plu.TELEPORT_REQUEST.value)) {
+                if (OddJob.getInstance().getCurrencyManager().can(sender, Account.pocket, player.getUniqueId(), Plu.PLAYER_HOMES_TELEPORT.getValue())) {
                     OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.homes);
                 }
             //player.teleport(location);

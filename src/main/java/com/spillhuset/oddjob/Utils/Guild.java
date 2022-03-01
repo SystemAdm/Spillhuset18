@@ -6,20 +6,24 @@ import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
+import com.spillhuset.oddjob.SQL.GuildSQL;
 import com.spillhuset.oddjob.SQL.HomesSQL;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Guild {
     private final UUID uuid;
     private final int defaultClaims = ConfigManager.isSet("guilds.default.claims") ? ConfigManager.getInt("guilds.default.claims") : 10;
+    private final int defaultOutpost = ConfigManager.isSet("guilds.default.outposts") ? ConfigManager.getInt("guilds.default.outposts") : 1;
+    private final int defaultHomes = ConfigManager.isSet("guilds.default.homes") ? ConfigManager.getInt("guilds.default.homes") : 1;
     private int boughtClaims = 0;
+    private int boughtOutposts = 0;
+    private int boughtHomes = 0;
     private boolean spawnMobs = false;
     private boolean open = false;
     private boolean invited_only = false;
@@ -28,9 +32,6 @@ public class Guild {
     private Role permissionInvite = Role.Members;
     private String name;
     private Zone zone = Zone.GUILD;
-    private final int defaultHomes = ConfigManager.isSet("guilds.default.homes") ? ConfigManager.getInt("guilds.default.homes") : 1;
-    private int boughtHomes = 0;
-    private int availableClaims;
 
     /**
      * Created from loading
@@ -185,6 +186,13 @@ public class Guild {
         boughtClaims++;
     }
 
+    public void incMaxHomes() {
+        boughtHomes++;
+    }
+
+    public void incMaxOutposts() {
+        boughtOutposts++;
+    }
     /**
      * Return current home size
      *
@@ -203,23 +211,36 @@ public class Guild {
         return defaultHomes + boughtHomes;
     }
 
-    public void incMaxHomes() {
-        boughtHomes++;
+    public int getMaxOutposts() {
+        int players = 0;
+        int perMember = OddJob.getInstance().getConfig().getInt("guilds.multiplier.members.claims", 1);
+        for (UUID uuid : OddJob.getInstance().getGuildsManager().getMembers().keySet()) {
+            if (getUuid().equals(OddJob.getInstance().getGuildsManager().getMembers().get(uuid))) {
+                players++;
+            }
+        }
+        //          10       +       0      + (   1    *     1    ) = 15
+        return defaultClaims + boughtClaims + (players * perMember);
     }
+
 
     public int getBoughtHomes() {
         return boughtHomes;
-    }
-
-    public List<String> listHomes(UUID uuid) {
-        return OddJob.getInstance().getHomeManager().getList(uuid);
     }
 
     public int getBoughtClaims() {
         return boughtClaims;
     }
 
+    public int getBoughtOutposts() {
+        return boughtOutposts;
+    }
+
     public double getCurrency() {
         return CurrencySQL.get(uuid, Account.guild);
+    }
+
+    public List<String> listHomes(UUID uuid) {
+        return OddJob.getInstance().getHomeManager().getList(uuid);
     }
 }

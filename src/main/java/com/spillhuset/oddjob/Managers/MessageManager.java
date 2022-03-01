@@ -227,7 +227,7 @@ public class MessageManager {
         list(plugin, sender, notify, "-----------------------------------------");
     }
 
-    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites, List<String> members) {
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites, List<String> members,double price_homes,double price_claim,double price_outpost) {
         Notify notify = Notify.info;
         Plugin plugin = Plugin.guilds;
         list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
@@ -242,7 +242,11 @@ public class MessageManager {
         list(plugin, sender, notify, "Invited players: " + cValue + invites.size());
         list(plugin, sender, notify, "Open to join: " + cValue + guild.isOpen());
         list(plugin, sender, notify, "Claims: " + cValue + guild.getClaims() + cInfo + "/" + cValue + guild.getMaxClaims());
+        list(plugin, sender, notify, "Next claim will cost: " + cValue + price_claim);
         list(plugin, sender, notify, "Homes set: " + cValue + guild.getHomes() + cInfo + "/" + cValue + guild.getMaxHomes());
+        list(plugin, sender, notify, "Next home will cost: " + cValue + price_homes);
+        list(plugin, sender, notify, "Outposts set: " + cValue + guild.getOutposts() + cInfo + "/" + cValue + guild.getMaxOutposts());
+        list(plugin, sender, notify, "Next outpost will cost: " + cValue + price_outpost);
         list(plugin, sender, notify, "Spawn mobs: " + cValue + guild.isSpawnMobs());
         list(plugin, sender, notify, "Invited only: " + cValue + guild.isInvited_only());
         list(plugin, sender, notify, "Friendly fire: " + cValue + guild.isFriendlyFire());
@@ -766,6 +770,14 @@ public class MessageManager {
     }
 
     public static void no_combat(UUID uniqueId) {
-        notify(Plugin.teleports,Bukkit.getPlayer(uniqueId),Notify.success,"No longer in combat");
+        notify(Plugin.teleports, Bukkit.getPlayer(uniqueId), Notify.success, "No longer in combat");
+    }
+
+    public static void homes_info(CommandSender sender, int homes, int total, double price) {
+        Plugin plugin = Plugin.homes;
+        Notify notify = Notify.info;
+        list(plugin, sender, notify, "You have set " + cValue + homes + cInfo + " of total " + cValue + total);
+        list(plugin, sender, notify, "Next will cost: " + cValue + price);
+        list(plugin, sender, notify, "-----------------------------------------");
     }
 }

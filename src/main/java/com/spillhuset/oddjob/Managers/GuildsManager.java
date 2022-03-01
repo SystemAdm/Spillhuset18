@@ -1274,7 +1274,7 @@ public class GuildsManager extends Managers {
             return;
         }
 
-        if (OddJob.getInstance().getCurrencyManager().sub(player, Account.pocket, player.getUniqueId(), Plu.TELEPORT_REQUEST.value)) {
+        if (OddJob.getInstance().getCurrencyManager().can(player, Account.pocket, player.getUniqueId(), Plu.GUILDS_HOMES_TELEPORT.getValue())) {
             OddJob.getInstance().getTeleportManager().teleport(player, location, Plugin.guilds);
         }
     }

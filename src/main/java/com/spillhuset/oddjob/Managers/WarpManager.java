@@ -70,15 +70,12 @@ public class WarpManager {
     public void teleport(Player player, String name, String passwd) {
         Warp warp = WarpSQL.get(name);
 
-        // TODO check COST
-
         if (!warp.matchPwd(passwd)) {
             MessageManager.warps_error_password(player, name);
             return;
         }
 
         OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation(), Plugin.warps, CountdownSpeed.warp);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 1000, true, true));
     }
 
     public List<String> getList() {

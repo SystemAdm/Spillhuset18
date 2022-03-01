@@ -1,14 +1,12 @@
 package com.spillhuset.oddjob.Commands;
 
+import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.ListInterface;
-import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -79,7 +77,18 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        finder(sender,args);
+        if (sender instanceof Player player) {
+            int homes = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getBoughtHomes();
+            int total = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes();
+            Plu plu = Plu.PLAYER_HOMES;
+            double price = plu.getMultiplier() * (homes+1) * plu.getValue();
+
+            if (args.length == 0) {
+                MessageManager.homes_info(sender, homes, total, price);
+            }
+        }
+        finder(sender, args);
+
         return true;
     }
 
