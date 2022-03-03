@@ -49,8 +49,10 @@ public class GuildSQL extends MySQLManager {
                 int boughtHomes = resultSet.getInt("boughtHomes");
                 String name = resultSet.getString("name");
                 uuid = UUID.fromString(resultSet.getString("uuid"));
+                int boughtOutposts = resultSet.getInt("boughtOutposts");
+                int usedOutposts = resultSet.getInt("usedOutposts");
 
-                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite));
+                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite,boughtOutposts,usedOutposts));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -90,6 +92,8 @@ public class GuildSQL extends MySQLManager {
             preparedStatement.setInt(10, guild.isSpawnMobs() ? 1 : 0);
             preparedStatement.setString(11, guild.getUuid().toString());
             preparedStatement.setString(12, server);
+            preparedStatement.setInt(13,guild.getBoughtOutposts());
+            preparedStatement.setInt(14,guild.getUsedOutposts());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

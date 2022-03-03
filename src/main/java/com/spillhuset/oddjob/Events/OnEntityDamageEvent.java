@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.Managers.PlayerManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.Chunk;
@@ -20,6 +21,13 @@ public class OnEntityDamageEvent implements Listener {
     public void onDamageByMonster(EntityDamageByEntityEvent event) {
         Entity target = event.getEntity();
         Entity damager = event.getDamager();
+
+        if (target instanceof Player player) {
+            PlayerManager.setCombat(player.getUniqueId(), true);
+        }
+        if (damager instanceof Player player) {
+            PlayerManager.setCombat(player.getUniqueId(), true);
+        }
 
         // Damager AND Target is a player
         if (damager instanceof Player && target instanceof Player) {

@@ -53,8 +53,6 @@ public class OnPlayerInteractEvent implements Listener {
             }
         }
 
-        PlayerManager.setCombat(player.getUniqueId(),true);
-
         boolean door = false;
         boolean chest = false;
 

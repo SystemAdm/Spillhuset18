@@ -6,7 +6,6 @@ import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
-import com.spillhuset.oddjob.SQL.GuildSQL;
 import com.spillhuset.oddjob.SQL.HomesSQL;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -24,6 +23,7 @@ public class Guild {
     private int boughtClaims = 0;
     private int boughtOutposts = 0;
     private int boughtHomes = 0;
+    private int usedOutposts = 0;
     private boolean spawnMobs = false;
     private boolean open = false;
     private boolean invited_only = false;
@@ -35,11 +35,12 @@ public class Guild {
 
     /**
      * Created from loading
-     *
-     * @param uuid UUID
+     *  @param uuid UUID
      * @param name String name
+     * @param boughtOutposts
+     * @param usedOutposts
      */
-    public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite) {
+    public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite, int boughtOutposts, int usedOutposts) {
         this.uuid = uuid;
         this.name = name;
         this.zone = zone;
@@ -51,6 +52,8 @@ public class Guild {
         this.friendlyFire = friendly_fire;
         this.permissionKick = permission_kick;
         this.permissionInvite = permission_invite;
+        this.boughtOutposts = boughtOutposts;
+        this.usedOutposts = usedOutposts;
     }
 
     /**
@@ -219,8 +222,8 @@ public class Guild {
                 players++;
             }
         }
-        //          10       +       0      + (   1    *     1    ) = 15
-        return defaultClaims + boughtClaims + (players * perMember);
+        //          0       +       0      + (   1    *     1    ) = 15
+        return defaultOutpost + boughtOutposts + (players * perMember);
     }
 
 
@@ -242,5 +245,9 @@ public class Guild {
 
     public List<String> listHomes(UUID uuid) {
         return OddJob.getInstance().getHomeManager().getList(uuid);
+    }
+
+    public int getUsedOutposts() {
+        return usedOutposts;
     }
 }

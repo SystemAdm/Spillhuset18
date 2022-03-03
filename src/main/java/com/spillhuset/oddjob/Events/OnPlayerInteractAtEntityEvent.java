@@ -18,21 +18,16 @@ import java.util.UUID;
 public class OnPlayerInteractAtEntityEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityInteractAtEntityEvent(PlayerInteractAtEntityEvent event) {
-        OddJob.getInstance().log("b");
         if (event.isCancelled()) return;
         Entity entity = event.getRightClicked();
         Player clicker = event.getPlayer();
-        OddJob.getInstance().log("a");
 
         Inventory inventory = OddJob.getInstance().getPlayerManager().getSpiritInventory(entity.getUniqueId());
         if (inventory != null) {
-            OddJob.getInstance().log("Click Clack");
             event.setCancelled(true);
             clicker.openInventory(inventory);
             OddJob.getInstance().getPlayerManager().openSpirit.put(clicker.getUniqueId(), entity);
         }
-
-        OddJob.getInstance().log("Righty tidy");
 
         Guild guildClicked = OddJob.getInstance().getGuildsManager().getGuildByChunk(entity.getLocation().getChunk());
         Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(clicker.getUniqueId());
@@ -44,12 +39,10 @@ public class OnPlayerInteractAtEntityEvent implements Listener {
         }
 
         if (entity instanceof ArmorStand armorStand) {
-            OddJob.getInstance().log("test");
             if (armorStand.getCustomName() != null && armorStand.getCustomName().startsWith("The spirit of ")) {
                 Inventory spiritInv = OddJob.getInstance().getPlayerManager().getSpiritInventory(armorStand.getUniqueId());
                 clicker.openInventory(spiritInv);
             }
-
         }
     }
 }

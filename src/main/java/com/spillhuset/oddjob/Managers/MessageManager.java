@@ -227,7 +227,7 @@ public class MessageManager {
         list(plugin, sender, notify, "-----------------------------------------");
     }
 
-    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites, List<String> members,double price_homes,double price_claim,double price_outpost) {
+    public static void guilds_info(CommandSender sender, Guild guild, OddPlayer guildMaster, List<OddPlayer> pending, List<OddPlayer> invites, List<String> members, double price_homes, double price_claim, double price_outpost) {
         Notify notify = Notify.info;
         Plugin plugin = Plugin.guilds;
         list(plugin, sender, notify, "Info about: " + cGuild + guild.getName());
@@ -245,7 +245,7 @@ public class MessageManager {
         list(plugin, sender, notify, "Next claim will cost: " + cValue + price_claim);
         list(plugin, sender, notify, "Homes set: " + cValue + guild.getHomes() + cInfo + "/" + cValue + guild.getMaxHomes());
         list(plugin, sender, notify, "Next home will cost: " + cValue + price_homes);
-        list(plugin, sender, notify, "Outposts set: " + cValue + guild.getOutposts() + cInfo + "/" + cValue + guild.getMaxOutposts());
+        list(plugin, sender, notify, "Outposts set: " + cValue + guild.getUsedOutposts() + cInfo + "/" + cValue + guild.getMaxOutposts());
         list(plugin, sender, notify, "Next outpost will cost: " + cValue + price_outpost);
         list(plugin, sender, notify, "Spawn mobs: " + cValue + guild.isSpawnMobs());
         list(plugin, sender, notify, "Invited only: " + cValue + guild.isInvited_only());

@@ -9,6 +9,11 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -44,20 +49,26 @@ public class PlayerManager {
         return combat.get(uniqueId) != null;
     }
     public static void setCombat(UUID uniqueId, boolean set) {
+        KeyedBossBar bossBar = Bukkit.getBossBar(NamespacedKey.minecraft("combat"));
+        Player player = Bukkit.getPlayer(uniqueId);
+        if (player == null) return;
         if (set) {
-            OddJob.getInstance().log("set");
+            if (bossBar == null) {
+                bossBar = Bukkit.createBossBar(NamespacedKey.minecraft("combat"),"In combat, no teleport accepted", BarColor.RED, BarStyle.SOLID);
+            }
+            bossBar.addPlayer(player);
             if (combat.get(uniqueId) != null) combat.get(uniqueId).cancel();
             combat.put(uniqueId,new BukkitRunnable() {
                 @Override
                 public void run() {
                     PlayerManager.setCombat(uniqueId, false);
-                    MessageManager.in_combat(uniqueId);
                 }
-            }.runTaskLater(OddJob.getInstance(), 600));
+            }.runTaskLater(OddJob.getInstance(), 200));
         } else {
-            OddJob.getInstance().log("unset");
+            if (bossBar != null) {
+                bossBar.removePlayer(player);
+            }
             combat.remove(uniqueId);
-            MessageManager.no_combat(uniqueId);
         }
     }
 
