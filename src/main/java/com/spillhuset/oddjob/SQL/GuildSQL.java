@@ -76,9 +76,9 @@ public class GuildSQL extends MySQLManager {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_guilds` SET `name` = ?, `zone` = ?, `invited_only`=?,`friendly_fire`=?,`permission_kick`=?,`permission_invite`=?,`open`=?,`boughtClaims`=?,`boughtHomes`=?,`spawnmobs`=? WHERE `uuid` = ? AND `server` = ?");
+                preparedStatement = connection.prepareStatement("UPDATE `mine_guilds` SET `name` = ?, `zone` = ?, `invited_only`=?,`friendly_fire`=?,`permission_kick`=?,`permission_invite`=?,`open`=?,`boughtClaims`=?,`boughtHomes`=?,`spawnmobs`=?,`boughtOutposts` = ?,`usedOutposts` = ? WHERE `uuid` = ? AND `server` = ?");
             } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds` (`name`, `zone` , `invited_only`,`friendly_fire`,`permission_kick`,`permission_invite`,`open`,`boughtClaims`,`boughtHomes`,`spawnmobs` ,`uuid` ,`server`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds` (`name`, `zone` , `invited_only`,`friendly_fire`,`permission_kick`,`permission_invite`,`open`,`boughtClaims`,`boughtHomes`,`spawnmobs` ,`boughtOutposts`,`usedOutposts`,`uuid` ,`server`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             }
             preparedStatement.setString(1, guild.getName());
             preparedStatement.setString(2, guild.getZone().name());
@@ -90,10 +90,10 @@ public class GuildSQL extends MySQLManager {
             preparedStatement.setInt(8, guild.getBoughtClaims());
             preparedStatement.setInt(9,guild.getBoughtHomes());
             preparedStatement.setInt(10, guild.isSpawnMobs() ? 1 : 0);
-            preparedStatement.setString(11, guild.getUuid().toString());
-            preparedStatement.setString(12, server);
-            preparedStatement.setInt(13,guild.getBoughtOutposts());
-            preparedStatement.setInt(14,guild.getUsedOutposts());
+            preparedStatement.setInt(11,guild.getBoughtOutposts());
+            preparedStatement.setInt(12,guild.getUsedOutposts());
+            preparedStatement.setString(13, guild.getUuid().toString());
+            preparedStatement.setString(14, server);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -56,7 +56,9 @@ public class PlayerManager {
             if (bossBar == null) {
                 bossBar = Bukkit.createBossBar(NamespacedKey.minecraft("combat"),"In combat, no teleport accepted", BarColor.RED, BarStyle.SOLID);
             }
+            bossBar.setProgress(1d);
             bossBar.addPlayer(player);
+
             if (combat.get(uniqueId) != null) combat.get(uniqueId).cancel();
             combat.put(uniqueId,new BukkitRunnable() {
                 @Override

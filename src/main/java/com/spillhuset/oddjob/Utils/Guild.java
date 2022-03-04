@@ -37,8 +37,6 @@ public class Guild {
      * Created from loading
      *  @param uuid UUID
      * @param name String name
-     * @param boughtOutposts
-     * @param usedOutposts
      */
     public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invited_only, boolean friendly_fire, Role permission_kick, Role permission_invite, int boughtOutposts, int usedOutposts) {
         this.uuid = uuid;

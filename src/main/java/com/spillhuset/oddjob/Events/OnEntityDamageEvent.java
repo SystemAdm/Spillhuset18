@@ -29,6 +29,13 @@ public class OnEntityDamageEvent implements Listener {
             PlayerManager.setCombat(player.getUniqueId(), true);
         }
 
+        if (damager instanceof Player player) {
+            PlayerManager.setCombat(player.getUniqueId(),true);
+        }
+        if (target instanceof Player player) {
+            PlayerManager.setCombat(player.getUniqueId(),true);
+        }
+
         // Damager AND Target is a player
         if (damager instanceof Player && target instanceof Player) {
             Chunk chunk = target.getLocation().getChunk();

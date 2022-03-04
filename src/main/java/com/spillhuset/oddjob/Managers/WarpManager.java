@@ -33,26 +33,6 @@ public class WarpManager {
     private final Random random = new Random();
     private FileConfiguration config = OddJob.getInstance().getConfig();
 
-    public void west(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
-        player.teleport(new Location(player.getWorld(), -20000, 300, 0));
-    }
-
-    public void east(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
-        player.teleport(new Location(player.getWorld(), 20000, 300, 0));
-    }
-
-    public void north(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
-        player.teleport(new Location(player.getWorld(), 0, 300, -20000));
-    }
-
-    public void south(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 600, 1, false, true, true));
-        player.teleport(new Location(player.getWorld(), 0, 300, 20000));
-    }
-
     public void add(Player player, String name, double cost, String passwd) {
         if (WarpSQL.exists(name)) {
             MessageManager.warps_exists(player, name);

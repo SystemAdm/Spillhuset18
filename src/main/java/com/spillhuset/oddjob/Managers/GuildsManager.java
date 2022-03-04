@@ -239,7 +239,10 @@ public class GuildsManager extends Managers {
                 members.add(OddJob.getInstance().getPlayerManager().get(uuid).getName());
             }
         }
-        MessageManager.guilds_info(sender, guild, getGuildMaster(guild), getPending(guild.getUuid()), getInvites(guild.getUuid()), members);
+        double price_homes = Plu.GUILDS_HOMES.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_HOMES.getValue();
+        double price_claims = Plu.GUILDS_CLAIMS.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_CLAIMS.getValue();
+        double price_outposts = Plu.GUILDS_OUTPOST.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_OUTPOST.getValue();
+        MessageManager.guilds_info(sender, guild, getGuildMaster(guild), getPending(guild.getUuid()), getInvites(guild.getUuid()), members,price_homes,price_claims,price_outposts);
     }
 
     public void info(Player player) {
@@ -251,7 +254,10 @@ public class GuildsManager extends Managers {
                     members.add(OddJob.getInstance().getPlayerManager().get(uuid).getName());
                 }
             }
-            MessageManager.guilds_info(player, guild, getGuildMaster(guild), getPending(guild.getUuid()), getInvites(guild.getUuid()), members);
+            double price_homes = Plu.GUILDS_HOMES.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_HOMES.getValue();
+            double price_claims = Plu.GUILDS_CLAIMS.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_CLAIMS.getValue();
+            double price_outposts = Plu.GUILDS_OUTPOST.getMultiplier() * (guild.getMaxHomes()+1) * Plu.GUILDS_OUTPOST.getValue();
+            MessageManager.guilds_info(player, guild, getGuildMaster(guild), getPending(guild.getUuid()), getInvites(guild.getUuid()), members,price_homes,price_claims,price_outposts);
         } else {
             MessageManager.guilds_not_associated(player);
         }
