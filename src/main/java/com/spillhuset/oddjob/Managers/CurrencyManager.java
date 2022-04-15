@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -74,26 +75,9 @@ public class CurrencyManager {
         }
     }
 
-    public void add(CommandSender sender, String accountString, String valueString) {
-        Account account = null;
-        for (Account a : Account.values()) {
-            if (a.name().equalsIgnoreCase(accountString)) {
-                account = a;
-            }
-        }
-        if (account == null) {
-            MessageManager.currency_account_not_found(sender, accountString);
-            return;
-        }
-
-        double value = 0d;
-        value = Double.parseDouble(valueString);
-        if (value == 0d) {
-            MessageManager.invalidNumber(Plugin.currency, sender, valueString);
-            return;
-        }
+    public void add(CommandSender sender, Account account, double value) {
         Player player = (Player) sender;
-        UUID uuid = null;
+        UUID uuid;
         if (account == Account.guild) {
             uuid = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
         } else {
@@ -108,7 +92,25 @@ public class CurrencyManager {
             CurrencySQL.initializeGuild(uuid);
 
         CurrencySQL.add(uuid, value, account);
-        MessageManager.currency_added(sender, uuid.toString(), account.name(), value);
+        MessageManager.currency_added(sender, sender.getName(), account.name(), value);
+    }
+    public void add(CommandSender sender, OddPlayer oddPlayer, Account account, double value) {
+        UUID uuid;
+        if (account == Account.guild) {
+            uuid = OddJob.getInstance().getGuildsManager().getMembers().get(oddPlayer.getUuid());
+        } else {
+            uuid = oddPlayer.getUuid();
+        }
+
+        if (uuid == null) {
+            MessageManager.currency_account_not_found(sender, account.name());
+            return;
+        }
+        if (!CurrencySQL.has(uuid))
+            CurrencySQL.initializeGuild(uuid);
+
+        CurrencySQL.add(uuid, value, account);
+        MessageManager.currency_added(sender, oddPlayer.getName(), account.name(), value);
     }
 
     public void showPlayer(Player player) {

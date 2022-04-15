@@ -84,11 +84,8 @@ public class PlayerManager {
     }
 
     public List<String> listString() {
-        OddJob.getInstance().log("listing");
         List<String> list = new ArrayList<>();
-        OddJob.getInstance().log("size:" + oddPlayers.size());
         for (OddPlayer oddPlayer : oddPlayers.values()) {
-            OddJob.getInstance().log("item-player");
             list.add(oddPlayer.getName());
         }
         return list;
