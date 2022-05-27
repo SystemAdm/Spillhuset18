@@ -19,12 +19,19 @@ public class OnPlayerInteractAtEntityEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityInteractAtEntityEvent(PlayerInteractAtEntityEvent event) {
         if (event.isCancelled()) return;
+
+        /* Entity clicked */
         Entity entity = event.getRightClicked();
+
+        /* Clicking player*/
         Player clicker = event.getPlayer();
 
+        /* Get entities inventory */
         Inventory inventory = OddJob.getInstance().getPlayerManager().getSpiritInventory(entity.getUniqueId());
         if (inventory != null) {
+            // Cancel default
             event.setCancelled(true);
+            // Open inventory
             clicker.openInventory(inventory);
             OddJob.getInstance().getPlayerManager().openSpirit.put(clicker.getUniqueId(), entity);
         }

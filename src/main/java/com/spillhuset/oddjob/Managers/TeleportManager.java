@@ -54,9 +54,9 @@ public class TeleportManager {
                         MessageManager.teleports_countdown(i, player);
                     } else {
                         Plu plu = switch (plugin) {
-                            case guilds -> Plu.TELEPORT_REQUEST;
-                            case homes -> Plu.TELEPORT_REQUEST;
-                            case warps -> Plu.TELEPORT_REQUEST;
+                            case guilds -> Plu.GUILDS_HOMES_TELEPORT;
+                            case homes -> Plu.PLAYER_HOMES_TELEPORT;
+                            case warps -> Plu.WARP_TELEPORT;
                             default -> Plu.TELEPORT_REQUEST;
                         };
 

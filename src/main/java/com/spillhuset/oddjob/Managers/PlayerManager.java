@@ -194,40 +194,68 @@ public class PlayerManager {
     }
 
     public void addSpirit(Entity entity, Player player) {
+        /* Generating Skull */
         ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD, 1);
+
+        /* Changing to a player skull */
         SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
         if (skullMeta != null) {
+            // Sets what player to copy
             skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()));
+            // Sets name
             skullMeta.setDisplayName(ChatColor.DARK_PURPLE + "Head of " + player.getDisplayName());
+            // Sets detail to the skull
             playerSkull.setItemMeta(skullMeta);
+
             OddJob.getInstance().log("Skull generated");
         }
 
+        /* Entity */
         ArmorStand armorStand = (ArmorStand) entity;
+        // Sets name
         armorStand.setCustomName("The spirit of " + player.getDisplayName());
+        // Sets visibility
         armorStand.setCustomNameVisible(true);
 
+        /* Armor Stand Inventory */
         Inventory playerInventory = player.getInventory();
         if (armorStand.getEquipment() != null) {
+            // Sets helmet
             armorStand.getEquipment().setHelmet(playerSkull);
+            // Sets armor
             armorStand.getEquipment().setArmorContents(player.getInventory().getArmorContents());
+            // Sets main hand
             armorStand.getEquipment().setItemInMainHand(player.getInventory().getItemInMainHand());
+            // Sets offhand
             armorStand.getEquipment().setItemInOffHand(player.getInventory().getItemInOffHand());
+
             OddJob.getInstance().log("armor generated");
         }
 
+        /* Inventory */
         Inventory inventory = Bukkit.createInventory(null, 54, "Spirit of " + player.getDisplayName());
         if (playerInventory.getContents().length > 0) {
+            /* Copies players inventory */
             inventory.setContents(player.getInventory().getContents().clone());
+
             OddJob.getInstance().log("inventory generated");
         }
+        // Adds items to the inventory
         inventory.addItem(playerSkull);
+        // Deletes the player inventory
         player.getInventory().clear();
 
+        /* Saving the inventory */
         spiritInventories.put(entity.getUniqueId(), inventory);
+
         OddJob.getInstance().log("Inventory saved");
+
+        /* Saving the armor stand */
         spiritOwner.put(entity.getUniqueId(), player.getUniqueId());
+
         OddJob.getInstance().log("Owner set");
+
+        /* Creating the timer */
         spiritTask.put(entity.getUniqueId(), new BukkitRunnable() {
             int i = 1200;
 
@@ -254,17 +282,30 @@ public class PlayerManager {
                 i--;
             }
         }.runTaskTimer(OddJob.getInstance(), 20, 20));
+
         OddJob.getInstance().log("Timer is running");
     }
 
+    /**
+     *
+     * @param spirit Entity ArmorStand
+     * @param finder UUID finding player
+     * @param looted boolean Looted
+     */
     public void replaceSpirit(Entity spirit, UUID finder, boolean looted) {
+        /* ID of the player who is dead */
         UUID owner = spiritOwner.get(spirit.getUniqueId());
         if (owner != null && owner != finder) {
+            /* The dead player */
             Player player = Bukkit.getPlayer(owner);
+
             if (finder != null && player != null && player.isOnline()) {
+                // You found another players spirit who is online
                 MessageManager.spiritFoundOther(Bukkit.getPlayer(owner));
             }
+
             if (finder != null) {
+                // You found another players spirit who is offline
                 MessageManager.spiritFound(Bukkit.getPlayer(finder), player);
             }
         } else {

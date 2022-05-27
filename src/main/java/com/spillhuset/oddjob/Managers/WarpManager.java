@@ -6,13 +6,10 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,13 +46,15 @@ public class WarpManager {
 
     public void teleport(Player player, String name, String passwd) {
         Warp warp = WarpSQL.get(name);
-
-        if (!warp.matchPwd(passwd)) {
-            MessageManager.warps_error_password(player, name);
+        if (warp != null) {
+            if (!warp.matchPwd(passwd)) {
+                MessageManager.warps_error_password(player, name);
+                return;
+            }
+            OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation(), Plugin.warps, CountdownSpeed.warp);
             return;
         }
-
-        OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation(), Plugin.warps, CountdownSpeed.warp);
+        MessageManager.warps_not_exists(player, name);
     }
 
     public List<String> getList() {

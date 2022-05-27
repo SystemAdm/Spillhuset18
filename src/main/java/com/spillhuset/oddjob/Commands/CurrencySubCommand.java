@@ -1,10 +1,12 @@
 package com.spillhuset.oddjob.Commands;
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencySubCommand extends SubCommand {
@@ -75,6 +77,7 @@ public class CurrencySubCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        // currency sub account value
         if (!can(sender,false,true)) return;
         if (!argsLength(sender,args.length)) return;
 
@@ -83,6 +86,17 @@ public class CurrencySubCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        //currency sub <account> <value>
+        //currency sub <name> <account> <value>
+        List<String> list = new ArrayList<>();
+        Account account = null;
+        if (args.length == 2) {
+            for(Account a : Account.values()) {
+                if (args[1].equalsIgnoreCase(a.name())) {
+
+                }
+            }
+        }
+        return list;
     }
 }

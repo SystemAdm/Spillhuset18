@@ -65,6 +65,7 @@ public class WarpSQL extends MySQLManager {
     }
 
     public static Warp get(String name) {
+        Warp warp = null;
         Location location = null;
         World world = null;
         UUID worldUuid = null;
@@ -95,6 +96,8 @@ public class WarpSQL extends MySQLManager {
                 cost = resultSet.getDouble("cost");
                 passwd = resultSet.getString("passwd");
                 uuid = UUID.fromString(resultSet.getString("uuid"));
+
+                warp = new Warp(uuid,location,cost,passwd,name);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -102,7 +105,7 @@ public class WarpSQL extends MySQLManager {
             close();
         }
 
-        return new Warp(uuid,location,cost,passwd,name);
+        return warp;
     }
 
     public static List<String> getNames() {

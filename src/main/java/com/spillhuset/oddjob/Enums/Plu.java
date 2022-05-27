@@ -9,7 +9,8 @@ public enum Plu {
     GUILDS_OUTPOST(200000,1),
     // 1000 (n^2 + 5)
     PLAYER_HOMES(1000,0.5),
-    PLAYER_HOMES_TELEPORT(50, 1);
+    PLAYER_HOMES_TELEPORT(50, 1),
+    WARP_TELEPORT(50,1 );
     // 250 (n + 3)
 
     public final double value;
