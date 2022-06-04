@@ -30,6 +30,7 @@ public class OnPlayerJoinEvent implements Listener {
 
         // Clearing locks
         OddJob.getInstance().getLocksManager().clear(player);
+        OddJob.getInstance().getWarpManager().clear(player);
 
         // Notifications from guild
         OddJob.getInstance().getGuildsManager().notify(player);

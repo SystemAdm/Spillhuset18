@@ -5,18 +5,24 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
 import com.spillhuset.oddjob.Utils.Warp;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class WarpManager {
+    public static Location block_left;
+    public static Location block_right;
+    public static Material block_left_type;
+    public static Material block_right_type;
     public HashMap<String, Long> joinCooldown = new HashMap<>();
     public HashMap<String, HashMap<String, Long>> cooldown = new HashMap<>();
     public boolean portalsActive = false;
@@ -28,7 +34,91 @@ public class WarpManager {
     private int joinCooldownDelay;
     private boolean commandLog;
     private final Random random = new Random();
-    private FileConfiguration config = OddJob.getInstance().getConfig();
+    private static YamlConfiguration portalsConfig;
+
+    public static void fill() {
+        int minX = Math.min(block_left.getBlockX(),block_right.getBlockX());
+        int maxX = Math.max(block_left.getBlockX(),block_right.getBlockX());
+        int minY = Math.min(block_left.getBlockY(),block_right.getBlockY());
+        int maxY = Math.max(block_left.getBlockY(),block_right.getBlockY());
+        int minZ = Math.min(block_left.getBlockZ(),block_right.getBlockZ());
+        int maxZ = Math.max(block_left.getBlockZ(),block_right.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    Block block = new Location(block_left.getWorld(),x,y,z).getBlock();
+                    if (block.getType() == Material.AIR) {
+                        block.setType(Material.COBWEB);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void remove() {
+        int minX = Math.min(block_left.getBlockX(),block_right.getBlockX());
+        int maxX = Math.max(block_left.getBlockX(),block_right.getBlockX());
+        int minY = Math.min(block_left.getBlockY(),block_right.getBlockY());
+        int maxY = Math.max(block_left.getBlockY(),block_right.getBlockY());
+        int minZ = Math.min(block_left.getBlockZ(),block_right.getBlockZ());
+        int maxZ = Math.max(block_left.getBlockZ(),block_right.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    Block block = new Location(block_left.getWorld(),x,y,z).getBlock();
+                    if (block.getType() == Material.COBWEB) {
+                        block.setType(Material.AIR);
+                    }
+                }
+            }
+        }
+    }
+
+    public static List<UUID> edit = new ArrayList<>();
+
+    public static void removeTool(Player player) {
+        edit.remove(player.getUniqueId());
+        player.getInventory().remove(WarpManager.tool());
+        player.updateInventory();
+        remove();
+        block_left = null;
+        block_left_type = null;
+        block_right = null;
+        block_right_type = null;
+    }
+
+    public static String name(String name) {
+        if (portalsConfig.contains())
+    }
+
+    private void loadPortals() {
+        File portalsConfigFile = new File(OddJob.getInstance().getDataFolder(), "portals.yml");
+        if (portalsConfigFile.exists()) {
+            portalsConfig = new YamlConfiguration();
+            try {
+                portalsConfig.load(portalsConfigFile);
+            } catch (IOException | InvalidConfigurationException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            portalsConfigFile.getParentFile().mkdirs();
+        }
+    }
+
+    public static ItemStack tool() {
+        ItemStack itemStack = new ItemStack(Material.REDSTONE_TORCH, 1);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName("Portal tool");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.BLUE + "A tool, to make an portal frame");
+            itemMeta.setLore(lore);
+        }
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 
     public void add(Player player, String name, double cost, String passwd) {
         if (WarpSQL.exists(name)) {
@@ -89,4 +179,7 @@ public class WarpManager {
     }
 
 
+    public void clear(Player player) {
+        player.getInventory().remove(tool());
+    }
 }

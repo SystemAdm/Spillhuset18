@@ -19,6 +19,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
         subCommands.add(new WarpDelCommand());
         subCommands.add(new WarpListCommand());
         subCommands.add(new WarpTpCommand());
+        subCommands.add(new WarpPortalCommand());
         //subCommands.add(new WarpLinkCommand());
         //subCommands.add(new WarpUnlinkCommand());
     }
