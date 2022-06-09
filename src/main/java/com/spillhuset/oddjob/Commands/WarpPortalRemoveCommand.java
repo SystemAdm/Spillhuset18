@@ -1,29 +1,15 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.WarpManager;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class WarpPortalCommand extends SubCommand {
-    public WarpPortalCommand() {
-        subCommands.add(new WarpPortalAddCommand());
-        subCommands.add(new WarpPortalListCommand());
-        subCommands.add(new WarpPortalEditCommand());
-        subCommands.add(new WarpPortalRemoveCommand());
-        subCommands.add(new WarpPortalLinkCommand());
-    }
+public class WarpPortalRemoveCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return true;
+        return false;
     }
 
     @Override
@@ -33,37 +19,37 @@ public class WarpPortalCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.warps;
+        return null;
     }
 
     @Override
     public String getName() {
-        return "portal";
+        return null;
     }
 
     @Override
     public String getDescription() {
-        return "null";
+        return null;
     }
 
     @Override
     public String getSyntax() {
-        return "null";
+        return null;
     }
 
     @Override
     public String getPermission() {
-        return "warps.portal";
+        return null;
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -88,18 +74,11 @@ public class WarpPortalCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
-            return;
-        }
-        if (!argsLength(sender,args.length)) {
-            return;
-        }
-
 
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        return null;
     }
 }

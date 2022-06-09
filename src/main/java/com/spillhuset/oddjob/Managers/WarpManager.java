@@ -89,8 +89,11 @@ public class WarpManager {
         block_right_type = null;
     }
 
-    public static String name(String name) {
-        if (portalsConfig.contains())
+    public static boolean name(String name) {
+        if (portalsConfig.getConfigurationSection(name) != null) {
+            return false;
+        }
+        return true;
     }
 
     private void loadPortals() {

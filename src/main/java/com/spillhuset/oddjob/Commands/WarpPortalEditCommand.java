@@ -10,20 +10,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class WarpPortalCommand extends SubCommand {
-    public WarpPortalCommand() {
-        subCommands.add(new WarpPortalAddCommand());
-        subCommands.add(new WarpPortalListCommand());
-        subCommands.add(new WarpPortalEditCommand());
-        subCommands.add(new WarpPortalRemoveCommand());
-        subCommands.add(new WarpPortalLinkCommand());
-    }
+public class WarpPortalEditCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return true;
+        return false;
     }
 
     @Override
@@ -38,32 +30,32 @@ public class WarpPortalCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "portal";
+        return "edit";
     }
 
     @Override
     public String getDescription() {
-        return "null";
+        return null;
     }
 
     @Override
     public String getSyntax() {
-        return "null";
+        return null;
     }
 
     @Override
     public String getPermission() {
-        return "warps.portal";
+        return "warps.portal.admin";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -88,18 +80,23 @@ public class WarpPortalCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender,false,true)) {
-            return;
+        if (sender.isOp() && sender instanceof Player player) {
+            if (WarpManager.edit.contains(player.getUniqueId())) {
+                WarpManager.removeTool(player);
+                OddJob.getInstance().log("Removing");
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "Portal Edit Mode ended!"));
+            } else {
+                WarpManager.edit.add(player.getUniqueId());
+                OddJob.getInstance().log("Adding "+WarpManager.tool().getType());
+                player.getInventory().setItem(player.getInventory().firstEmpty(),WarpManager.tool());
+                player.updateInventory();
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Portal Edit Mode!"));
+            }
         }
-        if (!argsLength(sender,args.length)) {
-            return;
-        }
-
-
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        return null;
     }
 }
