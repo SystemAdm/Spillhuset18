@@ -7,6 +7,8 @@ depend:
   - WorldEdit
 
 commands:
+  arena:
+    description: Arena
   homes:
     description: Homes
   guilds:
@@ -14,7 +16,7 @@ commands:
   suicide:
     description: Suicide mother f***er!
   teleport:
-    description: Teleporters
+    description: Teleport
   locks:
     description: Locking
   enderchest:
@@ -37,3 +39,7 @@ commands:
     description: Heals a player
   feed:
     description: Feeds a player
+  sudo:
+    description: Sudo
+  world:
+    description: World

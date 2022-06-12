@@ -46,6 +46,7 @@ public class OddJob extends JavaPlugin {
     public MarkerSet markerSet = null;
     public BossBar bossbar;
     private ShopsManager shopsManager;
+    private ArenaManager arenaManager;
     private final HashMap<UUID, BossBar> bars = new HashMap<>();
     private AuctionsManager auctionsManager;
     int counter = 0;
@@ -79,6 +80,7 @@ public class OddJob extends JavaPlugin {
         locksManager = new LocksManager();
         shopsManager = new ShopsManager();
         auctionsManager = new AuctionsManager();
+        arenaManager = new ArenaManager();
 
         /* Listeners */
         //pm.registerEvents(new StrongholdEvent(),this);
@@ -102,6 +104,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnInventoryMoveEvent(), this);
 
         /* Commands */
+        getCommand("arena").setExecutor(new ArenaCommand());
         getCommand("homes").setExecutor(new HomesCommand());
         getCommand("guilds").setExecutor(new GuildsCommand());
         getCommand("suicide").setExecutor(new SuicideCommand());
@@ -115,11 +118,12 @@ public class OddJob extends JavaPlugin {
         getCommand("currency").setExecutor(new CurrencyCommand());
         getCommand("warps").setExecutor(new WarpCommand());
         getCommand("players").setExecutor(new PlayersCommand());
-        //getCommand("sudo").setExecutor(new SudoCommand());
+        getCommand("sudo").setExecutor(new SudoCommand());
         //getCommand("monster").setExecutor(new MonsterCommand());
         //getCommand("curse").setExecutor(new CurseCommand());
         getCommand("heal").setExecutor(new HealCommand());
         getCommand("feed").setExecutor(new FeedCommand());
+        getCommand("world").setExecutor(new WorldCommand());
 
 
 
@@ -258,6 +262,6 @@ public class OddJob extends JavaPlugin {
     public AuctionsManager getAuctionsManager() {
         return auctionsManager;
     }
-
+public ArenaManager getArenaManager() { return arenaManager; }
 }
 

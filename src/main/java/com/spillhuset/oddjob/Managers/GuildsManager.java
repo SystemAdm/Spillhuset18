@@ -1366,7 +1366,7 @@ public class GuildsManager extends Managers {
         Guild guild = OddJob.getInstance().getGuildsManager().getGuildByZone(guildType);
 
         try {
-            Region selection = OddJob.getInstance().getWorldEdit().getSession(player).getSelection();
+            Region selection = (Region) OddJob.getInstance().getWorldEdit().getSession(player).getSelection();
 
             Set<BlockVector2> chs = selection.getChunks();
             World world = Bukkit.getWorld(player.getWorld().getUID());
