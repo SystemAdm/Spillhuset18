@@ -1,0 +1,9 @@
+name: SpillhusetSpawn
+version: '${project.version}'
+main: com.spillhuset.spawn.spillhusetspawn.SpillhusetSpawn
+api-version: 1.19
+commands:
+  spawn:
+    description: Return to spawn
+  setspawn:
+    description: Sets a new spawnpoint

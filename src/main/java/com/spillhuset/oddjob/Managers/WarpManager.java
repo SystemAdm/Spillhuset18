@@ -181,6 +181,10 @@ public class WarpManager {
         MessageManager.warps_list(sender, w);
     }
 
+    public void loadWorlds() {
+
+    }
+
 
     public void clear(Player player) {
         player.getInventory().remove(tool());

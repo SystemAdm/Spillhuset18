@@ -100,17 +100,22 @@ public class ArenaCreateCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
+        OddJob.getInstance().log("Test");
         List<String> list = new ArrayList<>();
-        for (SubCommand subCommand : subCommands) {
-            // Can use 'self' command
-            if (can(sender, false, false)) {
-                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    return subCommand.getTabCompleter(sender, args);
-                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
-                    list.add(subCommand.getName());
+        if (args.length == 2) {
+            return list;
+        } else if (args.length == 3) {
+            for (WorldType type : WorldType.values()) {
+                if (args[2].isEmpty() || type.getName().startsWith(args[2])) {
+                    list.add(type.getName());
                 }
             }
-
+        } else if (args.length == 4) {
+            for (World.Environment environment : World.Environment.values()) {
+                if (args[3].isEmpty() || environment.name().startsWith(args[3])) {
+                    list.add(environment.name());
+                }
+            }
         }
         return list;
     }

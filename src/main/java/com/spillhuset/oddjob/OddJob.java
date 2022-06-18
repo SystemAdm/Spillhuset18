@@ -130,6 +130,8 @@ public class OddJob extends JavaPlugin {
         earnings = new HashMap<>();
         entrances = new ArrayList<>();
 
+        arenaManager.loadArena();
+
         bossbar = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SOLID);
         new BukkitRunnable() {
             @Override

@@ -18,13 +18,18 @@ import java.util.List;
 public class ArenaCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
     public ArenaCommand() {
         subCommands.add(new ArenaCreateCommand());
-        /*subCommands.add(new ArenaStartCommand());
-        subCommands.add(new ArenaStopCommand());
         subCommands.add(new ArenaEditCommand());
+        subCommands.add(new ArenaSetCommand());
         subCommands.add(new ArenaSaveCommand());
+        /*
+        subCommands.add(new ArenaListCommand());
+        subCommands.add(new ArenaStartCommand());
+        subCommands.add(new ArenaStopCommand());
+
         subCommands.add(new ArenaDestroyCommand());
         subCommands.add(new ArenaJoinCommand());
-        subCommands.add(new ArenaLeaveCommand());*/
+        subCommands.add(new ArenaLeaveCommand());
+        */
     }
 
     @Override
@@ -99,7 +104,18 @@ public class ArenaCommand extends SubCommandInterface implements CommandExecutor
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return new ArrayList<>();
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> list = new ArrayList<>();
+        for (SubCommand subCommand : subCommands) {
+            // Can use 'self' command
+            if (can(sender, false, false)) {
+                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                    return subCommand.getTabCompleter(sender, args);
+                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
+                    list.add(subCommand.getName());
+                }
+            }
+        }
+        return list;
     }
 }
