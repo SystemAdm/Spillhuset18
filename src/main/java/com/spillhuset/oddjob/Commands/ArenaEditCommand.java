@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArenaEditCommand extends SubCommand {
@@ -91,6 +92,12 @@ public class ArenaEditCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        for (String name : OddJob.getInstance().getArenaManager().arena.keySet()) {
+            if (args.length == 0 || name.startsWith(args[0])) {
+                list.add(name);
+            }
+        }
+        return list;
     }
 }

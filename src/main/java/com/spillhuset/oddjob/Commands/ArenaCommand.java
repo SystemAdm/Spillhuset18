@@ -21,10 +21,11 @@ public class ArenaCommand extends SubCommandInterface implements CommandExecutor
         subCommands.add(new ArenaEditCommand());
         subCommands.add(new ArenaSetCommand());
         subCommands.add(new ArenaSaveCommand());
-        /*
         subCommands.add(new ArenaListCommand());
+
         subCommands.add(new ArenaStartCommand());
         subCommands.add(new ArenaStopCommand());
+        /*
 
         subCommands.add(new ArenaDestroyCommand());
         subCommands.add(new ArenaJoinCommand());

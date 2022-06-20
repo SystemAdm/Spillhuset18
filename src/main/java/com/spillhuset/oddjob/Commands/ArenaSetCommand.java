@@ -26,12 +26,12 @@ public class ArenaSetCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.arena;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "set";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ArenaSetCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return null;
+        return "arena";
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -77,7 +78,7 @@ public class ArenaSaveCommand extends SubCommand {
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+        OddJob.getInstance().getArenaManager().save(player);
     }
 
     @Override

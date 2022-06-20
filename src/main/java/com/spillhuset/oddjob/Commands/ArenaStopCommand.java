@@ -1,15 +1,14 @@
 package com.spillhuset.oddjob.Commands;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Utils.GameType;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArenaSetGameTypeCommand extends SubCommand {
+public class ArenaStopCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,7 +26,7 @@ public class ArenaSetGameTypeCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "game_type";
+        return "stop";
     }
 
     @Override
@@ -57,7 +56,7 @@ public class ArenaSetGameTypeCommand extends SubCommand {
 
     @Override
     public int depth() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -77,17 +76,11 @@ public class ArenaSetGameTypeCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-
+        OddJob.getInstance().getArenaManager().stop(0);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        for (GameType gameType : GameType.values()) {
-            if (args[depth()].isEmpty() || gameType.name().startsWith(args[depth()])) {
-                list.add(gameType.name());
-            }
-        }
-        return list;
+        return new ArrayList<>();
     }
 }
