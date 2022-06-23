@@ -170,7 +170,6 @@ public class OddJob extends JavaPlugin {
                             earnings.remove(uuid);
                             bossbar.removePlayer(player);
 
-                            omen();
                         }
                     }
 
@@ -181,17 +180,6 @@ public class OddJob extends JavaPlugin {
         }.runTaskTimerAsynchronously(OddJob.getInstance(), 20, 20);
     }
 
-    private void omen() {
-        Player player = Bukkit.getPlayer(UUID.fromString("6753ee28-4e1d-4414-be04-76fc158613c4")) ;
-
-        if (player != null){
-            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,9999,255));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 9999, 255));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 9999, 255));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 9999, 255));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 9999, 255));
-        }
-    }
 
     @Override
     public void onDisable() {
