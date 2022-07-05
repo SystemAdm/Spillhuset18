@@ -500,7 +500,7 @@ public class MessageManager {
         notify(Plugin.guilds, sender, Notify.danger, "You have more than one guild invites");
     }
 
-    public static void guilds_more_pending(CommandSender sender) {
+    public static void guilds_more_pending(CommandSender sender, List<UUID> players) {
         notify(Plugin.guilds, sender, Notify.danger, "There are more than one pending request to join");
     }
 

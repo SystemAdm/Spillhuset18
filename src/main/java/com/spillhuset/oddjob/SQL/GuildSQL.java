@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MySQLManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.GuildInvitation;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,10 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GuildSQL extends MySQLManager {
 
@@ -52,7 +50,7 @@ public class GuildSQL extends MySQLManager {
                 int boughtOutposts = resultSet.getInt("boughtOutposts");
                 int usedOutposts = resultSet.getInt("usedOutposts");
 
-                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite,boughtOutposts,usedOutposts));
+                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite, boughtOutposts, usedOutposts));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -88,10 +86,10 @@ public class GuildSQL extends MySQLManager {
             preparedStatement.setString(6, guild.getPermissionInvite().name());
             preparedStatement.setInt(7, guild.isOpen() ? 1 : 0);
             preparedStatement.setInt(8, guild.getBoughtClaims());
-            preparedStatement.setInt(9,guild.getBoughtHomes());
+            preparedStatement.setInt(9, guild.getBoughtHomes());
             preparedStatement.setInt(10, guild.isSpawnMobs() ? 1 : 0);
-            preparedStatement.setInt(11,guild.getBoughtOutposts());
-            preparedStatement.setInt(12,guild.getUsedOutposts());
+            preparedStatement.setInt(11, guild.getBoughtOutposts());
+            preparedStatement.setInt(12, guild.getUsedOutposts());
             preparedStatement.setString(13, guild.getUuid().toString());
             preparedStatement.setString(14, server);
             preparedStatement.executeUpdate();
@@ -232,24 +230,21 @@ public class GuildSQL extends MySQLManager {
     }
 
     /**
-     * @param uuid UUID of Player
-     * @param type Player or Guild
      * @return List of opposite type UUID
      */
-    public static List<UUID> getInvite(UUID uuid, GuildType type) {
-        List<UUID> list = new ArrayList<>();
+    public static HashSet<GuildInvitation> getInvite() {
+        HashSet<GuildInvitation> list = new HashSet<>();
 
         try {
             connect();
-            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_invites` WHERE " + type.name() + " = ?");
-            preparedStatement.setString(1, uuid.toString());
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_invites`");
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                String string = resultSet.getString(type.type());
-                UUID guild = UUID.fromString(string);
-                if (!string.isEmpty())
-                    list.add(guild);
+                UUID guild = UUID.fromString(resultSet.getString("guild"));
+                UUID player = UUID.fromString(resultSet.getString("player"));
+
+                list.add(new GuildInvitation(guild, player));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -455,9 +450,9 @@ public class GuildSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT `uuid` FROM `mine_guilds_chunks` WHERE `world` = ? AND `x` = ? AND `z` = ?");
-            preparedStatement.setString(1,string);
-            preparedStatement.setInt(2,x);
-            preparedStatement.setInt(3,z);
+            preparedStatement.setString(1, string);
+            preparedStatement.setInt(2, x);
+            preparedStatement.setInt(3, z);
 
             resultSet = preparedStatement.executeQuery();
 
@@ -476,7 +471,7 @@ public class GuildSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `uuid` = ?");
-            preparedStatement.setString(1,uuid.toString());
+            preparedStatement.setString(1, uuid.toString());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

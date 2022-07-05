@@ -1,8 +1,11 @@
 package com.spillhuset.oddjob.Commands;
 
+import com.spillhuset.oddjob.Enums.GuildType;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.SQL.GuildSQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -79,6 +82,8 @@ public class GuildsAcceptCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        /* /guilds accept | /guilds accept <player> */
+
         if (!can(sender, false, true)) {
             return;
         }
@@ -100,6 +105,21 @@ public class GuildsAcceptCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        List<String> list = new ArrayList<>();
+
+        Player player = (Player) sender;
+
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+
+        if (guild.getPermissionInvite() == OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId())) {
+            List<UUID> g = GuildSQL.getInvite(guild.getUuid(), GuildType.uuid);
+            if (!g.isEmpty()) {
+                for (UUID uuid :g) {
+                    list.add(OddJob.getInstance().getPlayerManager().get(uuid).getName());
+                }
+            }
+        }
+
+        return list;
     }
 }
