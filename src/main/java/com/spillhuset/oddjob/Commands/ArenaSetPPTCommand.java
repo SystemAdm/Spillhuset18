@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 public class ArenaSetPPTCommand extends com.spillhuset.oddjob.Utils.SubCommand {
+    /* Player per team */
     @Override
     public boolean denyConsole() {
         return false;

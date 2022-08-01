@@ -17,8 +17,6 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerSet;
@@ -43,7 +41,8 @@ public class OddJob extends JavaPlugin {
     public HashMap<UUID, Double> earnings;
     private LocksManager locksManager;
     public DynmapAPI dynmap = null;
-    public MarkerSet markerSet = null;
+    public MarkerSet markerGuilds = null;
+    public MarkerSet markerToombs = null;
     public BossBar bossbar;
     private ShopsManager shopsManager;
     private ArenaManager arenaManager;
@@ -63,9 +62,9 @@ public class OddJob extends JavaPlugin {
 
         dynmap = (DynmapAPI) Bukkit.getServer().getPluginManager().getPlugin("Dynmap");
         if (dynmap != null) {
-            markerSet = dynmap.getMarkerAPI().createMarkerSet("spillhuset.guilds", "Guilds", null, false);
+            markerGuilds = dynmap.getMarkerAPI().createMarkerSet("spillhuset.guilds", "Guilds", null, false);
+            markerToombs = dynmap.getMarkerAPI().createMarkerSet("spillhuset.toombs", "Toombs", null, false);
         }
-
 
         /* Loadings */
         ConfigManager.load();
@@ -85,7 +84,7 @@ public class OddJob extends JavaPlugin {
         /* Listeners */
         //pm.registerEvents(new StrongholdEvent(),this);
         pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
-        pm.registerEvents(new OnEntitySpawnEvent(),this);
+        pm.registerEvents(new OnEntitySpawnEvent(), this);
         pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnPlayerQuitEvent(), this);
         pm.registerEvents(new OnPlayerMoveEvent(), this);
@@ -99,8 +98,8 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerInventoryCloseEvent(), this);
         pm.registerEvents(new OnPlayerInteractEvent(), this);
         pm.registerEvents(new OnBlockFromToEvent(), this);
-        pm.registerEvents(new OnPlayerDropItemEvent(),this);
-        pm.registerEvents(new OnPlayerGameModeChangeEvent(),this);
+        pm.registerEvents(new OnPlayerDropItemEvent(), this);
+        pm.registerEvents(new OnPlayerGameModeChangeEvent(), this);
         pm.registerEvents(new OnInventoryMoveEvent(), this);
 
         /* Commands */
@@ -124,7 +123,6 @@ public class OddJob extends JavaPlugin {
         getCommand("heal").setExecutor(new HealCommand());
         getCommand("feed").setExecutor(new FeedCommand());
         getCommand("world").setExecutor(new WorldCommand());
-
 
 
         earnings = new HashMap<>();
@@ -252,6 +250,9 @@ public class OddJob extends JavaPlugin {
     public AuctionsManager getAuctionsManager() {
         return auctionsManager;
     }
-public ArenaManager getArenaManager() { return arenaManager; }
+
+    public ArenaManager getArenaManager() {
+        return arenaManager;
+    }
 }
 

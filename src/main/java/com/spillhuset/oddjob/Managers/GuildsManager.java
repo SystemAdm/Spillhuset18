@@ -78,16 +78,16 @@ public class GuildsManager extends Managers {
     }
 
     private void renderChunks() {
-        if (OddJob.getInstance().markerSet != null) {
-            for (AreaMarker areaMarker : OddJob.getInstance().markerSet.getAreaMarkers()) {
+        if (OddJob.getInstance().markerGuilds != null) {
+            for (AreaMarker areaMarker : OddJob.getInstance().markerGuilds.getAreaMarkers()) {
                 areaMarker.deleteMarker();
             }
             for (Chunk chunk : chunks.keySet()) {
                 Guild guild = getGuild(chunks.get(chunk));
                 double[] x = new double[]{chunk.getX() * 16, (chunk.getX() * 16) + 16};
                 double[] z = new double[]{chunk.getZ() * 16, (chunk.getZ() * 16) + 16};
-                if (OddJob.getInstance().markerSet != null && guild != null) {
-                    AreaMarker marker = OddJob.getInstance().markerSet.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
+                if (OddJob.getInstance().markerGuilds != null && guild != null) {
+                    AreaMarker marker = OddJob.getInstance().markerGuilds.createAreaMarker("x:" + chunk.getX() + ";z:" + chunk.getZ(), guild.getName(), true, "world", x, z, false);
                     if (marker != null) {
                         marker.setFillStyle(.5, Integer.parseInt(guild.getZone().getColorCode(), 16));
                         marker.setLineStyle(1, 1, Integer.parseInt(guild.getZone().getColorCode(), 16));

@@ -1,5 +1,5 @@
 package com.spillhuset.oddjob.Utils;
 
 public enum GameType {
-    deathmatch,spleef,team_deathmatch
+    deathmatch, spleef, team_deathmatch
 }
