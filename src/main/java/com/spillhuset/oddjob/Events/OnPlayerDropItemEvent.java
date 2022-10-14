@@ -7,12 +7,5 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class OnPlayerDropItemEvent implements Listener {
-    @EventHandler
-    public void drop(PlayerDropItemEvent event) {
-        ItemStack item = event.getItemDrop().getItemStack();
-        OddJob.getInstance().log("drop");
-        if (OddJob.getInstance().getLocksManager().getTools().contains(item)) {
-            event.setCancelled(true);
-        }
-    }
+
 }

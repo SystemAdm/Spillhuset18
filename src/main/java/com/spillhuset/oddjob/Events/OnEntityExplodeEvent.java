@@ -18,49 +18,5 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 
 public class OnEntityExplodeEvent implements Listener {
-    /**
-     * Cancel Ignition
-     */
-    @EventHandler
-    public void blockIgnite(BlockIgniteEvent event) {
-        // CHECK GUILD
-        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(event.getBlock().getLocation().getChunk());
-        if (guild != null && guild.getZone() != Zone.WILD) {
-            event.setCancelled(true);
-        }
-    }
 
-    @EventHandler
-    public void blockPrime(TNTPrimeEvent event) {
-        // CHECK GUILD
-        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByChunk(event.getBlock().getLocation().getChunk());
-        if (guild != null && guild.getZone() != Zone.WILD) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onExplode(EntityExplodeEvent event) {
-        HashMap<Location, BlockData> keep = new HashMap<>();
-        if (event.blockList().size() > 0) {
-            for (Block block : event.blockList()) {
-                Chunk chunk = block.getChunk();
-                Guild blockGuild = OddJob.getInstance().getGuildsManager().getGuildByChunk(chunk);
-                if (blockGuild != null && !blockGuild.getZone().equals(Zone.WILD)) {
-                    keep.put(block.getLocation(), block.getBlockData());
-                    block.getDrops().clear();
-                }
-            }
-        }
-
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Location location : keep.keySet()) {
-                    location.getBlock().setBlockData(keep.get(location), true);
-                }
-            }
-        };
-        runnable.runTaskLater(OddJob.getInstance(), 10L);
-    }
 }

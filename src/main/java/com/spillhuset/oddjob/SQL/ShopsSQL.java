@@ -1,7 +1,6 @@
 package com.spillhuset.oddjob.SQL;
 
 import com.spillhuset.oddjob.Managers.MySQLManager;
-import com.spillhuset.oddjob.Utils.PLU;
 import org.bukkit.Material;
 
 import java.sql.SQLException;

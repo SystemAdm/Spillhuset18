@@ -8,9 +8,5 @@ import java.util.UUID;
 
 public class CostManager {
 
-    public static boolean transaction(@Nonnull Account pocket, @Nonnull UUID player, @Nonnull Plu plu) {
-        boolean success = false;
 
-        return success;
-    }
 }

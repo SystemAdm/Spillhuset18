@@ -5,8 +5,8 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.MySQLManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Cords;
 import com.spillhuset.oddjob.Utils.Guild;
-import com.spillhuset.oddjob.Utils.GuildInvitation;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -105,8 +105,8 @@ public class GuildSQL extends MySQLManager {
     /**
      * @return HashMap of Chunk and Guild UUID
      */
-    public static HashMap<Chunk, UUID> loadChunks() {
-        HashMap<Chunk, UUID> chunks = new HashMap<>();
+    public static HashMap<Cords, UUID> loadChunks() {
+        HashMap<Cords, UUID> chunks = new HashMap<>();
 
         try {
             connect();
@@ -117,9 +117,8 @@ public class GuildSQL extends MySQLManager {
             while (resultSet.next()) {
                 World world = Bukkit.getWorld(UUID.fromString(resultSet.getString("world")));
                 if (world != null) {
-                    Chunk chunk = world.getChunkAt(resultSet.getInt("x"), resultSet.getInt("z"));
                     UUID guild = UUID.fromString(resultSet.getString("uuid"));
-                    chunk.load();
+                    Cords chunk = new Cords(resultSet.getInt("x"), resultSet.getInt("z"),world,guild);
                     chunks.put(chunk, guild);
                 }
             }
@@ -136,9 +135,9 @@ public class GuildSQL extends MySQLManager {
      * @param chunks HashMap of Chunk and Guild UUID
      * @return Integer | number of saved chunks
      */
-    public static int saveChunks(HashMap<Chunk, UUID> chunks) {
+    public static int saveChunks(HashMap<Cords, UUID> chunks) {
         int affected = 0;
-        for (Chunk chunk : chunks.keySet()) {
+        for (Cords chunk : chunks.keySet()) {
             try {
                 connect();
                 preparedStatement = connection.prepareStatement("SELECT * FROM `mine_guilds_chunks` WHERE `server` = ? AND `world` = ? AND `x` = ? AND `z` = ?");
@@ -400,7 +399,7 @@ public class GuildSQL extends MySQLManager {
     }
 
 
-    public static void removeChunk(Guild guild, Chunk chunk) {
+    public static void removeChunk(Guild guild, Cords chunk) {
         try {
             connect();
             preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_chunks` WHERE `uuid` = ? AND `server` = ? AND `world` = ? AND `x` = ? AND `z` = ?");

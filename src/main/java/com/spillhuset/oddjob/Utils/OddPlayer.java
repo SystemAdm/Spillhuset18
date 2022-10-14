@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class OddPlayer {
-    UUID uuid;
-    String name;
-    Long joined;
+    private final UUID uuid;
+    private final String name;
+    private Long joined;
     private List<UUID> whiteList = new ArrayList<>();
     private List<UUID> blackList = new ArrayList<>();
     private boolean denyTpa;

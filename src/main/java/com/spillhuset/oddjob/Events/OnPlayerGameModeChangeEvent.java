@@ -7,13 +7,5 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
 public class OnPlayerGameModeChangeEvent implements Listener {
-    @EventHandler
-    public void gameModeChange(PlayerGameModeChangeEvent event) {
-        Player player = event.getPlayer();
-        if (player.isOp() || player.hasPermission("admin")) {
-            if (event.getNewGameMode() == GameMode.SURVIVAL) {
-                player.setGameMode(GameMode.CREATIVE);
-            }
-        }
-    }
+
 }

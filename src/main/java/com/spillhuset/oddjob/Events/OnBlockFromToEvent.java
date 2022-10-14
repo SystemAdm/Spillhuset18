@@ -8,17 +8,5 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 
 public class OnBlockFromToEvent implements Listener {
-    @EventHandler
-    public void onBlockFromTo(BlockFromToEvent event) {
-        if (event.getBlock().isLiquid()) {
-            Block to = event.getToBlock();
-            Block from = event.getBlock();
 
-            Guild guildFrom = OddJob.getInstance().getGuildsManager().getGuildByChunk(from.getChunk());
-            Guild guildTo = OddJob.getInstance().getGuildsManager().getGuildByChunk(to.getChunk());
-
-            if (guildFrom != guildTo)
-                event.setCancelled(true);
-        }
-    }
 }
