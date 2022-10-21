@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.SQL;
 
 import com.spillhuset.oddjob.Managers.MySQLManager;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -92,12 +93,12 @@ public class WarpSQL extends MySQLManager {
                 z = resultSet.getDouble("z");
                 yaw = resultSet.getFloat("yaw");
                 pitch = resultSet.getFloat("pitch");
-                location = new Location(world,x,y,z,yaw,pitch);
+                location = new Location(world, x, y, z, yaw, pitch);
                 cost = resultSet.getDouble("cost");
                 passwd = resultSet.getString("passwd");
                 uuid = UUID.fromString(resultSet.getString("uuid"));
 
-                warp = new Warp(uuid,location,cost,passwd,name);
+                warp = new Warp(uuid, location, cost, passwd, name);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -113,10 +114,10 @@ public class WarpSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT `name` FROM `mine_warps` WHERE `server` = ?");
-            preparedStatement.setString(1,server);
+            preparedStatement.setString(1, server);
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 list.add(resultSet.getString("name"));
             }
         } catch (SQLException ex) {
@@ -131,8 +132,8 @@ public class WarpSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("DELETE FROM `mine_warps` WHERE `server` = ? AND `name` = ?");
-            preparedStatement.setString(1,server);
-            preparedStatement.setString(2,name);
+            preparedStatement.setString(1, server);
+            preparedStatement.setString(2, name);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -143,7 +144,7 @@ public class WarpSQL extends MySQLManager {
 
     public static List<Warp> list() {
         List<Warp> warps = new ArrayList<>();
-        for (String string: getNames()){
+        for (String string : getNames()) {
             warps.add(get(string));
         }
         return warps;
@@ -151,5 +152,41 @@ public class WarpSQL extends MySQLManager {
 
     public static Set<String> loadPortals() {
         return new HashSet<>();
+    }
+
+    public static HashMap<UUID, Warp> load() {
+        HashMap<UUID, Warp> warps = new HashMap<>();
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_warps` WHERE `server` = ?");
+            preparedStatement.setString(1, server);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String name;
+                UUID worldUuid = UUID.fromString(resultSet.getString("world"));
+                World world = Bukkit.getWorld(worldUuid);
+                double x = resultSet.getDouble("x");
+                double y = resultSet.getDouble("y");
+                double z = resultSet.getDouble("z");
+                float yaw = resultSet.getFloat("yaw");
+                float pitch = resultSet.getFloat("pitch");
+                Location location = new Location(world, x, y, z, yaw, pitch);
+                double cost = resultSet.getDouble("cost");
+                String passwd = resultSet.getString("passwd");
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                name = resultSet.getString("name");
+                warps.put(uuid, new Warp(uuid, location, cost, passwd, name));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        OddJob.getInstance().log("Loaded "+warps.size()+" warps");
+        return warps;
+    }
+
+    public static void save(HashMap<UUID, Warp> warps) {
     }
 }

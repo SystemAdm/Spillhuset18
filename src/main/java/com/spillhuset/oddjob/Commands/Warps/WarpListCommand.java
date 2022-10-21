@@ -80,7 +80,7 @@ public class WarpListCommand extends SubCommand {
         if (!argsLength(sender,args.length)) {
             return;
         }
-        OddJob.getInstance().getWarpManager().list(sender);
+        OddJob.getInstance().getWarpsManager().list(sender);
     }
 
     @Override

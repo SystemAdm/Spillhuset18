@@ -99,21 +99,15 @@ public class GuildsClaimCommand extends SubCommand {
             if (args[1].equalsIgnoreCase("outpost")) {
                 OddJob.getInstance().getGuildsManager().claim(player, true);
             }
-            if (args[1].equalsIgnoreCase("auto")) {
-                OddJob.getInstance().getGuildsManager().autoClaim(player, OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
-                return;
-            }
             if (can(sender, true, true)) {
                 Guild guild = OddJob.getInstance().getGuildsManager().getGuildByName(args[1]);
                 if (guild == null) {
                     MessageManager.guilds_not_found(sender, args[1]);
                     return;
                 }
-                if (args.length == 3 && args[2].equalsIgnoreCase("auto")) {
-                    OddJob.getInstance().getGuildsManager().autoClaim(player, guild.getUuid());
-                } else {
+
                     OddJob.getInstance().getGuildsManager().claim(player, guild);
-                }
+
             }
         }
     }
@@ -121,19 +115,6 @@ public class GuildsClaimCommand extends SubCommand {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        /*
-        if (args.length == 2 && sender instanceof Player player) {
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-            if (guild != null) {
-
-                if (OddJob.getInstance().getGuildsManager().getChunks().containsValue(guild.getUuid())) {
-                    list.add("outpost");
-                }
-            }
-        }*/
-        if (args.length == 2 || args.length == 3) {
-            list.add("auto");
-        }
         if (can(sender, true, false)) {
             if (args.length == 2) {
                 for (Guild guild : OddJob.getInstance().getGuildsManager().getGuilds().values()) {

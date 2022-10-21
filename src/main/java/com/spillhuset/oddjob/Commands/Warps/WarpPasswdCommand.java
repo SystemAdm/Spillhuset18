@@ -4,12 +4,10 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class WarpDelCommand extends SubCommand {
+public class WarpPasswdCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,17 +25,17 @@ public class WarpDelCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "del";
+        return "passwd";
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "Set a password to use a warp";
     }
 
     @Override
     public String getSyntax() {
-        return "/warps del <name>";
+        return null;
     }
 
     @Override
@@ -47,18 +45,19 @@ public class WarpDelCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -73,6 +72,7 @@ public class WarpDelCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
@@ -82,22 +82,11 @@ public class WarpDelCommand extends SubCommand {
             return;
         }
 
-        String name = args[1];
-
-        Player player = (Player) sender;
-        OddJob.getInstance().getWarpsManager().del(player, name);
+        OddJob.getInstance().getWarpsManager().passwd(sender,args[1],args[2]);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            for (String name : OddJob.getInstance().getWarpsManager().getList()) {
-                if (args[1].isEmpty() || name.startsWith(args[1])) {
-                    list.add(name);
-                }
-            }
-        }
-        return list;
+        return null;
     }
 }

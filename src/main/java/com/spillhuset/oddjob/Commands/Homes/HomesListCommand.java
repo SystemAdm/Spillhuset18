@@ -4,6 +4,8 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -62,6 +64,7 @@ public class HomesListCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -76,6 +79,7 @@ public class HomesListCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
@@ -85,24 +89,22 @@ public class HomesListCommand extends SubCommand {
             return;
         }
 
-        Player target = null;
+        OddPlayer target = null;
         if (args.length == 2) {
-            target = Bukkit.getPlayer(args[1]);
+            target = OddJob.getInstance().getPlayerManager().get(args[1]);
             if (target == null) {
                 MessageManager.errors_find_player(getPlugin(), args[1], sender);
                 return;
             }
         } else if (sender instanceof Player) {
-            target = (Player) sender;
+            target = OddJob.getInstance().getPlayerManager().get(((Player) sender).getUniqueId());
         }
 
         if (target == null) {
             MessageManager.errors_something_somewhere(getPlugin(), sender);
             return;
         }
-
-        OddJob.getInstance().debug(getPlugin(), "list", target.getDisplayName());
-        OddJob.getInstance().getHomeManager().sendList(sender,target);
+        OddJob.getInstance().getHomesManager().sendList(sender, target);
     }
 
     @Override
@@ -111,9 +113,9 @@ public class HomesListCommand extends SubCommand {
         // homes list <player>
         List<String> list = new ArrayList<>();
 
-        if (can(sender,true,false)) {
+        if (can(sender, true, false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list,args[1]);
+                ListInterface.playerList(list, args[1], sender.getName());
             }
         }
         return list;

@@ -80,24 +80,11 @@ public class ArenaEditCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        String name = args[1];
-        World world = Bukkit.getWorld(name);
-        if (world != null) {
-            player.teleport(world.getSpawnLocation());
-        } else {
-            OddJob.getInstance().log("Error");
-        }
+
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        for (String name : OddJob.getInstance().getArenaManager().arena.keySet()) {
-            if (args.length == 0 || name.startsWith(args[0])) {
-                list.add(name);
-            }
-        }
-        return list;
+        return null;
     }
 }

@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class LocksSQL extends MySQLManager {
@@ -82,5 +84,23 @@ public class LocksSQL extends MySQLManager {
         } finally {
             close();
         }
+    }
+
+    public static List<Material> getLockable() {
+        List<Material> list = new ArrayList<>();
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_lockable_materials` WHERE `value` = 1");
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                list.add(Material.valueOf(resultSet.getString("name")));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return list;
     }
 }

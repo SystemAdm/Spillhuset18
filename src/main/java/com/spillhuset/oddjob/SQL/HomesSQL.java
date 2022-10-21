@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.SQL;
 
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MySQLManager;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ public class HomesSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_homes` WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
-            preparedStatement.setString(1, OddJob.getInstance().getConfig().getString("server_unique_id"));
+            preparedStatement.setString(1, ConfigManager.getString("server.id"));
             preparedStatement.setString(2, target.toString());
             preparedStatement.setString(3, name);
             resultSet = preparedStatement.executeQuery();
@@ -38,7 +39,7 @@ public class HomesSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_homes` WHERE `server` = ? AND `uuid` = ?");
-            preparedStatement.setString(1, OddJob.getInstance().getConfig().getString("server_unique_id"));
+            preparedStatement.setString(1, ConfigManager.getString("server.id"));
             preparedStatement.setString(2, target.toString());
             resultSet = preparedStatement.executeQuery();
 
@@ -58,7 +59,7 @@ public class HomesSQL extends MySQLManager {
             connect();
             preparedStatement = connection.prepareStatement("INSERT INTO `mine_homes` (`uuid`, `server`, `name`, `world`, `x`, `y`, `z`, `yaw`, `pitch`) VALUES (?,?,?,?,?,?,?,?,?)");
             preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setString(2, OddJob.getInstance().getConfig().getString("server_unique_id"));
+            preparedStatement.setString(2, ConfigManager.getString("server.id"));
             preparedStatement.setString(3, name);
             preparedStatement.setString(4, Objects.requireNonNull(location.getWorld()).getUID().toString());
             preparedStatement.setDouble(5, location.getX());
@@ -80,7 +81,7 @@ public class HomesSQL extends MySQLManager {
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_homes` WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
-            preparedStatement.setString(1, OddJob.getInstance().getConfig().getString("server_unique_id"));
+            preparedStatement.setString(1, ConfigManager.getString("server.id"));
             preparedStatement.setString(2, uuid.toString());
             preparedStatement.setString(3, name);
             resultSet = preparedStatement.executeQuery();
@@ -102,43 +103,41 @@ public class HomesSQL extends MySQLManager {
         return home;
     }
 
-    public static boolean delete(UUID uuid, String name) {
-        boolean affected = false;
+    public static void delete(UUID uuid, String name) {
         try {
             connect();
             preparedStatement = connection.prepareStatement("DELETE FROM `mine_homes` WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
-            preparedStatement.setString(1, OddJob.getInstance().getConfig().getString("server_unique_id"));
+            preparedStatement.setString(1, ConfigManager.getString("server.id"));
             preparedStatement.setString(2, uuid.toString());
             preparedStatement.setString(3, name);
-            affected = preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             close();
         }
-        return affected;
     }
 
-    public static boolean rename(UUID uuid, String nameOld, String nameNew) {
-        boolean affected = false;
+    public static void rename(UUID uuid, String nameOld, String nameNew) {
         try {
+            OddJob.getInstance().log("sql");
             connect();
             preparedStatement = connection.prepareStatement("UPDATE `mine_homes` SET `name` = ? WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
             preparedStatement.setString(1,nameNew);
             preparedStatement.setString(2,server);
             preparedStatement.setString(3,uuid.toString());
             preparedStatement.setString(4,nameOld);
-            affected = preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
+            OddJob.getInstance().log("sql-error");
             ex.printStackTrace();
         } finally {
+            OddJob.getInstance().log("sql-complete");
             close();
         }
-        return affected;
     }
 
-    public static boolean change(UUID uuid, String name, Location location) {
-        boolean affected = false;
+    public static void change(UUID uuid, String name, Location location) {
         try {
             connect();
             preparedStatement = connection.prepareStatement("UPDATE `mine_homes` SET `world` = ?,`x` = ?,`y` = ?,`z` = ?,`yaw` = ?,`pitch` = ? WHERE `server` = ? AND `uuid` = ? AND `name` = ?");
@@ -151,12 +150,14 @@ public class HomesSQL extends MySQLManager {
             preparedStatement.setString(7,server);
             preparedStatement.setString(8,uuid.toString());
             preparedStatement.setString(9,name);
-            affected = preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             close();
         }
-        return affected;
+    }
+
+    public static void addGuild(UUID uuid, Location location, String home) {
     }
 }

@@ -1,10 +1,9 @@
 package com.spillhuset.oddjob.Commands.Homes;
 
-import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -65,6 +64,7 @@ public class HomesRenameCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -79,6 +79,7 @@ public class HomesRenameCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
@@ -106,8 +107,7 @@ public class HomesRenameCommand extends SubCommand {
         }
 
         if (target != null) {
-            HistoryManager.add(target.getUuid(), Changed.homes_rename, nameOld, nameNew);
-            OddJob.getInstance().getHomeManager().rename(sender, target, nameOld,nameNew);
+            OddJob.getInstance().getHomesManager().rename(sender, target, nameOld, nameNew);
         }
     }
 
@@ -117,13 +117,13 @@ public class HomesRenameCommand extends SubCommand {
         // homes rename <player> <old> <new>
         List<String> list = new ArrayList<>();
 
-        if (can(sender,true,false)) {
+        if (can(sender, true, false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list,args[1]);
+                ListInterface.playerList(list, args[1], sender.getName());
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
-                    ListInterface.listHomes(list,uuid,args[2]);
+                    ListInterface.listHomes(list, uuid, args[2]);
                 }
             } else {
                 list.add("<new_home_name>");
@@ -131,9 +131,9 @@ public class HomesRenameCommand extends SubCommand {
         }
         if (args.length == 2) {
             if (sender instanceof Player player) {
-                ListInterface.listHomes(list,player.getUniqueId(),args[1]);
+                ListInterface.listHomes(list, player.getUniqueId(), args[1]);
             }
-        } else if(args.length == 3) {
+        } else if (args.length == 3) {
             list.add("<new_home_name>");
         }
         return list;

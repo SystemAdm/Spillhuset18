@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Commands.Guilds;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

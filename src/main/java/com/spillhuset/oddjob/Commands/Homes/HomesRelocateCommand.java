@@ -1,10 +1,9 @@
 package com.spillhuset.oddjob.Commands.Homes;
 
-import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HomesChangeCommand extends SubCommand implements ListInterface {
+public class HomesRelocateCommand extends SubCommand implements ListInterface {
     @Override
     public boolean denyConsole() {
         return true;
@@ -32,7 +31,7 @@ public class HomesChangeCommand extends SubCommand implements ListInterface {
 
     @Override
     public String getName() {
-        return "change";
+        return "relocate";
     }
 
     @Override
@@ -47,7 +46,7 @@ public class HomesChangeCommand extends SubCommand implements ListInterface {
 
     @Override
     public String getPermission() {
-        return "homes";
+        return "homes.relocate";
     }
 
     @Override
@@ -102,8 +101,7 @@ public class HomesChangeCommand extends SubCommand implements ListInterface {
         }
 
         if (target != null && sender instanceof Player player) {
-            HistoryManager.add(target.getUuid(), Changed.homes_changed, name, "");
-            OddJob.getInstance().getHomeManager().change(sender, target, name, player.getLocation());
+            OddJob.getInstance().getHomesManager().change(sender, target, name, player.getLocation());
         }
     }
 
@@ -114,7 +112,7 @@ public class HomesChangeCommand extends SubCommand implements ListInterface {
         List<String> list = new ArrayList<>();
         if (can(sender, true, false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list,args[1]);
+                ListInterface.playerList(list,args[1],sender.getName());
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {

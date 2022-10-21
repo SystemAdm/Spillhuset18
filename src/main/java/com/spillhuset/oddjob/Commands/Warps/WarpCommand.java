@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,12 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
         subCommands.add(new WarpAddCommand());
         subCommands.add(new WarpDelCommand());
         subCommands.add(new WarpListCommand());
-        subCommands.add(new WarpTpCommand());
-        subCommands.add(new WarpPortalCommand());
+        subCommands.add(new WarpTeleportCommand());
+        //subCommands.add(new WarpPortalCommand());
+        subCommands.add(new WarpRenameCommand());
+        subCommands.add(new WarpRelocateCommand());
+        subCommands.add(new WarpCostCommand());
+        subCommands.add(new WarpPasswdCommand());
         //subCommands.add(new WarpLinkCommand());
         //subCommands.add(new WarpUnlinkCommand());
     }
@@ -63,7 +68,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!can(sender, false, true)) {
             return true;
         }
@@ -76,7 +81,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
 
         // List commands

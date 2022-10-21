@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +84,9 @@ public class GuildsCreateCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
-
-        OddJob.getInstance().getGuildsManager().create(sender, args[1]);
+        if (sender instanceof Player player) {
+            OddJob.getInstance().getGuildsManager().create(player, args[1]);
+        }
     }
 
     @Override

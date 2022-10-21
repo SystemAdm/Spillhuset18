@@ -17,7 +17,7 @@ public class PlayerSQL extends MySQLManager {
         }
     }
 
-    public static boolean save(OddPlayer oddPlayer) {
+    public static void save(OddPlayer oddPlayer) {
         boolean set = false;
         String whiteList = assemble(oddPlayer.getWhiteList());
         String blackList = assemble(oddPlayer.getBlackList());
@@ -47,7 +47,6 @@ public class PlayerSQL extends MySQLManager {
         } finally {
             close();
         }
-        return set;
     }
 
     public static void load(UUID uuid) {
@@ -87,6 +86,36 @@ public class PlayerSQL extends MySQLManager {
             close();
         }
         return oddPlayer;
+    }
+
+    public static HashMap<UUID, OddPlayer> load() {
+        HashMap<UUID, OddPlayer> players = new HashMap<>();
+
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM mine_players ");
+            resultSet = preparedStatement.executeQuery();
+
+            String name;
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                name = resultSet.getString("name");
+                long joined = resultSet.getLong("joined");
+                List<UUID>whiteList = deAssemble(resultSet.getString("whitelist"));
+                List<UUID>blackList = deAssemble(resultSet.getString("blacklist"));
+                boolean denyTpa = resultSet.getInt("denytpa") == 1;
+                boolean denyTrade = resultSet.getInt("denytrade") == 1;
+                int boughtHomes = resultSet.getInt("boughthomes");
+                ScoreBoard scoreBoard = ScoreBoard.None;
+                players.put(uuid,new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, scoreBoard, boughtHomes));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return players;
     }
 
     public static OddPlayer get(UUID uuid) {

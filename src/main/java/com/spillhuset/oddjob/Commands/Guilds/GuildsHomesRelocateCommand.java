@@ -96,7 +96,7 @@ public class GuildsHomesRelocateCommand extends SubCommand {
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         if (sender instanceof Player player && args.length == 3) {
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByUuid(player.getUniqueId());
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
             for (String name: guild.listHomes(guild.getUuid())) {
                 if (args[2].isEmpty() || name.startsWith(args[2])) {
                     list.add(name);

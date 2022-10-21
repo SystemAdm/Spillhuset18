@@ -43,4 +43,20 @@ public class Warp {
     public double getCost() {
         return cost;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
 }

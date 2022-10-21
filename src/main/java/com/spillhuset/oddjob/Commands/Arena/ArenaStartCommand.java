@@ -77,13 +77,7 @@ public class ArenaStartCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender, false, true)) return;
-        if (!argsLength(sender, args.length)) return;
-        Arena arena = OddJob.getInstance().getArenaManager().arena.get(args[0]);
-        if (arena == null) {
-            OddJob.getInstance().log("error");
-        }
-        OddJob.getInstance().getArenaManager().start(arena);
+
     }
 
     @Override

@@ -172,7 +172,7 @@ public class CurrencyTransferCommand extends SubCommand {
         Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
         if (args.length == 2) {
             if (guild != null) {
-                if (OddJob.getInstance().getGuildsManager().getRoles().getOrDefault(player.getUniqueId(), Role.guest) == Role.Master) {
+                if (OddJob.getInstance().getGuildsManager().getRoles().getOrDefault(player.getUniqueId(), Role.Guest) == Role.Master) {
                     preList.add("guild");
                 }
             }
@@ -200,7 +200,7 @@ public class CurrencyTransferCommand extends SubCommand {
         if (args.length == 4) {
             // value || player
             if (args[2].equalsIgnoreCase("player")) {
-                preList.addAll(OddJob.getInstance().getPlayerManager().listString());
+                preList.addAll(OddJob.getInstance().getPlayerManager().listAll());
             }
             for (String string : preList) {
                 if (args[3].isEmpty() || string.startsWith(args[3])) {

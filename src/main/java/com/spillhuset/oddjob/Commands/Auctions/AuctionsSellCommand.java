@@ -7,6 +7,7 @@ import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
+import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -86,8 +87,9 @@ public class AuctionsSellCommand extends SubCommand {
         int timeout = 48;
         Player seller = (Player) sender;
         ItemStack itemStack = seller.getInventory().getItemInMainHand();
-        Guild guild =OddJob.getInstance().getGuildsManager().getGuildByCords(seller.getLocation().getChunk());
-        if (guild== null || guild.getZone() != Zone.AUCTION) {
+        Chunk chunk =seller.getLocation().getChunk();
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByCords(chunk.getX(),chunk.getZ(),chunk.getWorld());
+        if (guild == null || guild.getZone() != Zone.AUCTION) {
             MessageManager.auctions_not_area(seller);
             return;
         }
@@ -101,7 +103,7 @@ public class AuctionsSellCommand extends SubCommand {
         if (args.length > 2) buyout = Double.parseDouble(args[2]);
         if (args.length == 4) timeout = Integer.parseInt(args[3]);
 
-        OddJob.getInstance().getAuctionsManager().sell(seller,itemStack,bid,buyout,timeout);
+        OddJob.getInstance().getAuctionsManager().sell(seller, itemStack, bid, buyout, timeout);
         // auction sell <bid> <buyout> <timeout>
         //           0    1       2        3
     }

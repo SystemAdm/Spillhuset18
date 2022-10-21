@@ -7,4 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class AuctionsManager {
 
+    public void sell(Player seller, ItemStack itemStack, double bid, double buyout, int timeout) {
+    }
 }

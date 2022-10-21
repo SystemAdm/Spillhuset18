@@ -77,16 +77,7 @@ public class ArenaListCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (OddJob.getInstance().getArenaManager().arena.isEmpty()) {
-            sender.sendMessage("No arena found");
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (String name : OddJob.getInstance().getArenaManager().arena.keySet()) {
-            sb.append(name).append(", ");
-        }
-        if (!sb.isEmpty()) sb.deleteCharAt(sb.lastIndexOf(","));
-        sender.sendMessage(sb.toString());
+
     }
 
     @Override

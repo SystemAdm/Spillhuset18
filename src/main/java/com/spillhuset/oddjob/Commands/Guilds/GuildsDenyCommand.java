@@ -88,7 +88,7 @@ public class GuildsDenyCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
+        UUID guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()).getUuid();
         if (guild == null) {
             // Has invitations to a guild?
             OddJob.getInstance().getGuildsManager().denyInvite(player, args.length == 1 ? null : args[1]);

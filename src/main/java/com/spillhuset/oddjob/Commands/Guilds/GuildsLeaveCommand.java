@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Commands.Guilds;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

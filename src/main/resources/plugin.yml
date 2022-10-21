@@ -1,8 +1,8 @@
 name: Spillhuset
 main: com.spillhuset.oddjob.OddJob
 version: 0.6
-api-version: 1.18
-depend:
+api-version: 1.19
+softdepend:
   - dynmap
   - WorldEdit
 
@@ -43,3 +43,31 @@ commands:
     description: Sudo
   world:
     description: World
+
+permissions:
+  homes:
+    default: true
+  homes.add:
+    default: true
+  homes.add.others:
+    default: op
+  homes.rename:
+    default: true
+  homes.rename.others:
+    default: op
+  homes.list:
+    default: true
+  homes.list.others:
+    default: op
+  homes.change:
+    default: true
+  homes.change.others:
+    default: op
+  homes.del:
+    default: true
+  homes.del.others:
+    default: op
+  homes.teleport:
+    default: true
+  homes.teleport.others:
+    default: op

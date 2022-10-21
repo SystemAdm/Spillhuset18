@@ -92,34 +92,12 @@ public class GuildsAcceptCommand extends SubCommand {
             return;
         }
 
-        Player player = (Player) sender;
-        UUID guild = OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId());
-        if (guild == null) {
-            // Has invitations to a guild?
-            OddJob.getInstance().getGuildsManager().acceptInvite(player, args.length == 1 ? null : args[1]);
-        } else {
-            // Guild has pending requests?
-            OddJob.getInstance().getGuildsManager().acceptPending(sender, guild, args.length == 1 ? null : args[1]);
-        }
+
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
 
-        Player player = (Player) sender;
-
-        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-
-        if (guild.getPermissionInvite() == OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId())) {
-            List<UUID> g = GuildSQL.getInvite(guild.getUuid(), GuildType.uuid);
-            if (!g.isEmpty()) {
-                for (UUID uuid :g) {
-                    list.add(OddJob.getInstance().getPlayerManager().get(uuid).getName());
-                }
-            }
-        }
-
-        return list;
+        return null;
     }
 }

@@ -46,10 +46,10 @@ public abstract class SubCommand {
     public Role getRole(CommandSender sender) {
         if (sender instanceof Player player ) {
             Role role = OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
-            if (role == null) return Role.guest;
+            if (role == null) return Role.Guest;
             return OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
         }
-        return Role.guest;
+        return Role.Guest;
     }
 
     public boolean can(CommandSender sender, boolean others, boolean response) {

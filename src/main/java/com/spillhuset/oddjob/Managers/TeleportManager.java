@@ -22,4 +22,30 @@ import java.util.UUID;
 
 public class TeleportManager {
 
+    public void accept(Player player, String name) {
+    }
+
+    public void accept(Player player) {
+    }
+
+    public void deny(Player player, String name) {
+    }
+
+    public void deny(Player player) {
+    }
+
+    public void request(Player sender, String name) {
+    }
+
+    public void teleport(OddPlayer oddPlayer, Location location) {
+        Player player = Bukkit.getPlayer(oddPlayer.getUuid());
+        if (player != null) {
+            teleport(player,location);
+        }
+    }
+
+    public void teleport(Player player, Location location) {
+        //TODO
+        player.teleport(location);
+    }
 }

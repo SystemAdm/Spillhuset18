@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -104,8 +105,7 @@ public class HomesDelCommand extends SubCommand {
         }
 
         if (target != null) {
-            HistoryManager.add(target.getUuid(), Changed.homes_deleted, name, "");
-            OddJob.getInstance().getHomeManager().del(sender, target, name);
+            OddJob.getInstance().getHomesManager().del(sender, target, name);
         }
 
     }
@@ -118,7 +118,7 @@ public class HomesDelCommand extends SubCommand {
 
         if (can(sender,true,false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list,args[1]);
+                ListInterface.playerList(list,args[1],sender.getName());
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {

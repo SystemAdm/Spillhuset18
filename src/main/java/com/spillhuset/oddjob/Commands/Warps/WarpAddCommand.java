@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Commands.Warps;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
@@ -62,6 +63,7 @@ public class WarpAddCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -76,6 +78,7 @@ public class WarpAddCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
@@ -94,7 +97,7 @@ public class WarpAddCommand extends SubCommand {
                     String pwd = args[i].split("=")[1];
                     if (!pwd.isEmpty()) passwd = pwd;
                 }
-                if (args[i].startsWith("cost")) {
+                if (ConfigManager.getBoolean("plugins.currency") && args[i].startsWith("cost")) {
                     String t = args[i].split("=")[1];
                     double d = Double.parseDouble(t);
                     if (d != 0d) cost = d;
@@ -106,14 +109,14 @@ public class WarpAddCommand extends SubCommand {
             }
         }
         Player player = (Player) sender;
-        OddJob.getInstance().getWarpManager().add(player, args[1],cost,passwd);
+        OddJob.getInstance().getWarpsManager().add(player, args[1], cost, passwd);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         List<String> options = new ArrayList<>();
-        options.add("cost=");
+        if (ConfigManager.getBoolean("plugins.currency")) options.add("cost=");
         options.add("passwd=");
         if (args.length == 2) list.add("<name>");
         if (args.length == 3) {
@@ -123,7 +126,7 @@ public class WarpAddCommand extends SubCommand {
                 }
             }
         } else if (args.length == 4) {
-            options.remove(args[2].substring(0,args[2].indexOf("=")+1));
+            options.remove(args[2].substring(0, args[2].indexOf("=") + 1));
             for (String opt : options) {
                 if (args[3].isEmpty() || opt.startsWith(args[3])) {
                     list.add(opt);

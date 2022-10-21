@@ -91,21 +91,15 @@ public class GuildsUnclaimCommand extends SubCommand {
             return;
         }
         if (args.length >= 2) {
-            if (args[1].equalsIgnoreCase("auto")) {
-                OddJob.getInstance().getGuildsManager().autoUnClaim(player,OddJob.getInstance().getGuildsManager().getMembers().get(player.getUniqueId()));
-                return;
-            }
+
             if (can(sender, true, true)) {
                 Guild guild = OddJob.getInstance().getGuildsManager().getGuildByName(args[1]);
                 if (guild == null) {
                     MessageManager.guilds_not_found(sender,args[1]);
                     return;
                 }
-                if (args.length == 3 && args[2].equalsIgnoreCase("auto")) {
-                    OddJob.getInstance().getGuildsManager().autoUnClaim(player,guild.getUuid());
-                } else {
-                    OddJob.getInstance().getGuildsManager().unClaim(player,guild);
-                }
+                OddJob.getInstance().getGuildsManager().unClaim(player,guild);
+
             }
         }
     }

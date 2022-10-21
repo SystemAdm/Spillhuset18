@@ -1,11 +1,11 @@
 package com.spillhuset.oddjob.Commands.Homes;
 
-import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.HistoryManager;
+import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -65,6 +65,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -79,6 +80,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
@@ -92,10 +94,12 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
         String targetName = sender.getName();
         String name = "home";
         if (args.length == 3) {
+            // homes add <target> <name>
             targetName = args[1];
             target = OddJob.getInstance().getPlayerManager().get(targetName);
             name = args[2];
         } else if (sender instanceof Player player) {
+            // homes add <name>
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             if (args.length == 2) {
                 name = args[1];
@@ -111,10 +115,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
 
 
         if (sender instanceof Player player) {
-            if (OddJob.getInstance().getHomeManager().add(sender, target, name, player.getLocation())) {
-                OddJob.getInstance().debug(getPlugin(), "add", target.getDisplayName() + " " + name);
-                HistoryManager.add(target.getUuid(), Changed.homes_added, "", name);
-            }
+            OddJob.getInstance().getHomesManager().add(sender, target, name, player.getLocation());
         }
     }
 
@@ -123,7 +124,7 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
         List<String> list = new ArrayList<>();
         if (can(sender, true, false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list, args[1]);
+                ListInterface.playerList(list, args[1], sender.getName());
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {

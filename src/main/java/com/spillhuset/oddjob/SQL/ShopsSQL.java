@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import java.sql.SQLException;
 
 public class ShopsSQL extends MySQLManager {
-
+/*
     public static PLU get(Material material) {
         PLU plu = new PLU(material);
         try {
@@ -63,5 +63,5 @@ public class ShopsSQL extends MySQLManager {
         } finally {
             close();
         }
-    }
+    }*/
 }

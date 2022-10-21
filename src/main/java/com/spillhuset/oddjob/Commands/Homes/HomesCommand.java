@@ -2,9 +2,10 @@ package com.spillhuset.oddjob.Commands.Homes;
 
 import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.ListInterface;
+import com.spillhuset.oddjob.SQL.HomesSQL;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
@@ -23,9 +24,9 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         subCommands.add(new HomesListCommand());
         subCommands.add(new HomesDelCommand());
         subCommands.add(new HomesRenameCommand());
-        subCommands.add(new HomesChangeCommand());
+        subCommands.add(new HomesRelocateCommand());
         subCommands.add(new HomesTeleportCommand());
-        subCommands.add(new HomesBuyCommand());
+        if (ConfigManager.getBoolean("plugin.currency")) subCommands.add(new HomesBuyCommand());
     }
 
     @Override
@@ -70,6 +71,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+        /* /homes buy */
         if (!can(sender, false, true)) {
             return true;
         }
@@ -77,16 +79,31 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        if (sender instanceof Player player) {
-            int bought = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getBoughtHomes();
-            int max = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes();
+
+        if (sender instanceof Player player && args.length == 0) {
+            /* How many has already been bought */
+            int bought = OddJob.getInstance().getHomesManager().getList(player.getUniqueId()).size();
+
+            /* Price list unit */
             Plu plu = Plu.PLAYER_HOMES;
+            /* Calculate the price */
             double price = plu.getMultiplier() * (bought + 1) * plu.getValue();
 
-            if (args.length == 0) {
-                MessageManager.homes_info(sender, bought, max, price);
+            /* New maximum number of homes */
+            int max = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes();
+
+            MessageManager.homes_info(sender, bought, max, price);
+
+        }
+
+        if(args.length == 1 && sender instanceof Player player) {
+            for (String name : HomesSQL.getList(player.getUniqueId())) {
+                if (args[0].equalsIgnoreCase(name)) {
+                    OddJob.getInstance().getHomesManager().teleport(sender,OddJob.getInstance().getPlayerManager().get(player.getUniqueId()),name );
+                }
             }
         }
+
         finder(sender, args);
 
         return true;
@@ -97,9 +114,13 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         List<String> list = new ArrayList<>();
 
         // List homes
-        if (args.length == 1 && sender instanceof Player player) {
-            list = OddJob.getInstance().getHomesManager().getList(player.getUniqueId());
-            ListInterface.listHomes(list, player.getUniqueId(), Plugin.homes);
+        if (sender instanceof Player player) {
+            List<String> homes = HomesSQL.getList(player.getUniqueId());
+            for (String string : homes) {
+                if (args.length == 0 || (args.length == 1 && string.startsWith(args[0]))) {
+                    list.add(string);
+                }
+            }
         }
 
         // List commands

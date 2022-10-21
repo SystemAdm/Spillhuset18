@@ -76,7 +76,7 @@ public class ArenaStopCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().getArenaManager().stop(0);
+
     }
 
     @Override

@@ -6,13 +6,12 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class WarpDelCommand extends SubCommand {
+public class WarpRelocateCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -27,17 +26,17 @@ public class WarpDelCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "del";
+        return "relocate";
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "Changes a warps location";
     }
 
     @Override
     public String getSyntax() {
-        return "/warps del <name>";
+        return null;
     }
 
     @Override
@@ -59,6 +58,7 @@ public class WarpDelCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -73,6 +73,7 @@ public class WarpDelCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!argsLength(sender, args.length)) {
@@ -81,23 +82,13 @@ public class WarpDelCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-
-        String name = args[1];
-
         Player player = (Player) sender;
-        OddJob.getInstance().getWarpsManager().del(player, name);
+        String name = args[1].toLowerCase();
+        OddJob.getInstance().getWarpsManager().relocate(player,name);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            for (String name : OddJob.getInstance().getWarpsManager().getList()) {
-                if (args[1].isEmpty() || name.startsWith(args[1])) {
-                    list.add(name);
-                }
-            }
-        }
-        return list;
+        return null;
     }
 }

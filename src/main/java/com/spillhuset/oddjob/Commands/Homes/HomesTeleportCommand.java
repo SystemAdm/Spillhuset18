@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.ListInterface;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -112,9 +113,7 @@ public class HomesTeleportCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().debug(getPlugin(), "teleport", destinationPlayer.getDisplayName() + " " + destinationName);
-        OddJob.getInstance().getHomeManager().teleport(sender, destinationPlayer, destinationName);
-        HistoryManager.add(destinationPlayer.getUuid(), Changed.homes_teleported, "", destinationName);
+        OddJob.getInstance().getHomesManager().teleport(sender, destinationPlayer, destinationName);
 
     }
 
@@ -123,7 +122,7 @@ public class HomesTeleportCommand extends SubCommand {
         List<String> list = new ArrayList<>();
         if (can(sender, true, false)) {
             if (args.length == 2) {
-                ListInterface.playerList(list, args[1]);
+                ListInterface.playerList(list, args[1],sender.getName());
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {

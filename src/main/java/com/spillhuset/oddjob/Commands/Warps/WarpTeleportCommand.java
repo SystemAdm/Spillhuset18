@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WarpTpCommand extends SubCommand {
+public class WarpTeleportCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -92,14 +92,14 @@ public class WarpTpCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        OddJob.getInstance().getWarpManager().teleport(player, name, passwd);
+        OddJob.getInstance().getWarpsManager().teleport(player, name, passwd);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 2) {
-            for (String name : OddJob.getInstance().getWarpManager().getList()) {
+            for (String name : OddJob.getInstance().getWarpsManager().getList()) {
                 if (args[1].isEmpty() || name.startsWith(args[1])) {
                     list.add(name);
                 }

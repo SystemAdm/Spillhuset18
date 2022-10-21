@@ -23,7 +23,7 @@ public class MySQLManager {
     private static String password = "";
     private static String type = "mysql";
 
-    protected static String server = OddJob.getInstance().getConfig().getString("server_unique_id");
+    protected static String server = ConfigManager.getString("server.id");
 
     protected static Connection connection;
     protected static PreparedStatement preparedStatement;
