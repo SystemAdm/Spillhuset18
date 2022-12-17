@@ -7,6 +7,7 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocksLockCommand extends SubCommand {
@@ -42,7 +43,7 @@ public class LocksLockCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "locks";
+        return "locks.lock";
     }
 
     @Override
@@ -87,6 +88,6 @@ public class LocksLockCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }

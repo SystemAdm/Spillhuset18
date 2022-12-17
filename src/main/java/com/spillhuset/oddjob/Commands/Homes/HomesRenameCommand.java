@@ -123,7 +123,7 @@ public class HomesRenameCommand extends SubCommand {
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
-                    ListInterface.listHomes(list, uuid, args[2]);
+                   ListInterface.listHomes(list, uuid, args[2]);
                 }
             } else {
                 list.add("<new_home_name>");

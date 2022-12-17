@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Currency;
 import java.util.UUID;
 
 public class CurrencyManager {
@@ -24,6 +25,7 @@ public class CurrencyManager {
     }
 
     public void showPlayer(Player player) {
+        MessageManager.currency_holding(player, CurrencySQL.getPocket(player.getUniqueId()),CurrencySQL.getBank(player.getUniqueId()));
     }
 
     public void sub(CommandSender sender, String account, String value) {

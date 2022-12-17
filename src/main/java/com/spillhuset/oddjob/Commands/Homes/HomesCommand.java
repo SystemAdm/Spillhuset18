@@ -72,7 +72,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         /* /homes buy */
-        if (!can(sender, false, true)) {
+        if (!can(sender, true, true)) {
             return true;
         }
 

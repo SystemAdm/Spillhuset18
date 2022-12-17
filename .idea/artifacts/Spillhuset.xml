@@ -1,12 +1,12 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="Spillhuset">
-    <output-path>F:/MC/plugins</output-path>
+    <output-path>D:/Server/plugins</output-path>
     <root id="archive" name="Spillhuset.jar">
       <element id="module-output" name="Spillhuset" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/zaxxer/HikariCP/5.0.0/HikariCP-5.0.0.jar" path-in-jar="/" />
-      <element id="library" level="project" name="worldedit-bukkit-7.2.8" />
       <element id="library" level="project" name="Maven: us.dynmap:DynmapCoreAPI:3.4" />
       <element id="library" level="project" name="Maven: us.dynmap:dynmap-api:3.4" />
+      <element id="library" level="project" name="worldedit-bukkit-7.2.10" />
     </root>
   </artifact>
 </component>

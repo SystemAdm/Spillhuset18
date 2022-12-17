@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.SQL;
 
 import com.spillhuset.oddjob.Managers.MySQLManager;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -102,5 +103,31 @@ public class LocksSQL extends MySQLManager {
             close();
         }
         return list;
+    }
+
+    public static void addBlock(Material type) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("INSERT INTO `mine_lockable_materials` (name, value) VALUES (?,1)");
+            preparedStatement.setString(1,type.name());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public static void delBlock(Material type) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_lockable_materials` WHERE `name` = ?");
+            preparedStatement.setString(1,type.name());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
     }
 }

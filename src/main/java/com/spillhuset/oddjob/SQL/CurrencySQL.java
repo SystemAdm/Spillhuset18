@@ -80,5 +80,41 @@ public class CurrencySQL extends MySQLManager {
             close();
         }
     }
+
+    public static double getPocket(UUID uuid) {
+        double value = 0.0;
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                value = resultSet.getDouble("pocket");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return value;
+    }
+
+    public static double getBank(UUID uuid) {
+        double value = 0.0;
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                value = resultSet.getDouble("bank");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return value;
+    }
 }
 

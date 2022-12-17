@@ -101,13 +101,13 @@ public class PlayerSQL extends MySQLManager {
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 name = resultSet.getString("name");
                 long joined = resultSet.getLong("joined");
-                List<UUID>whiteList = deAssemble(resultSet.getString("whitelist"));
-                List<UUID>blackList = deAssemble(resultSet.getString("blacklist"));
+                List<UUID> whiteList = deAssemble(resultSet.getString("whitelist"));
+                List<UUID> blackList = deAssemble(resultSet.getString("blacklist"));
                 boolean denyTpa = resultSet.getInt("denytpa") == 1;
                 boolean denyTrade = resultSet.getInt("denytrade") == 1;
                 int boughtHomes = resultSet.getInt("boughthomes");
                 ScoreBoard scoreBoard = ScoreBoard.None;
-                players.put(uuid,new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, scoreBoard, boughtHomes));
+                players.put(uuid, new OddPlayer(uuid, name, joined, whiteList, blackList, denyTpa, denyTrade, scoreBoard, boughtHomes));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,5 +151,24 @@ public class PlayerSQL extends MySQLManager {
             close();
         }
         return oddPlayer;
+    }
+
+    public static List<String> getList() {
+        List<String> list = new ArrayList<>();
+
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM mine_players");
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                list.add(resultSet.getString("name"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+        return list;
     }
 }

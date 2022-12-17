@@ -71,12 +71,12 @@ public class HomesManager {
             MessageManager.guilds_homes_max_reached(player);
             return;
         }
-        if (HomesSQL.get(guild.getUuid(),home) != null) {
-            MessageManager.guilds_homes_exists(player,home);
+        if (HomesSQL.get(guild.getUuid(), home) != null) {
+            MessageManager.guilds_homes_exists(player, home);
             return;
         }
-        HomesSQL.add(guild.getUuid(),location,home);
-        MessageManager.guilds_homes_successfully_added(guild,home);
+        HomesSQL.add(guild.getUuid(), location, home);
+        MessageManager.guilds_homes_successfully_added(guild, home);
     }
 
     public void sendList(CommandSender sender, OddPlayer target) {
@@ -84,8 +84,8 @@ public class HomesManager {
     }
 
     public void change(CommandSender sender, OddPlayer target, String name, Location location) {
-        if (HomesSQL.get(target.getUuid(), name) != null) {
-            MessageManager.homes_exists(name, target, sender);
+        if (HomesSQL.get(target.getUuid(), name) == null) {
+            MessageManager.homes_not_exists(name, target, sender);
             return;
         }
         if (ConfigManager.getBoolean("plugins.guilds")) {
@@ -117,11 +117,21 @@ public class HomesManager {
     }
 
     public void teleport(CommandSender sender, OddPlayer destinationPlayer, String destinationName) {
+        CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
         if (HomesSQL.get(destinationPlayer.getUuid(), destinationName) == null) {
             MessageManager.homes_no_name(sender, destinationName);
             return;
         }
         Location location = HomesSQL.get(destinationPlayer.getUuid(), destinationName);
+        if (ConfigManager.getBoolean("plugin.currency")) {
+            double price = Plu.PLAYER_HOMES_TELEPORT.getValue();
+            if (!currencyManager.checkPocket(destinationPlayer.getUuid(), price)) {
+                MessageManager.insufficient_funds(sender);
+                return;
+            }
+            OddJob.getInstance().getCurrencyManager().subPocket(destinationPlayer.getUuid(), price);
+
+        }
         if (ConfigManager.getBoolean("plugin.teleport")) {
             OddJob.getInstance().getTeleportManager().teleport(destinationPlayer, location);
         } else {

@@ -122,12 +122,14 @@ public class HomesDelCommand extends SubCommand {
             } else if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
+                    OddJob.getInstance().log("!");
                     ListInterface.listHomes(list,uuid,args[2]);
                 }
             }
         }
         if (args.length == 2) {
             if (sender instanceof Player player) {
+                OddJob.getInstance().log("!");
                 ListInterface.listHomes(list,player.getUniqueId(),args[1]);
             }
         }

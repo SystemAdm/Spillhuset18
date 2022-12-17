@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob;
 
+import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
@@ -32,23 +33,31 @@ public class OddJob extends JavaPlugin {
         instance = this;
         ConfigManager.load();
         playerManager = new PlayerManager();
-        if (ConfigManager.getBoolean("plugin.homes")) homesManager = new HomesManager();
-        if (ConfigManager.getBoolean("plugin.currency"))currencyManager = new CurrencyManager();
-        if (ConfigManager.getBoolean("plugin.guilds"))guildsManager = new GuildsManager();
-        if (ConfigManager.getBoolean("plugin.arena"))arenaManager = new ArenaManager();
-        if (ConfigManager.getBoolean("plugin.auctions"))auctionsManager = new AuctionsManager();
-        if (ConfigManager.getBoolean("plugin.locks"))locksManager = new LocksManager();
-        if (ConfigManager.getBoolean("plugin.shops"))shopsManager = new ShopsManager();
-        if (ConfigManager.getBoolean("plugin.teleport"))teleportManager = new TeleportManager();
-        if (ConfigManager.getBoolean("plugin.warps"))warpsManager = new WarpsManager();
-
-        getCommand("homes").setExecutor(new HomesCommand());
-        getCommand("warps").setExecutor(new WarpCommand());
-        getCommand("locks").setExecutor(new LocksCommand());
+        if (ConfigManager.getBoolean("plugin.homes")) {
+            homesManager = new HomesManager();
+            getCommand("homes").setExecutor(new HomesCommand());
+        }
+        if (ConfigManager.getBoolean("plugin.currency")) {
+            currencyManager = new CurrencyManager();
+            getCommand("currency").setExecutor(new CurrencyCommand());
+        }
+        if (ConfigManager.getBoolean("plugin.guilds")) guildsManager = new GuildsManager();
+        if (ConfigManager.getBoolean("plugin.arena")) arenaManager = new ArenaManager();
+        if (ConfigManager.getBoolean("plugin.auctions")) auctionsManager = new AuctionsManager();
+        if (ConfigManager.getBoolean("plugin.locks")) {
+            locksManager = new LocksManager();
+            getCommand("locks").setExecutor(new LocksCommand());
+        }
+        if (ConfigManager.getBoolean("plugin.shops")) shopsManager = new ShopsManager();
+        if (ConfigManager.getBoolean("plugin.teleport")) teleportManager = new TeleportManager();
+        if (ConfigManager.getBoolean("plugin.warps")) {
+            warpsManager = new WarpsManager();
+            getCommand("warps").setExecutor(new WarpCommand());
+        }
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new OnPlayerInteractEvent(),this);
-        pm.registerEvents(new OnBlockBreakEvent(),this);
+        pm.registerEvents(new OnPlayerInteractEvent(), this);
+        pm.registerEvents(new OnBlockBreakEvent(), this);
     }
 
     public void onDisable() {
@@ -76,7 +85,7 @@ public class OddJob extends JavaPlugin {
     }
 
     public void log(String update) {
-        getLogger().log(Level.INFO,update);
+        getLogger().log(Level.INFO, update);
     }
 
     public AuctionsManager getAuctionsManager() {

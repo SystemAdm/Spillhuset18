@@ -29,6 +29,28 @@ public class LocksManager {
         }
         lockTool = itemStack;
 
+        itemStack = new ItemStack(Material.BLAZE_ROD);
+        itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName("Adding tool");
+            List<String> lore = new ArrayList<>();
+            lore.add("Right click on an object to add it to lockable.");
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+        }
+        addTool = itemStack;
+
+        itemStack = new ItemStack(Material.END_ROD);
+        itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName("Removing tool");
+            List<String> lore = new ArrayList<>();
+            lore.add("Right click on an object to remove it from lockable.");
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+        }
+        delTool = itemStack;
+
         itemStack = new ItemStack(Material.END_ROD);
         itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
@@ -46,10 +68,28 @@ public class LocksManager {
     private List<Material> lockable;
     public final ItemStack lockTool;
     public final ItemStack unlockTool;
+    public final ItemStack addTool;
+    public final ItemStack delTool;
 
     public void giveInfoTool(Player player) {
     }
 
+    public void giveAddTool(Player player) {
+        Inventory inventory = player.getInventory();
+        if (inventory.contains(addTool)) {
+            inventory.remove(addTool);
+        } else {
+            inventory.addItem(addTool);
+        }
+    }
+    public void giveDelTool(Player player) {
+        Inventory inventory = player.getInventory();
+        if (inventory.contains(delTool)) {
+            inventory.remove(delTool);
+        } else {
+            inventory.addItem(delTool);
+        }
+    }
     public void giveLockTool(Player player) {
         Inventory inventory = player.getInventory();
         if (inventory.contains(lockTool)) {
@@ -130,5 +170,18 @@ public class LocksManager {
         LocksSQL.unlock(location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         OddJob.getInstance().log("Lock: x="+location.getBlockX()+"; y="+location.getBlockY()+"; z="+location.getBlockZ());
         MessageManager.locks_broken(player, location.getBlock().getType().name());
+    }
+
+
+    public void add(Player player, Block block) {
+        LocksSQL.addBlock(block.getType());
+        lockable.add(block.getType());
+        MessageManager.locks_added(player, block.getType().name());
+    }
+
+    public void del(Player player, Block block) {
+        LocksSQL.delBlock(block.getType());
+        lockable.remove(block.getType());
+        MessageManager.locks_deleted(player, block.getType().name());
     }
 }

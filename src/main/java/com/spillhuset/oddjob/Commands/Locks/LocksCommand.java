@@ -18,7 +18,10 @@ public class LocksCommand extends SubCommandInterface implements CommandExecutor
         subCommands.add(new LocksLockCommand());
         subCommands.add(new LocksUnlockCommand());
         subCommands.add(new LocksInfoCommand());
+        subCommands.add(new LocksAddCommand());
+        subCommands.add(new LocksDelCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return false;
@@ -68,7 +71,7 @@ public class LocksCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        finder(sender,args);
+        finder(sender, args);
         return true;
 
     }

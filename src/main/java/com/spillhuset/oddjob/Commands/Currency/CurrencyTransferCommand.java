@@ -47,7 +47,7 @@ public class CurrencyTransferCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "currency";
+        return "currency.transfer";
     }
 
     @Override

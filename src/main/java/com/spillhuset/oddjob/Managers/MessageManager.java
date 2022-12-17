@@ -31,9 +31,9 @@ public class MessageManager {
         HashMap<UUID, UUID> members = OddJob.getInstance().getGuildsManager().getMembers();
         for (UUID uuid : members.keySet()) {
             if (members.get(uuid).equals(guild.getUuid())) {
-                Player player = Bukkit.getPlayer(members.get(uuid)); 
+                Player player = Bukkit.getPlayer(members.get(uuid));
                 if (player != null) {
-                    player.sendMessage(ChatColor.GREEN+message);
+                    player.sendMessage(ChatColor.GREEN + message);
                 }
             }
         }
@@ -64,6 +64,10 @@ public class MessageManager {
 
     public static void homes_exists(String name, OddPlayer target, CommandSender sender) {
         danger(Plugin.homes, sender, "The " + name + " has already been used");
+    }
+
+    public static void homes_not_exists(String name, OddPlayer target, CommandSender sender) {
+        danger(Plugin.homes, sender, "The " + name + " does not exist");
     }
 
     public static void homes_max_reached(String name, OddPlayer target, CommandSender sender) {
@@ -286,4 +290,20 @@ public class MessageManager {
         success(Plugin.homes, guild, "Home " + name + " successfully set");
     }
 
+
+    public static void locks_added(Player sender, String name) {
+        success(Plugin.locks, sender, "Successfully added " + name);
+    }
+
+    public static void locks_deleted(Player sender, String name) {
+        success(Plugin.locks, sender, "Successfully removed " + name);
+    }
+
+    public static void insufficient_funds(CommandSender sender) {
+        danger(Plugin.currency, sender, "Insufficient funds.");
+    }
+
+    public static void currency_holding(Player sender, double pocket, double bank) {
+        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your pocket, and `" + bank + "` in your bank account");
+    }
 }

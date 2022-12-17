@@ -1,6 +1,5 @@
 package com.spillhuset.oddjob.Utils;
 
-import com.spillhuset.oddjob.OddJob;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -46,10 +45,8 @@ public class LockUtil {
         }
         Half half = door.getHalf();
         if (half == Half.TOP) {
-            OddJob.getInstance().log("This is upper, choosing lower.");
             location = location.getBlock().getRelative(BlockFace.DOWN).getLocation();
-        } else
-            OddJob.getInstance().log("This is lower.");
+        }
         return location;
     }
 
@@ -60,15 +57,13 @@ public class LockUtil {
         }
         Hinge hinge = door.getHinge();
         if (hinge == Hinge.RIGHT) {
-            OddJob.getInstance().log("This is right, choosing left.");
             switch (door.getFacing()) {
                 case EAST -> location = location.getBlock().getRelative(BlockFace.NORTH).getLocation();
                 case WEST -> location = location.getBlock().getRelative(BlockFace.SOUTH).getLocation();
                 case NORTH -> location = location.getBlock().getRelative(BlockFace.WEST).getLocation();
                 case SOUTH -> location = location.getBlock().getRelative(BlockFace.EAST).getLocation();
             }
-        } else
-            OddJob.getInstance().log("This is left.");
+        }
         return location;
     }
 
@@ -79,15 +74,13 @@ public class LockUtil {
         }
         Hinge hinge = door.getHinge();
         if (hinge == Hinge.LEFT) {
-            OddJob.getInstance().log("This is left, choosing right.");
             switch (door.getFacing()) {
                 case EAST -> location = location.getBlock().getRelative(BlockFace.SOUTH).getLocation();
                 case WEST -> location = location.getBlock().getRelative(BlockFace.NORTH).getLocation();
                 case NORTH -> location = location.getBlock().getRelative(BlockFace.EAST).getLocation();
                 case SOUTH -> location = location.getBlock().getRelative(BlockFace.WEST).getLocation();
             }
-        } else
-            OddJob.getInstance().log("This is right.");
+        }
         return location;
     }
 
@@ -98,7 +91,6 @@ public class LockUtil {
         Hinge hinge = door.getHinge();
         boolean left = (hinge == Hinge.LEFT);
         boolean lower = (half == Half.BOTTOM);
-        OddJob.getInstance().log("hinge:"+hinge+"; half:"+half);
 
         Block upperRight = null;
         Block upperLeft = null;
@@ -109,7 +101,6 @@ public class LockUtil {
 
         if (!lower) {
             if (!left) {
-                OddJob.getInstance().log("upper right");
                 upperRight = block;
                 lowerRight = block.getRelative(BlockFace.DOWN);
                 Block opposite = getLowerLeftDoor(block.getLocation()).getBlock();
@@ -118,7 +109,6 @@ public class LockUtil {
                     upperLeft = opposite.getRelative(BlockFace.UP);
                 }
             } else {
-                OddJob.getInstance().log("upper left");
                 upperLeft = block;
                 lowerLeft = block.getRelative(BlockFace.DOWN);
                 Block opposite = getLowerRightDoor(block.getLocation()).getBlock();
@@ -129,7 +119,6 @@ public class LockUtil {
             }
         } else {
             if (!left) {
-                OddJob.getInstance().log("lower right");
                 lowerLeft = block;
                 upperLeft = block.getRelative(BlockFace.UP);
                 Block opposite = getLowerLeftDoor(block.getLocation()).getBlock();
@@ -138,7 +127,6 @@ public class LockUtil {
                     upperRight = opposite.getRelative(BlockFace.UP);
                 }
             } else {
-                OddJob.getInstance().log("lower left");
                 lowerRight = block;
                 upperRight = block.getRelative(BlockFace.UP);
                 Block opposite = getLowerRightDoor(block.getLocation()).getBlock();
@@ -160,9 +148,9 @@ public class LockUtil {
             }
             Openable openable = (Openable) bl.getBlockData();
             if (open) {
-                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_CLOSE,1f,8f);
+                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_CLOSE, 1f, 8f);
             } else {
-                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_OPEN,1f,8f);
+                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_OPEN, 1f, 8f);
             }
             openable.setOpen(!open);
             bl.setBlockData(openable);

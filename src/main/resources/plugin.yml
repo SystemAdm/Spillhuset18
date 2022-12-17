@@ -71,3 +71,31 @@ permissions:
     default: true
   homes.teleport.others:
     default: op
+  homes.relocate:
+    default: true
+  homes.relocate.others:
+    default: op
+  locks:
+    default: true
+  locks.info:
+    default: true
+  locks.lock:
+    default: true
+  locks.unlock:
+    default: true
+  locks.add:
+    default: op
+  locks.del:
+    default: op
+  locks.override:
+    default: false
+  currency:
+    default: true
+  currency.add:
+    default: op
+  currency.set:
+    default: op
+  currency.sub:
+    default: op
+  currency.transfer:
+    default: true
