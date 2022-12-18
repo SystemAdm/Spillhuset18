@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import org.bukkit.command.CommandSender;
@@ -44,7 +45,7 @@ public abstract class SubCommand {
     public abstract List<String> getTabCompleter(CommandSender sender, String[] args);
 
     public Role getRole(CommandSender sender) {
-        if (sender instanceof Player player ) {
+        if (sender instanceof Player player) {
             Role role = OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
             if (role == null) return Role.Guest;
             return OddJob.getInstance().getGuildsManager().getRoles().get(player.getUniqueId());
@@ -119,7 +120,7 @@ public abstract class SubCommand {
 
     public boolean hasGuild(CommandSender sender, boolean response) {
         if (sender instanceof Player player) {
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+            Guild guild = (ConfigManager.getBoolean("plugin.guilds")) ? OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()) : null;
             if (needGuild() && guild == null) {
                 if (response) MessageManager.guilds_not_associated(sender);
                 return false;

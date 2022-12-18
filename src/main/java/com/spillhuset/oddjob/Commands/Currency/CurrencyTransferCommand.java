@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Commands.Currency;
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
@@ -169,7 +170,7 @@ public class CurrencyTransferCommand extends SubCommand {
         List<String> list = new ArrayList<>();
         List<String> preList = new ArrayList<>();
         Player player = (Player) sender;
-        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        Guild guild = (ConfigManager.getBoolean("plugin.guilds")) ? OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()) : null;
         if (args.length == 2) {
             if (guild != null) {
                 if (OddJob.getInstance().getGuildsManager().getRoles().getOrDefault(player.getUniqueId(), Role.Guest) == Role.Master) {

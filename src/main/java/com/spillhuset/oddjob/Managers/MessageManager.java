@@ -306,4 +306,8 @@ public class MessageManager {
     public static void currency_holding(Player sender, double pocket, double bank) {
         info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your pocket, and `" + bank + "` in your bank account");
     }
+
+    public static void errors_number(Plugin plugin, String value, CommandSender sender) {
+        danger(plugin,sender,"`"+value+"` is an invalid number");
+    }
 }
