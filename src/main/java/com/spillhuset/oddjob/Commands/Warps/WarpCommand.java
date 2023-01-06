@@ -87,7 +87,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
         // List commands
         for (SubCommand subCommand : subCommands) {
             if (subCommand.can(sender, false, false)) {
-                if (args.length == 0 || (args.length == 1 && subCommand.getName().startsWith(args[0]))) {
+                if (args.length == 0 || (args.length == 1 && subCommand.getName().startsWith(args[0])) && sender.hasPermission(subCommand.getPermission())) {
                     list.add(subCommand.getName());
                 } else if (subCommand.getName().equalsIgnoreCase(args[0])) {
                     return subCommand.getTabCompleter(sender, args);

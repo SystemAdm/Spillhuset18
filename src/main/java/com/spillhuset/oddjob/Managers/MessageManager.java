@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
@@ -17,14 +18,20 @@ import java.util.UUID;
 
 public class MessageManager {
     private static final ChatColor cInfo = ChatColor.LIGHT_PURPLE;
-    private static final ChatColor cValue = ChatColor.GOLD;
+    private static final ChatColor cSuccess = ChatColor.GREEN;
+    private static final ChatColor cDanger = ChatColor.RED;
+    private static final ChatColor cGuild = ChatColor.BLUE;
+    private static final ChatColor cPlayer = ChatColor.GOLD;
+    private static final ChatColor cAccount = ChatColor.YELLOW;
+    private static final ChatColor cValue = ChatColor.GRAY;
+    private static final ChatColor cList = ChatColor.WHITE;
 
     private static void danger(Plugin plugin, CommandSender sender, String message) {
-        sender.sendMessage(ChatColor.RED + message);
+        sender.sendMessage(cDanger + message);
     }
 
     private static void success(Plugin plugin, CommandSender sender, String message) {
-        sender.sendMessage(ChatColor.GREEN + message);
+        sender.sendMessage(cSuccess + message);
     }
 
     private static void success(Plugin plugin, Guild guild, String message) {
@@ -33,14 +40,14 @@ public class MessageManager {
             if (members.get(uuid).equals(guild.getUuid())) {
                 Player player = Bukkit.getPlayer(members.get(uuid));
                 if (player != null) {
-                    player.sendMessage(ChatColor.GREEN + message);
+                    player.sendMessage(cSuccess + message);
                 }
             }
         }
     }
 
     private static void info(Plugin plugin, CommandSender sender, String message) {
-        sender.sendMessage(ChatColor.YELLOW + message);
+        sender.sendMessage(cInfo + message);
     }
 
     private static void list(CommandSender sender, String title, List<String> list) {
@@ -53,9 +60,16 @@ public class MessageManager {
 
     /* Homes start */
     public static void homes_info(CommandSender sender, int used, int max, double price) {
+        Player player = (Player) sender;
         String text = cInfo + "You have used " + cValue + used + cInfo + " homes of " + cValue + max;
+        String next = cInfo + "Based on default: " + cValue + ConfigManager.getInt("homes.default");
+        String next_next = cInfo + "Previous bought: " + cValue + OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getBoughtHomes();
         if (ConfigManager.getBoolean("plugin.currency")) text += cInfo + ", next home will cost " + cValue + price;
+
+        sender.sendMessage(next);
+        sender.sendMessage(next_next);
         sender.sendMessage(text);
+
     }
 
     public static void homes_cant_afford(CommandSender sender) {
@@ -154,7 +168,14 @@ public class MessageManager {
     }
     /* Guilds end */
 
-    public static void currency_transferred(CommandSender sender, String name, String name1, double value) {
+    public static void currency_transferred(CommandSender sender, String sender_account, String sender_name, boolean sender_guild, String receiver_account, String receiver_name, boolean receiver_guild, double value) {
+        if (sender.getName().equalsIgnoreCase(sender_name) && sender.getName().equalsIgnoreCase(receiver_name))
+            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + cAccount + sender_account + cSuccess + "` to `" + cAccount + receiver_account + cSuccess + "`");
+        else if (sender.getName().equalsIgnoreCase(sender_name))
+            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + cAccount + sender_account + cSuccess + "` to `" + ((receiver_guild) ? cGuild : cPlayer) + receiver_name + " " + cAccount + receiver_account + cSuccess + "`");
+        else if (sender.getName().equalsIgnoreCase(receiver_name))
+            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + ((sender_guild) ? cGuild : cPlayer) + sender_name + " " + cAccount + sender_account + cSuccess + "` to `" + cAccount + receiver_account + cSuccess + "`");
+
     }
 
     public static void invalidNumber(Plugin plugin, CommandSender sender, String t) {
@@ -172,28 +193,31 @@ public class MessageManager {
         List<String> list = new ArrayList<>();
         for (Warp warp : warps.values()) {
             String name = warp.getName();
-            if (ConfigManager.getBoolean("plugins.currency") && warp.hasCost())
-                name += ChatColor.GOLD + " cost=`" + warp.getCost() + "`";
-            if (warp.isProtected()) name += ChatColor.RED + " *";
+            if (ConfigManager.getBoolean("plugin.currency") && warp.hasCost()) {
+                name += " cost=`" + cValue + warp.getCost() + cList + "`";
+            }
+            if (warp.isProtected()) {
+                name += ChatColor.RED + " *";
+            }
             list.add(name);
         }
         list(sender, "List of warps (" + warps.size() + ")", list);
     }
 
     public static void warps_protected(Player player, String name) {
-        danger(Plugin.warps, player, "The warp " + name + " is protected");
+        danger(Plugin.warps, player, "The warp `" + cValue + name + cDanger + "` is protected");
     }
 
     public static void warps_cant_afford(Player player, String name, double cost) {
-        danger(Plugin.warps, player, "You can't afford to use this warp");
+        danger(Plugin.warps, player, "You can't afford `" + cValue + cost + cDanger + "` to use this warp");
     }
 
     public static void warps_exists(CommandSender sender, String nameNew) {
-        danger(Plugin.warps, sender, "A warp named " + nameNew + " does already exists");
+        danger(Plugin.warps, sender, "A warp named `" + cValue + nameNew + cDanger + "` does already exists");
     }
 
     public static void warps_successfully_renamed(CommandSender sender, String nameOld, String nameNew) {
-        success(Plugin.warps, sender, "Successfully rename warp " + nameOld + " to " + nameNew);
+        success(Plugin.warps, sender, "Successfully rename warp `" + cValue + nameOld + cSuccess + "` to `" + cValue + nameNew + cSuccess + "`");
     }
 
     public static void warps_not_exists(CommandSender player, String name) {
@@ -201,15 +225,15 @@ public class MessageManager {
     }
 
     public static void warps_successfully_relocated(Player player, String name) {
-        success(Plugin.warps, player, "Successfully relocated " + name + " to your position");
+        success(Plugin.warps, player, "Successfully relocated `" + cValue + name + cSuccess + "` to your position");
     }
 
     public static void warps_successfully_cost(CommandSender sender, String name, double value) {
-        success(Plugin.warps, sender, "Successfully set cost on " + name + " to " + value);
+        success(Plugin.warps, sender, "Successfully set cost on `" + cValue + name + cSuccess + "` to `" + cValue + value + cSuccess + "`");
     }
 
     public static void warps_successfully_passwd(CommandSender sender, String name, String passwd) {
-        success(Plugin.warps, sender, "Successfully set password on " + name + " to " + passwd);
+        success(Plugin.warps, sender, "Successfully set password on `" + cValue+name+cSuccess + "` to `" + cValue+passwd+cSuccess+"`");
     }
 
     public static void locks_already_locked(Player player) {
@@ -217,7 +241,7 @@ public class MessageManager {
     }
 
     public static void locks_successfully_locked(Player player, String name) {
-        success(Plugin.locks, player, "You have successfully locked " + name);
+        success(Plugin.locks, player, "You have successfully locked `" + cValue+name+cSuccess+"`");
     }
 
     public static void locks_not_locked(Player player, String name) {
@@ -308,6 +332,33 @@ public class MessageManager {
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {
-        danger(plugin,sender,"`"+value+"` is an invalid number");
+        danger(plugin, sender, "`" + value + "` is an invalid number");
+    }
+
+    public static void plugin(CommandSender sender, String plugin, String enabled) {
+        sender.sendMessage(plugin + ": " + enabled);
+    }
+
+    public static void essentials_join(CommandSender sender, double pocket, double bank, int max, int current) {
+        info(Plugin.currency, sender, "Your current balance at bank: `" + cValue + bank + cInfo + "`; in pocket `" + cValue + pocket + cInfo + "`");
+        info(Plugin.homes, sender, "You have set `" + cValue + current + cInfo + "` homes of `" + cValue + max + cInfo + "` available");
+    }
+
+    public static void guild_join(CommandSender sender, Guild guild, Role role, double bank, boolean hasHome) {
+        info(Plugin.guilds, sender, "You are a `" + cValue + role.name() + cInfo + "` of the guild `" + cGuild + guild.getName() + cInfo + "`");
+        String set = (hasHome) ? "been set" : "not been set yet";
+        info(Plugin.guilds, sender, "The guild has `" + cValue + bank + cInfo + "` in their account. Home has " + cValue + set);
+    }
+
+    public static void currency_invalid_account(CommandSender sender, String arg) {
+        danger(Plugin.currency, sender, "Invalid account");
+    }
+
+    public static void currency_paid(CommandSender sender, String name, double value) {
+        success(Plugin.currency, sender, "Successfully paid `" + cValue + value + cSuccess + "` to `" + cPlayer + name + cSuccess + "`");
+    }
+
+    public static void warps_withdraw(CommandSender sender, double cost) {
+        success(Plugin.warps, sender, "Successfully withdraw of `" + cValue + cost + cSuccess + "` from your `" + cAccount + "pocket" + cSuccess + "`");
     }
 }

@@ -67,14 +67,6 @@ public class EnderchestCommand extends SubCommandInterface implements CommandExe
         }
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(args[0]);
-            if (oddPlayer == null) {
-                MessageManager.errors_find_player(getPlugin(),args[0],sender);
-                return true;
-            }
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(oddPlayer.getUuid());
-            Player player = (Player) sender;
-
             return true;
         }
 

@@ -105,7 +105,7 @@ public abstract class SubCommandInterface {
                 if (subCommand.hasGuild(sender,false)) {
                     if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
                         return subCommand.getTabCompleter(sender, args);
-                    } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
+                    } else if ((args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()]))) {
                         list.add(subCommand.getName());
                     }
                 }
@@ -117,7 +117,7 @@ public abstract class SubCommandInterface {
     public String list(CommandSender sender) {
         StringBuilder stringBuilder = new StringBuilder();
         for (SubCommand subCommand : subCommands) {
-            if (can(sender,false,false)) {
+            if (subCommand.can(sender,false,false)) {
                 stringBuilder.append(ChatColor.GRAY).append(subCommand.getName()).append(ChatColor.RESET).append(",");
             }
         }

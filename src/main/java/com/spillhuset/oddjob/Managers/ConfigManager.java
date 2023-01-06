@@ -48,14 +48,22 @@ public class ConfigManager {
         setConfig("plugin.arena",false);
         setConfig("plugin.auctions",false);
 
-        OddJob.getInstance().saveConfig();
+        save();
     }
 
     public static double getDouble(String name) {
         return OddJob.getInstance().getConfig().getDouble(name);
     }
 
-    public static boolean getBoolean(String name) {
-        return OddJob.getInstance().getConfig().getBoolean(name);
+    public static boolean getBoolean(String configName) {
+        return OddJob.getInstance().getConfig().getBoolean(configName);
+    }
+
+    public static void save() {
+        OddJob.getInstance().saveConfig();
+    }
+
+    public static void reload() {
+        OddJob.getInstance().reloadConfig();
     }
 }

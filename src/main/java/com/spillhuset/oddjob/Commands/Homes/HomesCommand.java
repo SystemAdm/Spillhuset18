@@ -82,7 +82,8 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
 
         if (sender instanceof Player player && args.length == 0) {
             /* How many has already been bought */
-            int bought = OddJob.getInstance().getHomesManager().getList(player.getUniqueId()).size();
+            int bought = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getBoughtHomes();
+            int used = OddJob.getInstance().getHomesManager().getList(player.getUniqueId()).size();
 
             /* Price list unit */
             Plu plu = Plu.PLAYER_HOMES;
@@ -92,7 +93,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
             /* New maximum number of homes */
             int max = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes();
 
-            MessageManager.homes_info(sender, bought, max, price);
+            MessageManager.homes_info(sender, used, max, price);
 
         }
 

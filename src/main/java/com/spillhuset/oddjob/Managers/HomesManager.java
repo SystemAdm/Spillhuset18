@@ -1,8 +1,10 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Plu;
+import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.HomesSQL;
+import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
@@ -117,19 +119,19 @@ public class HomesManager {
     }
 
     public void teleport(CommandSender sender, OddPlayer destinationPlayer, String destinationName) {
-        CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
         if (HomesSQL.get(destinationPlayer.getUuid(), destinationName) == null) {
             MessageManager.homes_no_name(sender, destinationName);
             return;
         }
         Location location = HomesSQL.get(destinationPlayer.getUuid(), destinationName);
         if (ConfigManager.getBoolean("plugin.currency")) {
+            CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
             double price = Plu.PLAYER_HOMES_TELEPORT.getValue();
             if (!currencyManager.checkPocket(destinationPlayer.getUuid(), price)) {
                 MessageManager.insufficient_funds(sender);
                 return;
             }
-            OddJob.getInstance().getCurrencyManager().subPocket(destinationPlayer.getUuid(), price);
+            currencyManager.subPocket(destinationPlayer.getUuid(), price);
 
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {
@@ -143,4 +145,11 @@ public class HomesManager {
     }
 
 
+    public int getMax(UUID uniqueId) {
+        return PlayerSQL.get(uniqueId).getMaxHomes();
+    }
+
+    public int getCurrent(UUID uniqueId) {
+        return HomesSQL.getList(uniqueId).size();
+    }
 }

@@ -172,6 +172,12 @@ public class GuildSQL extends MySQLManager {
     public static void loadMembersRoles() {
         HashMap<UUID, UUID> members = new HashMap<>();
         HashMap<UUID, Role> roles = new HashMap<>();
+        HashMap<UUID, Guild> guilds = OddJob.getInstance().getGuildsManager().getGuilds();
+        if (guilds.isEmpty()) {
+            OddJob.getInstance().getGuildsManager().setRoles(roles);
+            OddJob.getInstance().getGuildsManager().setMembers(members);
+            return;
+        }
         for (UUID uuid : OddJob.getInstance().getGuildsManager().getGuilds().keySet()) {
             try {
                 connect();

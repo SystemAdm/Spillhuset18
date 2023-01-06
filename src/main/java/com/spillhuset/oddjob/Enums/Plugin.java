@@ -8,7 +8,6 @@ public enum Plugin {
     teleports(ChatColor.LIGHT_PURPLE, "T"),
     auctions(ChatColor.DARK_PURPLE, "A"),
     currency(ChatColor.GOLD, "C"),
-    messages(ChatColor.GRAY, "M"),
     deaths(ChatColor.DARK_GRAY, "D"),
 
     join(ChatColor.GREEN, "+"),
@@ -19,7 +18,8 @@ public enum Plugin {
     shops(ChatColor.YELLOW, "S"),
     essentials(ChatColor.BLUE, "E"),
     arena(ChatColor.RED, "A"),
-    world(ChatColor.BLACK, "W");
+    world(ChatColor.BLACK, "W"),
+    plugin(ChatColor.GOLD, "P");
 
     private final String string;
     private final ChatColor color;
@@ -39,5 +39,9 @@ public enum Plugin {
 
     public String getString() {
         return "[" + getColor() + getShort() + ChatColor.RESET + "] ";
+    }
+
+    public String getName() {
+        return name();
     }
 }

@@ -3,12 +3,14 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.Utils.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -16,19 +18,19 @@ public class GuildsManager extends Managers {
     /**
      * UUID Guild, Guild
      */
-    private HashMap<UUID, Guild> guilds;
+    private HashMap<UUID, Guild> guilds = new HashMap<>();
     /**
      * UUID Player, Role
      */
-    private HashMap<UUID, Role> roles;
+    private HashMap<UUID, Role> roles = new HashMap<>();
     /**
      * UUID Player, UUID Guild
      */
-    private HashMap<UUID, UUID> members;
+    private HashMap<UUID, UUID> members = new HashMap<>();
     /**
      * Cords, UUID Guild
      */
-    private HashMap<Cords, UUID> chunks;
+    private HashMap<Cords, UUID> chunks = new HashMap<>();
 
     public void buyClaims(CommandSender sender) {
 
@@ -58,13 +60,14 @@ public class GuildsManager extends Managers {
     }
 
     public HashMap<UUID, Guild> getGuilds() {
-        return null;
+        return guilds;
     }
 
     public void leave(Player player) {
     }
 
     public void loadGuild(Guild guild) {
+        guilds.put(guild.getUuid(), guild);
     }
 
     public void info(Player player) {
@@ -85,10 +88,12 @@ public class GuildsManager extends Managers {
         return list;
     }
 
+    @Nullable
     public Guild getGuildByMember(UUID player) {
         return getGuildByUUID(members.get(player));
     }
 
+    @Nullable
     private Guild getGuildByUUID(UUID guild) {
         return guilds.get(guild);
     }
@@ -167,20 +172,22 @@ public class GuildsManager extends Managers {
         }
 
         for (Cords cords : chunks(guild.getUuid())) {
-            if(chunk.getWorld().getUID() != cords.getWorld()){
-                continue;
-            }if(chunk.getX() != cords.getX()) {
-                continue;
-            }if (chunk.getZ() != cords.getZ()) {
+            if (chunk.getWorld().getUID() != cords.getWorld()) {
                 continue;
             }
-            OddJob.getInstance().getHomesManager().addGuild(guild,home,player);
+            if (chunk.getX() != cords.getX()) {
+                continue;
+            }
+            if (chunk.getZ() != cords.getZ()) {
+                continue;
+            }
+            OddJob.getInstance().getHomesManager().addGuild(guild, home, player);
         }
     }
 
     private Set<Cords> chunks(UUID uuid) {
         Set<Cords> chunks = new HashSet<>();
-        for (Cords cords : this.chunks.keySet()){
+        for (Cords cords : this.chunks.keySet()) {
             if (this.chunks.get(cords).equals(uuid)) {
                 chunks.add(cords);
             }
@@ -269,5 +276,13 @@ public class GuildsManager extends Managers {
 
     public void setMembers(HashMap<UUID, UUID> members) {
         this.members = members;
+    }
+
+    public double getBank(UUID uuid) {
+        return CurrencySQL.getBank(uuid);
+    }
+
+    public boolean hasHome(UUID uuid) {
+        return !OddJob.getInstance().getHomesManager().getList(uuid).isEmpty();
     }
 }

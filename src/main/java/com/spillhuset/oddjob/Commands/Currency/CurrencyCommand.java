@@ -17,7 +17,6 @@ public class CurrencyCommand extends SubCommandInterface implements CommandExecu
         subCommands.add(new CurrencySetCommand());
         subCommands.add(new CurrencyAddCommand());
         subCommands.add(new CurrencySubCommand());
-        subCommands.add(new CurrencyTransferCommand());
     }
 
     @Override

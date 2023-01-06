@@ -1,12 +1,18 @@
 package com.spillhuset.oddjob;
 
+import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
+import com.spillhuset.oddjob.Commands.Currency.PayCommand;
+import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
+import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.OnBlockBreakEvent;
 import com.spillhuset.oddjob.Events.OnPlayerInteractEvent;
+import com.spillhuset.oddjob.Events.OnPlayerJoinEvent;
 import com.spillhuset.oddjob.Managers.*;
+import com.spillhuset.oddjob.SQL.GuildSQL;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,6 +45,9 @@ public class OddJob extends JavaPlugin {
         }
         if (ConfigManager.getBoolean("plugin.currency")) {
             currencyManager = new CurrencyManager();
+            getCommand("transfer").setExecutor(new TransferCommand());
+            getCommand("pay").setExecutor(new PayCommand());
+            getCommand("balance").setExecutor(new BalanceCommand());
             getCommand("currency").setExecutor(new CurrencyCommand());
         }
         if (ConfigManager.getBoolean("plugin.guilds")) guildsManager = new GuildsManager();
@@ -55,9 +64,16 @@ public class OddJob extends JavaPlugin {
             getCommand("warps").setExecutor(new WarpCommand());
         }
 
+        getCommand("loaded").setExecutor(new LoadedCommand());
+
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new OnPlayerInteractEvent(), this);
+        pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnBlockBreakEvent(), this);
+
+        // Loading
+        GuildSQL.loadGuild(null);
+        GuildSQL.loadMembersRoles();
     }
 
     public void onDisable() {

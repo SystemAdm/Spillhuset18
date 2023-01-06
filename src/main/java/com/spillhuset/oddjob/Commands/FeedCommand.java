@@ -31,12 +31,12 @@ public class FeedCommand extends SubCommandInterface implements CommandExecutor 
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.essentials;
     }
 
     @Override
     public String getPermission() {
-        return null;
+        return "essentials.heal";
     }
 
     @Override

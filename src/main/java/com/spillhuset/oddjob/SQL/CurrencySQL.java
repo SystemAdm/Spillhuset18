@@ -116,5 +116,33 @@ public class CurrencySQL extends MySQLManager {
         }
         return value;
     }
+
+    public static void addBank(UUID uuid, double value) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = `bank` + ? WHERE `uuid` = ?");
+            preparedStatement.setDouble(1, value);
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public static void addPocket(UUID uuid, double value) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = `pocket` + ? WHERE `uuid` = ?");
+            preparedStatement.setDouble(1, value);
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
 }
 

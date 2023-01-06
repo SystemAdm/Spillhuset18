@@ -43,6 +43,12 @@ commands:
     description: Sudo
   world:
     description: World
+  loaded:
+    description: Show plugins
+  transfer:
+  pay:
+  balance:
+
 
 permissions:
   homes:
@@ -99,3 +105,7 @@ permissions:
     default: op
   currency.transfer:
     default: true
+  warps:
+    default: true
+  warps.admin:
+    default: op
