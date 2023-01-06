@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
@@ -328,7 +329,7 @@ public class MessageManager {
     }
 
     public static void currency_holding(Player sender, double pocket, double bank) {
-        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your pocket, and `" + bank + "` in your bank account");
+        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your `"+ Account.pocket.name()+"`, and `" + bank + "` in your bank account");
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {

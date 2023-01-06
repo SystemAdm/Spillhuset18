@@ -109,3 +109,5 @@ permissions:
     default: true
   warps.admin:
     default: op
+  guilds:
+    default: true

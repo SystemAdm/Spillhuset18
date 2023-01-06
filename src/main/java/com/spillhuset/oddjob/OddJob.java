@@ -4,6 +4,7 @@ import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
 import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
+import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
@@ -50,7 +51,12 @@ public class OddJob extends JavaPlugin {
             getCommand("balance").setExecutor(new BalanceCommand());
             getCommand("currency").setExecutor(new CurrencyCommand());
         }
-        if (ConfigManager.getBoolean("plugin.guilds")) guildsManager = new GuildsManager();
+        if (ConfigManager.getBoolean("plugin.guilds")) {
+            guildsManager = new GuildsManager();
+            getCommand("guilds").setExecutor(new GuildsCommand());
+            GuildSQL.loadGuild(null);
+            GuildSQL.loadMembersRoles();
+        }
         if (ConfigManager.getBoolean("plugin.arena")) arenaManager = new ArenaManager();
         if (ConfigManager.getBoolean("plugin.auctions")) auctionsManager = new AuctionsManager();
         if (ConfigManager.getBoolean("plugin.locks")) {
