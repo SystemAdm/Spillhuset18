@@ -3,11 +3,13 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 
 public class PlayerManager {
     private final HashMap<UUID, OddPlayer> players;
+    private HashMap<UUID, Scoreboard> scoreboards = new HashMap<>();
 
     public PlayerManager() {
         players = PlayerSQL.load();
@@ -64,9 +66,17 @@ public class PlayerManager {
 
     public List<String> listAll() {
         List<String> list = new ArrayList<>();
-        for (OddPlayer oddPlayer:players.values()) {
+        for (OddPlayer oddPlayer : players.values()) {
             list.add(oddPlayer.getName());
         }
         return list;
+    }
+
+    public void setScoreboard(UUID uniqueId, Scoreboard scoreboard) {
+        scoreboards.put(uniqueId, scoreboard);
+    }
+
+    public Scoreboard getScoreboard(UUID uniqueId) {
+        return scoreboards.remove(uniqueId);
     }
 }

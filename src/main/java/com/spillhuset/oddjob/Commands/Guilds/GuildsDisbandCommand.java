@@ -91,7 +91,6 @@ public class GuildsDisbandCommand extends SubCommand {
         if (args.length == 2 && args[1].equalsIgnoreCase("confirm")){
             Player player = (Player) sender;
             OddJob.getInstance().getGuildsManager().disband(player);
-            return;
         }
     }
 

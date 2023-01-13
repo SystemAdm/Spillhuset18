@@ -8,6 +8,7 @@ import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -162,6 +163,8 @@ public class MessageManager {
     }
 
     public static void guilds_disband_info(CommandSender sender) {
+        info(Plugin.guilds, sender, "You are about to this band your guild.");
+        info(Plugin.guilds, sender, "Please confirm the action with " + cValue + "/guilds disband confirm");
     }
 
     public static void guilds_list(Plugin plugin, CommandSender sender, List<String> list, int i) {
@@ -170,12 +173,13 @@ public class MessageManager {
 
     public static void currency_transferred(CommandSender sender, String sender_account, String sender_name, boolean sender_guild, String receiver_account, String receiver_name, boolean receiver_guild, double value) {
         if (sender.getName().equalsIgnoreCase(sender_name) && sender.getName().equalsIgnoreCase(receiver_name))
-            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + cAccount + sender_account + cSuccess + "` to `" + cAccount + receiver_account + cSuccess + "`");
+            success(Plugin.currency, sender, "You've transferred " + cValue + value + cSuccess + " from " + cAccount + sender_account + cSuccess + " to " + cAccount + receiver_account);
         else if (sender.getName().equalsIgnoreCase(sender_name))
-            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + cAccount + sender_account + cSuccess + "` to `" + ((receiver_guild) ? cGuild : cPlayer) + receiver_name + " " + cAccount + receiver_account + cSuccess + "`");
+            success(Plugin.currency, sender, "You've transferred " + cValue + value + cSuccess + " from " + cAccount + sender_account + cSuccess + " to " + ((receiver_guild) ? cGuild : cPlayer) + receiver_name + " " + cAccount + receiver_account);
         else if (sender.getName().equalsIgnoreCase(receiver_name))
-            success(Plugin.currency, sender, "You've transferred `" + cValue + value + cSuccess + "` from `" + ((sender_guild) ? cGuild : cPlayer) + sender_name + " " + cAccount + sender_account + cSuccess + "` to `" + cAccount + receiver_account + cSuccess + "`");
-
+            success(Plugin.currency, sender, "You've transferred " + cValue + value + cSuccess + " from " + ((sender_guild) ? cGuild : cPlayer) + sender_name + " " + cAccount + sender_account + cSuccess + " to " + cAccount + receiver_account);
+        else
+            success(Plugin.currency, sender, "You've transferred " + cValue + value + cSuccess + "from " + cAccount + sender_account + cSuccess + " to " + ((sender_guild) ? cGuild : cPlayer) + receiver_name + " " + cAccount + receiver_account);
     }
 
     public static void invalidNumber(Plugin plugin, CommandSender sender, String t) {
@@ -233,7 +237,7 @@ public class MessageManager {
     }
 
     public static void warps_successfully_passwd(CommandSender sender, String name, String passwd) {
-        success(Plugin.warps, sender, "Successfully set password on `" + cValue+name+cSuccess + "` to `" + cValue+passwd+cSuccess+"`");
+        success(Plugin.warps, sender, "Successfully set password on `" + cValue + name + cSuccess + "` to `" + cValue + passwd + cSuccess + "`");
     }
 
     public static void locks_already_locked(Player player) {
@@ -241,7 +245,7 @@ public class MessageManager {
     }
 
     public static void locks_successfully_locked(Player player, String name) {
-        success(Plugin.locks, player, "You have successfully locked `" + cValue+name+cSuccess+"`");
+        success(Plugin.locks, player, "You have successfully locked `" + cValue + name + cSuccess + "`");
     }
 
     public static void locks_not_locked(Player player, String name) {
@@ -360,5 +364,67 @@ public class MessageManager {
 
     public static void warps_withdraw(CommandSender sender, double cost) {
         success(Plugin.warps, sender, "Successfully withdraw of `" + cValue + cost + cSuccess + "` from your `" + cAccount + "pocket" + cSuccess + "`");
+    }
+
+    public static void guilds_created(CommandSender sender, String name) {
+        success(Plugin.guilds, sender, "Successfully created a new guild " + cGuild + name);
+    }
+
+    public static void guilds_disband_success(CommandSender sender) {
+        success(Plugin.guilds, sender, "You have successfully disbanded your guild");
+    }
+
+    public static void guilds_role_needed(CommandSender sender, Guild guild, Role role) {
+        danger(Plugin.guilds, sender, "You need to contact your guild " + role + " to claim the chunk for you.");
+    }
+
+    public static void guilds_claimed_you(CommandSender sender) {
+        danger(Plugin.guilds, sender, "This chunk is already claimed to your guild");
+    }
+
+    public static void guilds_claimed(Guild claimed, CommandSender sender) {
+        danger(Plugin.guilds, sender, "This chunk is already claimed to " + cGuild + claimed.getName());
+    }
+
+    public static void guilds_claimed_connected(CommandSender sender) {
+        danger(Plugin.guilds, sender, "Claims must be connected");
+    }
+
+    public static void guilds_claimed_near(CommandSender sender) {
+        danger(Plugin.guilds, sender, "There are guilds too near this chunk to be claimed");
+    }
+
+    public static void guilds_claiming(CommandSender sender, Chunk chunk, Guild guild) {
+        success(Plugin.guilds, sender, "You have successfully claimed x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
+    }
+
+    public static void guilds_claiming_outpost(CommandSender sender, Chunk chunk, Guild guild) {
+        success(Plugin.guilds, sender, "You have successfully claimed an outpost x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
+    }
+
+    public static void guilds_claiming_max_reached(CommandSender sender) {
+        danger(Plugin.guilds, sender, "The maximal number of claims reached, please buy more to extend your area");
+    }
+
+    public static void guilds_info_other(CommandSender sender, Guild guild, String master, int count, int claims) {
+        info(Plugin.guilds, sender, "Name: " + cGuild + guild.getName());
+        info(Plugin.guilds, sender, "Role Master: " + cPlayer + master);
+        info(Plugin.guilds, sender, "Members count: " + cValue + count);
+        info(Plugin.guilds, sender, "Open to join: " + cValue + guild.isOpen());
+        info(Plugin.guilds, sender, "Claims: " + cValue + claims);
+        info(Plugin.guilds, sender, "Outposts: " + cValue + guild.getUsedOutposts());
+    }
+
+    public static void guilds_info_your(CommandSender sender, Guild guild, String master, String mods, String members, int homes, int claims) {
+        info(Plugin.guilds, sender, "Name: " + cGuild + guild.getName());
+        info(Plugin.guilds, sender, "Role Master: " + cPlayer + master);
+        info(Plugin.guilds, sender, "Role Mods: " + cValue + mods);
+        info(Plugin.guilds, sender, "Role Members: " + cValue + members);
+        info(Plugin.guilds, sender, "Homes set: " + cValue + homes + cInfo + "/" + cValue + guild.getMaxHomes());
+        info(Plugin.guilds, sender, "Open to join: " + cValue + guild.isOpen());
+        info(Plugin.guilds, sender, "Invited Only: " + cValue + guild.isInvited_only());
+        info(Plugin.guilds, sender, "FriendlyFire: " + cValue + guild.isFriendlyFire());
+        info(Plugin.guilds, sender, "Claims: " + cValue + claims + cInfo + "/" + cValue + guild.getMaxClaims());
+        info(Plugin.guilds, sender, "Outposts: " + cValue + guild.getUsedOutposts() + cInfo + "/" + cValue + guild.getUsedOutposts());
     }
 }

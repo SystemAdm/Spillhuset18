@@ -43,7 +43,7 @@ public class GuildsHomesAddCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guilds.homes";
     }
 
     @Override

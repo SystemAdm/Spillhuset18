@@ -32,6 +32,11 @@ public class CurrencyManager {
     }
 
     public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double value) {
+        boolean sender_guild = false;
+        boolean receiver_guild = false;
+        String sender_name = "";
+        String receiver_name = "";
+
         if (fromAccount == Account.pocket) {
             if (!CurrencySQL.hasPocket(fromUUID, value)) {
                 MessageManager.insufficient_funds(sender);
@@ -39,19 +44,30 @@ public class CurrencyManager {
             }
             CurrencySQL.subPocket(fromUUID, value);
         } else {
-            OddJob.getInstance().log("bank:" + CurrencySQL.getBank(fromUUID) + " : " + value);
             if (!CurrencySQL.hasBank(fromUUID, value)) {
                 MessageManager.insufficient_funds(sender);
                 return true;
             }
             CurrencySQL.subBank(fromUUID, value);
         }
-
+        OddJob.getInstance().log("transfer");
         switch (toAccount) {
-            case bank, guild -> CurrencySQL.addBank(toUUID, value);
-            case pocket -> CurrencySQL.addPocket(toUUID, value);
+            case guild -> {
+                receiver_guild = true;
+                receiver_name = OddJob.getInstance().getGuildsManager().getGuilds().get(toUUID).getName();
+                CurrencySQL.addBank(toUUID, value);
+            }
+            case bank -> {
+                receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
+                toUUID = ((Player) sender).getUniqueId();
+                CurrencySQL.addBank(toUUID, value);
+            }
+            case pocket -> {
+                receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
+                CurrencySQL.addPocket(toUUID, value);
+            }
         }
-        MessageManager.currency_transferred(sender, fromAccount.name(), OddJob.getInstance().getPlayerManager().get(fromUUID).getName(), false, toAccount.name(), OddJob.getInstance().getPlayerManager().get(toUUID).getName(), false, value);
+        MessageManager.currency_transferred(sender, fromAccount.name(), sender_name, sender_guild, toAccount.name(), receiver_name, receiver_guild, value);
         return true;
         ///transfer bank pocket 280
     }

@@ -7,11 +7,13 @@ import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scoreboard.*;
 
 public class OnPlayerJoinEvent implements Listener {
     @EventHandler
@@ -29,5 +31,19 @@ public class OnPlayerJoinEvent implements Listener {
             Role role = gm.getRoles().get(player.getUniqueId());
             MessageManager.guild_join(player, guild, role, gm.getBank(guild.getUuid()), gm.hasHome(guild.getUuid()));
         }
+
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("S", Criteria.DUMMY, ChatColor.GREEN+"Spillhuset");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+
+
+        Score chunk_xy = objective.getScore("Chunk x & y:");
+        Score chunk_guild = objective.getScore("Guild:");
+
+        OddJob.getInstance().getPlayerManager().setScoreboard(player.getUniqueId(), scoreboard);
+        player.setScoreboard(scoreboard);
+
     }
 }

@@ -45,7 +45,7 @@ public class GuildsInviteCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guilds.invite";
     }
 
     @Override

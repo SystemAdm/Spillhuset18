@@ -54,7 +54,7 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guilds.homes";
     }
 
     @Override

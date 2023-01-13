@@ -109,3 +109,17 @@ permissions:
     default: true
   warps.admin:
     default: op
+  guilds:
+    default: true
+  guilds.create:
+    default: true
+  guilds.join:
+    default: true
+  guilds.claim:
+    default: true
+  guilds.buy:
+    default: true
+  guilds.invite:
+    default: true
+  guilds.admin:
+    default: op

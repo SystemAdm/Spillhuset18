@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.bukkit.FireworkEffect;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
@@ -200,5 +201,8 @@ public class Tool {
             }
         }
         return gson.toJson(itemJson);
+    }
+
+    public static void announce(Player player, Guild guildChunk) {
     }
 }

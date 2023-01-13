@@ -4,15 +4,13 @@ import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
 import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
+import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
-import com.spillhuset.oddjob.Events.OnBlockBreakEvent;
-import com.spillhuset.oddjob.Events.OnPlayerInteractEvent;
-import com.spillhuset.oddjob.Events.OnPlayerJoinEvent;
+import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
-import com.spillhuset.oddjob.SQL.GuildSQL;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -50,7 +48,11 @@ public class OddJob extends JavaPlugin {
             getCommand("balance").setExecutor(new BalanceCommand());
             getCommand("currency").setExecutor(new CurrencyCommand());
         }
-        if (ConfigManager.getBoolean("plugin.guilds")) guildsManager = new GuildsManager();
+        if (ConfigManager.getBoolean("plugin.guilds")) {
+            guildsManager = new GuildsManager();
+            guildsManager.load();
+            getCommand("guilds").setExecutor(new GuildsCommand());
+        }
         if (ConfigManager.getBoolean("plugin.arena")) arenaManager = new ArenaManager();
         if (ConfigManager.getBoolean("plugin.auctions")) auctionsManager = new AuctionsManager();
         if (ConfigManager.getBoolean("plugin.locks")) {
@@ -70,10 +72,11 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerInteractEvent(), this);
         pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnBlockBreakEvent(), this);
+        pm.registerEvents(new OnPlayerMoveEvent(), this);
+        pm.registerEvents(new OnPlayerQuitEvent(), this);
 
         // Loading
-        GuildSQL.loadGuild(null);
-        GuildSQL.loadMembersRoles();
+
     }
 
     public void onDisable() {

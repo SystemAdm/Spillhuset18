@@ -391,21 +391,6 @@ public class GuildSQL extends MySQLManager {
         }
     }
 
-    public static void leave(Player player) {
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `player` = ?");
-            preparedStatement.setString(1, player.getUniqueId().toString());
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-    }
-
-
     public static void removeChunk(Guild guild, Cords chunk) {
         try {
             connect();
@@ -473,11 +458,26 @@ public class GuildSQL extends MySQLManager {
         return s;
     }
 
-    public static void removeRole(UUID uuid) {
+    public static void removeRole(UUID player, UUID guild) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `uuid` = ?");
-            preparedStatement.setString(1, uuid.toString());
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `uuid` = ? AND `player` = ?");
+            preparedStatement.setString(1, guild.toString());
+            preparedStatement.setString(2, player.toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public static void removeMember(UUID player, UUID guild) {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM `mine_guilds_members` WHERE `uuid` = ? AND `player` = ?");
+            preparedStatement.setString(1, guild.toString());
+            preparedStatement.setString(2, player.toString());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

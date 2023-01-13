@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GuildsUnclaimCommand extends SubCommand {
+public class GuildsUnClaimCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;

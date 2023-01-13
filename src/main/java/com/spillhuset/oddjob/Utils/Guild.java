@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.OddJob;
 
@@ -38,6 +39,22 @@ public class Guild {
         this.permissionKick = permissionKick;
         this.boughtOutposts = boughtOutposts;
         this.usedOutposts = usedOutposts;
+    }
+
+    public Guild(UUID uuid, String name,Zone zone) {
+        this.uuid = uuid;
+        this.name = name;
+        this.zone = zone;
+        this.boughtClaims = 0;
+        this.boughtHomes = 0;
+        this.spawnMobs = false;
+        this.open = false;
+        this.invitedOnly = false;
+        this.friendlyFire = false;
+        this.permissionInvite = Role.Members;
+        this.permissionKick = Role.Master;
+        this.boughtOutposts = 0;
+        this.usedOutposts = 0;
     }
 
     public Guild(UUID uuid, String name) {
@@ -118,5 +135,24 @@ public class Guild {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void useOutpost() {
+        usedOutposts++;
+    }
+    public int getMaxClaims() {
+        int max = ConfigManager.getInt("guilds.default.claims");
+        max += getBoughtClaims();
+        return max;
+    }
+    public int getMaxHomes() {
+        int max = ConfigManager.getInt("guilds.default.homes");
+        max += getBoughtHomes();
+        return max;
+    }
+
+    public void incBoughtClaims() {
+        boughtClaims++;
+        OddJob.getInstance().getGuildsManager().save( this);
     }
 }

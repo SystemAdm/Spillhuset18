@@ -44,7 +44,7 @@ public class GuildsHomesRenameCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds";
+        return "guilds.homes";
     }
 
     @Override
