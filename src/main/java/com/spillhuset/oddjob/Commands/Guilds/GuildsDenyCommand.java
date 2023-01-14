@@ -2,7 +2,10 @@ package com.spillhuset.oddjob.Commands.Guilds;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,7 +57,7 @@ public class GuildsDenyCommand extends SubCommand {
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 4;
     }
 
     @Override
@@ -87,14 +90,62 @@ public class GuildsDenyCommand extends SubCommand {
             return;
         }
 
-        Player player = (Player) sender;
-        UUID guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()).getUuid();
-        if (guild == null) {
-            // Has invitations to a guild?
-            OddJob.getInstance().getGuildsManager().denyInvite(player, args.length == 1 ? null : args[1]);
-        } else {
-            // Guild has pending requests?
-            OddJob.getInstance().getGuildsManager().denyPending(sender, guild, args.length == 1 ? null : args[1]);
+        if (sender instanceof Player player) {
+            // What guild am I in
+            Guild inGuild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+            if (inGuild == null) {
+                // In no guild, list invited
+                List<UUID> guilds = OddJob.getInstance().getGuildsManager().getInvites(player.getUniqueId(), false);
+                UUID target;
+                // Is there more than one invitation
+                if (guilds.size() == 1 && args.length == 1) {
+                    // find the first and only one
+                    target = guilds.get(0);
+                    Guild guild = OddJob.getInstance().getGuildsManager().getGuild(target);
+                    OddJob.getInstance().getGuildsManager().denyInvite(player, guild);
+                    return;
+                }
+                // list them up
+                for (UUID uuid : guilds) {
+                    // find guild
+                    Guild guild = OddJob.getInstance().getGuildsManager().getGuild(uuid);
+                    if (guild != null) {
+                        target = UUID.fromString(args[1]);
+                        // is it the same as I was expecting
+                        if (target.equals(guild.getUuid())) {
+                            OddJob.getInstance().getGuildsManager().denyInvite(player, guild);
+                            return;
+                        }
+                    }
+                }
+                MessageManager.guilds_invitation_not_found(sender);
+            }else {
+                // I am in guild, list requests
+                List<UUID> targets = OddJob.getInstance().getGuildsManager().getPending(inGuild.getUuid(), true);
+                UUID target;
+                // Are there any requests
+                if (targets.size() == 1 && args.length == 1) {
+                    // Find the first and only one
+                    target = targets.get(0);
+                    OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(target);
+                    OddJob.getInstance().getGuildsManager().denyPending(oddPlayer,inGuild);
+                    return;
+                }
+                // list them up
+                for (UUID uuid : targets) {
+                    // find player
+                    OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(uuid);
+                    if (oddPlayer != null) {
+                        target = UUID.fromString(args[1]);
+                        // is it the same as I was expecting
+                        if (target.equals(oddPlayer.getUuid())) {
+                            OddJob.getInstance().getGuildsManager().denyPending(oddPlayer,inGuild);
+                            return;
+                        }
+                    }
+                }
+                MessageManager.guilds_pending_not_found(sender);
+            }
         }
     }
 

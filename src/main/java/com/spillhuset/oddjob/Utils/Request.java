@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Utils;
 
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.SQL.RequestSql;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class Request {
@@ -16,6 +17,7 @@ public class Request {
             return;
         }
         RequestSql.request(player.getUniqueId(),guild.getUuid());
+        MessageManager.guilds_request(player,guild);
     }
 
     public static void invite(Guild guild, OddPlayer target) {
@@ -24,5 +26,10 @@ public class Request {
             return;
         }
         RequestSql.invite(guild.getUuid(),target.getUuid());
+        Player targetPlayer = Bukkit.getPlayer(target.getUuid());
+        if (targetPlayer != null) {
+            MessageManager.guilds_invited_to(target,guild);
+        }
+        MessageManager.guilds_invited_to_guild(target,guild);
     }
 }

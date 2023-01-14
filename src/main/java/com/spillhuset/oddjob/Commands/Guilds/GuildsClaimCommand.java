@@ -106,7 +106,7 @@ public class GuildsClaimCommand extends SubCommand {
                     return;
                 }
 
-                    OddJob.getInstance().getGuildsManager().claim(player, guild);
+                OddJob.getInstance().getGuildsManager().claim(player, guild);
 
             }
         }

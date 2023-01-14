@@ -15,6 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.*;
 
+import java.util.List;
+import java.util.UUID;
+
+
 public class OnPlayerJoinEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -26,10 +30,24 @@ public class OnPlayerJoinEvent implements Listener {
         GuildsManager gm = OddJob.getInstance().getGuildsManager();
 
         MessageManager.essentials_join(player, cm.getPocket(player.getUniqueId()), cm.getBank(player.getUniqueId()), hm.getMax(player.getUniqueId()), hm.getCurrent(player.getUniqueId()));
+        // Has Guild
         Guild guild = gm.getGuildByMember(player.getUniqueId());
         if (guild != null) {
             Role role = gm.getRoles().get(player.getUniqueId());
             MessageManager.guild_join(player, guild, role, gm.getBank(guild.getUuid()), gm.hasHome(guild.getUuid()));
+            List<UUID> pending = OddJob.getInstance().getGuildsManager().getPending(guild.getUuid(),true);
+            if (!pending.isEmpty()) {
+                MessageManager.guilds_pending(player,pending);
+            }
+        } else {
+            List<UUID> invites = OddJob.getInstance().getGuildsManager().getInvites(player.getUniqueId(),false);
+            if (!invites.isEmpty()) {
+                MessageManager.guilds_pending_invites(player,invites);
+            }
+            List<UUID> pending = OddJob.getInstance().getGuildsManager().getPending(player.getUniqueId(),false);
+            if (!pending.isEmpty()) {
+                MessageManager.guilds_pending_requests(player,pending);
+            }
         }
 
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();

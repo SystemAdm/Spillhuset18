@@ -53,7 +53,7 @@ public class MessageManager {
     }
 
     private static void list(CommandSender sender, String title, List<String> list) {
-        sender.sendMessage(ChatColor.AQUA + title);
+        sender.sendMessage(cInfo + title);
         for (int i = 0; i < list.size(); i++) {
             sender.sendMessage((i + 1) + ".) " + list.get(i));
         }
@@ -274,7 +274,7 @@ public class MessageManager {
     }
 
     public static void guilds_request_already_sent(Player player, Guild guild) {
-        info(Plugin.guilds, player, "You have already sent a request to join " + guild.getName());
+        info(Plugin.guilds, player, "You have already sent a request to join " + cGuild + guild.getName());
     }
 
     public static void guilds_invited_only(Player player, String name) {
@@ -287,7 +287,9 @@ public class MessageManager {
 
     public static void guilds_invite_already_sent(OddPlayer target, Guild guild) {
         Player player = Bukkit.getPlayer(target.getUuid());
-        info(Plugin.guilds, player, "You have already sent a request to join " + guild.getName());
+        if (player != null) {
+            info(Plugin.guilds, player, "You have already sent a request to join " + guild.getName());
+        }
     }
 
     public static void guilds_invite_denied(Player player, Guild guild) {
@@ -333,7 +335,7 @@ public class MessageManager {
     }
 
     public static void currency_holding(Player sender, double pocket, double bank) {
-        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your `"+ Account.pocket.name()+"`, and `" + bank + "` in your bank account");
+        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your `" + Account.pocket.name() + "`, and `" + bank + "` in your bank account");
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {
@@ -380,7 +382,7 @@ public class MessageManager {
     }
 
     public static void guilds_claimed_you(CommandSender sender) {
-        danger(Plugin.guilds, sender, "This chunk is already claimed to your guild");
+        info(Plugin.guilds, sender, "This chunk is already claimed to your guild");
     }
 
     public static void guilds_claimed(Guild claimed, CommandSender sender) {
@@ -397,6 +399,9 @@ public class MessageManager {
 
     public static void guilds_claiming(CommandSender sender, Chunk chunk, Guild guild) {
         success(Plugin.guilds, sender, "You have successfully claimed x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
+    }
+    public static void guilds_unClaiming(CommandSender sender, Chunk chunk, Guild guild) {
+        success(Plugin.guilds, sender, "You have successfully unClaimed x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
     }
 
     public static void guilds_claiming_outpost(CommandSender sender, Chunk chunk, Guild guild) {
@@ -427,5 +432,122 @@ public class MessageManager {
         info(Plugin.guilds, sender, "FriendlyFire: " + cValue + guild.isFriendlyFire());
         info(Plugin.guilds, sender, "Claims: " + cValue + claims + cInfo + "/" + cValue + guild.getMaxClaims());
         info(Plugin.guilds, sender, "Outposts: " + cValue + guild.getUsedOutposts() + cInfo + "/" + cValue + guild.getUsedOutposts());
+    }
+
+    public static void guilds_invited_to(OddPlayer target, Guild guild) {
+        Player player = Bukkit.getPlayer(target.getUuid());
+        if (player == null) return;
+        success(Plugin.guilds, player, "You have been invited to join the guild " + cGuild + guild.getName());
+    }
+
+    public static void guilds_invited_to_guild(OddPlayer target, Guild guild) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                success(Plugin.guilds, player, cPlayer + target.getName() + cSuccess + " has been invited to the guild");
+            }
+        }
+    }
+
+    public static void guilds_pending_invites(Player player, List<UUID> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (UUID uuid : list) {
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuild(uuid);
+            if (guild != null) {
+                stringBuilder.append(guild.getName()).append(", ");
+            }
+        }
+        info(Plugin.guilds, player, "You are wanted by guilds: " + cGuild + stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(", ")));
+    }
+
+    public static void guilds_invitation_not_found(CommandSender sender) {
+        danger(Plugin.guilds, sender, "No invitation found");
+    }
+
+    public static void guilds_invited_welcome(Guild guild, Player target) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                success(Plugin.guilds, player, cPlayer + target.getName() + cSuccess + " has accepted the guild invitation");
+            }
+        }
+    }
+
+    public static void guilds_left(Player player, Guild guild) {
+        success(Plugin.guilds, player, "You have successfully left the guild " + cGuild + guild.getName());
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player member = Bukkit.getPlayer(uuid);
+            if (member != null) {
+                success(Plugin.guilds, member, cPlayer + player.getName() + cSuccess + " has left the guild");
+            }
+        }
+    }
+
+    public static void guilds_request(Player player, Guild guild) {
+        MessageManager.info(Plugin.guilds, player, "Request to join the guild " + cGuild + guild.getName() + cInfo + " is sent");
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player member = Bukkit.getPlayer(uuid);
+            if (member != null) {
+                info(Plugin.guilds, member, cPlayer + player.getName() + cInfo + " wants to join your guild");
+            }
+        }
+    }
+
+    public static void guilds_pending_requests(Player player, List<UUID> pending) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (UUID uuid : pending) {
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuild(uuid);
+            if (guild != null) {
+                stringBuilder.append(guild.getName()).append(" ");
+            }
+        }
+        info(Plugin.guilds, player, "You still want to join the guilds: " + cGuild + stringBuilder);
+    }
+
+    public static void guilds_pending(Player player, List<UUID> pending) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (UUID uuid : pending) {
+            stringBuilder.append(OddJob.getInstance().getPlayerManager().get(uuid).getName()).append(", ");
+        }
+        info(Plugin.guilds, player, "" + cPlayer + stringBuilder + cInfo + " want to join your guild");
+    }
+
+    public static void guilds_pending_not_found(CommandSender sender) {
+        danger(Plugin.guilds, sender, "No requests found");
+    }
+
+    public static void guilds_pending_welcome(Guild guild, OddPlayer target) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                if (player.getUniqueId().equals(target.getUuid())) {
+                    success(Plugin.guilds, player, "You have been accepted into the guild " + cGuild + guild.getName());
+                } else
+                    success(Plugin.guilds, player, cPlayer + target.getName() + cSuccess + " has been accepted into the guild");
+            }
+        }
+    }
+
+    public static void guilds_invited_denied(Player target, Guild guild) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                info(Plugin.guilds, player,  cPlayer + target.getName() + cInfo + " declined the invitation to join the guild");
+            }
+        }
+        danger(Plugin.guilds, target, "You have declined the invitation to join the guild " + cGuild + guild.getName());
+
+    }
+
+    public static void guilds_pending_denied(OddPlayer target, Guild guild) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                info(Plugin.guilds, player, "The request from " + cPlayer + target.getName() + cInfo + " to join the guild has been declined");
+            }
+        }
+        Player player = Bukkit.getPlayer(target.getUuid());
+        if (player != null)
+            danger(Plugin.guilds, player, "Your request to join the guild " + cGuild + guild.getName() + cDanger + " has been declined");
     }
 }

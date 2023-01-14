@@ -4,7 +4,10 @@ import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.LockUtil;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
@@ -108,28 +111,46 @@ public class OnPlayerInteractEvent implements Listener {
     public void useItem(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
 
+        // Is it a block
         if (block == null) {
             return;
         }
+
         BlockData blockState = block.getBlockData();
+
+        // Is it lockable
         if (!OddJob.getInstance().getLocksManager().isLockable(block.getType())) {
             return;
         }
+
         Location location = event.getClickedBlock().getLocation();
+        if (blockState instanceof Door) {
+            location = LockUtil.getLowerLeftDoor(location);
+        } else if (block.getType() == Material.CHEST) {
+            location = LockUtil.getChestLeft(location);
+        }
         Player player = event.getPlayer();
+
+        // Is it already locked
         UUID owner = OddJob.getInstance().getLocksManager().isLocked(location);
         if (player.hasPermission("locks.override")) {
-
+            // Toggle the door
             if (blockState instanceof Door) {
                 LockUtil.toggleDoor(block, player, location);
             }
             return;
         }
+
+        // Are you the owner
         if (owner != null && !owner.equals(player.getUniqueId())) {
+            // Cancel it!
             MessageManager.locks_locked(player, block.getType().name());
             event.setCancelled(true);
+            return;
         }
 
+        // Toggle the door!
+        OddJob.getInstance().log("I");
         if (blockState instanceof Door) {
             LockUtil.toggleDoor(block, player, location);
         }

@@ -7,6 +7,7 @@ import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.OddJob;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -154,5 +155,16 @@ public class Guild {
     public void incBoughtClaims() {
         boughtClaims++;
         OddJob.getInstance().getGuildsManager().save( this);
+    }
+
+    public List<UUID> getMembers(UUID guild) {
+        List<UUID> list = new ArrayList<>();
+        HashMap<UUID,UUID> members = OddJob.getInstance().getGuildsManager().getMembers();
+        for (UUID uuid : members.keySet()) {
+            if (members.get(uuid).equals(guild)) {
+                list.add(uuid);
+            }
+        }
+        return list;
     }
 }

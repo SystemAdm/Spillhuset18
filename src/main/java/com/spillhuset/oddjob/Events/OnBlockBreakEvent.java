@@ -21,25 +21,34 @@ public class OnBlockBreakEvent implements Listener {
         Block block = event.getBlock();
         Location location = block.getLocation();
         Player player = event.getPlayer();
-
+OddJob.getInstance().log("B");
+        // Is block lockable
         if (!OddJob.getInstance().getLocksManager().isLockable(block.getType())) {
             return;
         }
 
+        // Is block a chest
         if (block.getType() == Material.CHEST) {
             location = LockUtil.getChestLeft(location);
         }
+
+        // Is block a door
         if (block.getBlockData() instanceof Door) {
             location = LockUtil.getLowerLeftDoor(location);
         }
 
+        // Is block owned
         UUID owner = OddJob.getInstance().getLocksManager().isLocked(location);
         if (owner != null){
             if (!owner.equals(player.getUniqueId())) {
+                // Cancel it!
+                OddJob.getInstance().log("B-N");
                 event.setCancelled(true);
                 MessageManager.locks_locked(player, block.getType().name());
                 return;
             }
+
+            // Break the lock
             OddJob.getInstance().getLocksManager().breakLock(player, location);
         }
     }

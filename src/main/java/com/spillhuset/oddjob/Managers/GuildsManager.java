@@ -80,6 +80,15 @@ public class GuildsManager extends Managers {
     }
 
     public void leave(Player player) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild != null) {
+            members.remove(player.getUniqueId());
+            roles.remove(player.getUniqueId());
+            MessageManager.guilds_left(player, guild);
+            GuildSQL.removeMember(player.getUniqueId());
+        } else
+            MessageManager.guilds_not_associated(player);
+
     }
 
     public void loadGuild(Guild guild) {
@@ -87,8 +96,12 @@ public class GuildsManager extends Managers {
     }
 
     public void info(Player player) {
-        if (members.containsKey(player.getUniqueId())) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
         }
+        info(player, guild.getName());
     }
 
     public HashMap<UUID, Role> getRoles() {
@@ -171,71 +184,93 @@ public class GuildsManager extends Managers {
         return null;
     }
 
-    public void acceptInvite(Player player, String s) {
+    public void acceptInvite(Player player, Guild guild) {
+        members.put(player.getUniqueId(), guild.getUuid());
+        roles.put(player.getUniqueId(), Role.Members);
+        save(true, null);
+        MessageManager.guilds_invited_welcome(guild, player);
+        GuildSQL.removeInvites(player.getUniqueId(), guild.getUuid());
     }
 
-    public void acceptPending() {
+    public void acceptPending(OddPlayer player, Guild guild) {
+        members.put(player.getUuid(), guild.getUuid());
+        roles.put(player.getUuid(), Role.Members);
+        save(true, null);
+        MessageManager.guilds_pending_welcome(guild, player);
+        GuildSQL.removePending(player.getUuid(), guild.getUuid());
     }
 
     public void buyHomes(CommandSender sender) {
     }
 
     public void claim(Player player, boolean outpost) {
+        // find guild
         Guild guild = getGuildByMember(player.getUniqueId());
-
         if (guild == null) {
             MessageManager.guilds_not_associated(player);
             return;
         }
+
+        // find role
         Role role = getRoles().get(player.getUniqueId());
-        if (role != Role.Master) {
-            MessageManager.guilds_role_needed(player, guild, Role.Master);
+        if (role.getLevel() < Role.Mods.getLevel()) {
+            MessageManager.guilds_role_needed(player, guild, Role.Mods);
             return;
         }
 
+        Chunk chunk = player.getLocation().getChunk();
         for (Cords cords : chunks.keySet()) {
-            Chunk chunk = player.getLocation().getChunk();
-            if (cords.getWorld() == chunk.getWorld().getUID() &&
+            // standing in chunk
+            if (cords.getWorld().equals(chunk.getWorld().getUID()) &&
                     cords.getX() == chunk.getX() && cords.getZ() == chunk.getZ()) {
                 if (cords.getGuild().equals(guild.getUuid())) {
                     MessageManager.guilds_claimed_you(player);
                     return;
                 }
+                // check if claimed already
                 Guild claimed = getGuildByUUID(cords.getGuild());
                 if (claimed != null) MessageManager.guilds_claimed(claimed, player);
                 return;
             }
         }
 
+        // is there any other guild within 2 chunks
         if (claimsNear(player.getLocation(), guild)) {
             MessageManager.guilds_claimed_near(player);
             return;
         }
-        Chunk chunk = player.getLocation().getChunk();
 
         int countClaims = 0;
-
+        // count the claimed chunks
         for (UUID uuid : chunks.values()) {
             if (guild.getUuid().equals(uuid)) countClaims++;
         }
 
-        if (countClaims >= guild.getMaxClaims()) {
+        // reached limit
+        if (countClaims != 0 && countClaims >= guild.getMaxClaims()) {
             MessageManager.guilds_claiming_max_reached(player);
             return;
         }
 
+        // outpost
         if (outpost) {
             GuildSQL.saveChunk(player.getLocation().getChunk(), guild);
             guild.useOutpost();
             MessageManager.guilds_claiming_outpost(player, chunk, guild);
         }
 
-        UUID comp = nearChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID());
-        if (comp != null && !comp.equals(guild.getUuid()) && countClaims != 0) {
-            MessageManager.guilds_claimed_connected(player);
-            return;
+        // is the claims connected
+        if (countClaims != 0) {
+            UUID comp = nearChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID());
+            if (comp == null || !comp.equals(guild.getUuid())) {
+                MessageManager.guilds_claimed_connected(player);
+                return;
+            }
         }
-        GuildSQL.saveChunk(player.getLocation().getChunk(), guild);
+
+        // save them all
+        chunks.put(new Cords(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID(), guild.getUuid()), guild.getUuid());
+        GuildSQL.saveChunk(chunk, guild);
         MessageManager.guilds_claiming(player, chunk, guild);
     }
 
@@ -328,21 +363,32 @@ public class GuildsManager extends Managers {
         if (memberRole) GuildSQL.saveMembersRoles(members, roles);
     }
 
-    public void denyInvite(Player player, String name) {
+    /**
+     * @param target
+     * @param guild
+     */
+    public void denyInvite(Player target, Guild guild) {
+        GuildSQL.removeInvites(target.getUniqueId(), guild.getUuid());
+        MessageManager.guilds_invited_denied(target, guild);
     }
 
-    public void denyPending(CommandSender sender, UUID guild, String name) {
+    public void denyPending(OddPlayer player, Guild guild) {
+        GuildSQL.removePending(player.getUuid(), guild.getUuid());
+        MessageManager.guilds_pending_denied(player, guild);
     }
 
     public void disband(Player player) {
+        List<UUID> players = new ArrayList<>();
         Guild guild = getGuildByMember(player.getUniqueId());
         if (guild != null) {
             for (UUID uuidPlayer : members.keySet()) {
-                if (members.get(uuidPlayer) == guild.getUuid()) {
-                    members.remove(uuidPlayer);
+                if (members.get(uuidPlayer).equals(guild.getUuid())) {
                     roles.remove(uuidPlayer);
-                    OddJob.getInstance().log("removed");
+                    players.add(uuidPlayer);
                 }
+            }
+            for (UUID uuid : players) {
+                members.remove(uuid);
             }
             guilds.remove(guild.getUuid());
             GuildSQL.disband(guild.getUuid());
@@ -409,7 +455,7 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_not_associated(player);
             return;
         }
-        if (!role.equals(guild.getPermissionInvite())) {
+        if (role.getLevel() < guild.getPermissionInvite().getLevel()) {
             MessageManager.guilds_invite_denied(player, guild);
             return;
         }
@@ -455,6 +501,28 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_not_associated(player);
             return;
         }
+        Role role = getRoles().get(player.getUniqueId());
+        if (role.getLevel() < Role.Mods.getLevel()) {
+            MessageManager.guilds_role_needed(player, guild, Role.Mods);
+            return;
+        }
+        Chunk chunk = player.getLocation().getChunk();
+        Cords remove = null;
+        for (Cords cords : chunks.keySet()) {
+            if (cords.getWorld().equals(chunk.getWorld().getUID()) &&
+                    cords.getX() == chunk.getX() && cords.getZ() == chunk.getZ()) {
+                if (cords.getGuild().equals(guild.getUuid())) {
+                    remove = cords;
+                    break;
+                }
+            }
+        }
+        if (remove != null) {
+            chunks.remove(remove);
+            GuildSQL.removeChunk(guild,remove);
+            MessageManager.guilds_unClaiming(player, chunk, guild);
+        } else
+            OddJob.getInstance().log("something wrong");
     }
 
     public void unClaim(Player player, Guild guild) {
@@ -488,5 +556,17 @@ public class GuildsManager extends Managers {
 
     public void save(Guild guild) {
         GuildSQL.save(guild);
+    }
+
+    public List<UUID> getPending(UUID uuid, boolean guild) {
+        return GuildSQL.getPending(uuid, guild);
+    }
+
+    public Guild getGuild(UUID uuid) {
+        return getGuilds().get(uuid);
+    }
+
+    public List<UUID> getInvites(UUID uuid, boolean guild) {
+        return GuildSQL.getInvite(uuid, guild);
     }
 }
