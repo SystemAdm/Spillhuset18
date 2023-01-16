@@ -36,7 +36,7 @@ public enum Zone {
     }
 
     public String getColoredString(String name) {
-        return getColor() + getString() + name;
+        return getColor() + getString() + ChatColor.BLUE+name;
     }
     public String getColorCode() {
         return code;

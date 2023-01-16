@@ -569,4 +569,13 @@ public class GuildsManager extends Managers {
     public List<UUID> getInvites(UUID uuid, boolean guild) {
         return GuildSQL.getInvite(uuid, guild);
     }
+
+    public Guild getGuildByZone(Zone zone) {
+        for (UUID uuid : guilds.keySet()) {
+            if (guilds.get(uuid).getZone().equals(zone)) {
+                return getGuild(uuid);
+            }
+        }
+        return null;
+    }
 }

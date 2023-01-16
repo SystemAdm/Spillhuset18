@@ -16,7 +16,7 @@ public class OnPlayerMoveEvent implements Listener {
 
     private HashMap<UUID, UUID> inside = new HashMap<>();
 
-    @EventHandler (priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
 
         if (event.getTo() == null) {
@@ -27,21 +27,20 @@ public class OnPlayerMoveEvent implements Listener {
         }
 
 
-
-        Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(),event.getTo().getChunk().getZ(),event.getTo().getWorld());
+        Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
         if (guildChunk == null) {
             return;
         }
 
         Player player = event.getPlayer();
 
-        if (inside.containsKey(player.getUniqueId())) {
-            if (inside.get(player.getUniqueId()).equals(guildChunk.getUuid())) {
+        if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()) != null) {
+            if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()).equals(guildChunk.getUuid())) {
                 Tool.announce(player, guildChunk);
             }
         } else {
-            inside.put(player.getUniqueId(),guildChunk.getUuid());
-            Tool.announce(player,guildChunk);
+            OddJob.getInstance().getPlayerManager().setInside(player.getUniqueId(), guildChunk.getUuid());
+            Tool.announce(player, guildChunk);
         }
 
         Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
@@ -49,7 +48,7 @@ public class OnPlayerMoveEvent implements Listener {
             return;
         }
 
-        OddJob.getInstance().log("inside "+guildChunk.getName());
+        OddJob.getInstance().log("inside " + guildChunk.getName());
     }
 
 }

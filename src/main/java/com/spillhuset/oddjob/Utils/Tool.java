@@ -4,6 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.OddJob;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -11,7 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffect;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class Tool {
+    static HashMap<UUID, UUID> map = new HashMap<>();
+
     public static double round(double value) {
         long factor = (long) Math.pow(10, 0);
         value = value * factor;
@@ -203,6 +213,17 @@ public class Tool {
         return gson.toJson(itemJson);
     }
 
-    public static void announce(Player player, Guild guildChunk) {
+    public static void announce(Player player, Guild guild) {
+        String name = "";
+        if (guild.getZone().equals(Zone.GUILD)) {
+            name = guild.getZone().getColoredString(guild.getName());
+        } else {
+            name = guild.getZone().getColoredString();
+        }
+        Guild mine = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (mine != null && mine.equals(guild)) {
+            name = ChatColor.GOLD + name;
+        }
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(name));
     }
 }
