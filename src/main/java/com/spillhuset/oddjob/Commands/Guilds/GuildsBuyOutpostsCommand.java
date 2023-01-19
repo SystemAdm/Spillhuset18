@@ -1,16 +1,12 @@
 package com.spillhuset.oddjob.Commands.Guilds;
-
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsCreateCommand extends SubCommand {
+public class GuildsBuyOutpostCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -28,7 +24,7 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "create";
+        return "outpost";
     }
 
     @Override
@@ -38,65 +34,51 @@ public class GuildsCreateCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/guilds create <name>";
+        return "/guilds buy outpost";
     }
 
     @Override
     public String getPermission() {
-        return "guilds.create";
+        return "guilds.buy";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int depth() {
-        return 1;
+        return 2;
     }
 
     @Override
     public boolean noGuild() {
-        return true;
-    }
-
-    @Override
-    public boolean needGuild() {
         return false;
     }
 
     @Override
+    public boolean needGuild() {
+        return true;
+    }
+
+    @Override
     public Role guildRole() {
-        return null;
+        return Role.Master;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!can(sender, false, true)) {
-            return;
-        }
-        if (!argsLength(sender, args.length)) {
-            return;
-        }
-        if (sender instanceof Player player) {
-            OddJob.getInstance().getGuildsManager().create(player, args[1]);
-        }else {
-            OddJob.getInstance().getGuildsManager().create();
-        }
+
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            list.add("<name>");
-        }
-        return list;
+        return null;
     }
 }

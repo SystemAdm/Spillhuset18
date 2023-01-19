@@ -2,8 +2,10 @@ package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
-import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
@@ -39,27 +41,81 @@ public class PlayerManager {
     }
 
     public void feedOne(CommandSender sender) {
+        Player player = (Player) sender;
+        player.setFoodLevel(20);
+        MessageManager.essentials_feed_self(sender);
     }
 
-    public void feedAll() {
+    public void feedAll(CommandSender sender) {
+        List<String> players = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.setFoodLevel(20);
+            MessageManager.essentials_feed(player);
+            players.add(player.getName());
+        }
+        MessageManager.essentials_feed_all(sender,players);
     }
 
     public void feedMany(String[] args, CommandSender sender) {
+        List<String> players = new ArrayList<>();
+        for (String name : args) {
+            Player player = Bukkit.getPlayer(name);
+            if (player != null) {
+                player.setFoodLevel(20);
+                MessageManager.essentials_feed(player);
+                players.add(player.getName());
+            }
+        }
+        MessageManager.essentials_feed_many(sender,players);
     }
 
     public void feedOne(String arg, CommandSender sender) {
+        Player player = Bukkit.getPlayer(arg);
+        if (player != null) {
+            player.setFoodLevel(20);
+            MessageManager.essentials_feed(player);
+            MessageManager.essentials_feed_one(sender,player.getName());
+        }
     }
 
     public void healOne(CommandSender sender) {
+        Player player = (Player) sender;
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+        MessageManager.essentials_heal_self(sender);
     }
 
-    public void healAll() {
+    public void healAll(CommandSender sender) {
+        List<String> players = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player != null) {
+                player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+                MessageManager.essentials_healed(player);
+                players.add(player.getName());
+            }
+        }
+        MessageManager.essentials_heal_all(sender,players);
     }
 
     public void healOne(String arg, CommandSender sender) {
+        Player player = Bukkit.getPlayer(arg);
+        if (player != null) {
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+            MessageManager.essentials_healed(player);
+            MessageManager.essentials_heal_one(sender,player.getName());
+        }
     }
 
     public void healMany(String[] args, CommandSender sender) {
+        List<String> players = new ArrayList<>();
+        for (String name:args) {
+            Player player = Bukkit.getPlayer(name);
+            if (player != null) {
+                player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+                MessageManager.essentials_healed(player);
+                players.add(player.getName());
+            }
+        }
+        MessageManager.essentials_heal_many(sender,players);
     }
 
     public Collection<OddPlayer> getAll() {
@@ -87,6 +143,6 @@ public class PlayerManager {
     }
 
     public void setInside(UUID player, UUID guild) {
-        inside.put(player,guild);
+        inside.put(player, guild);
     }
 }

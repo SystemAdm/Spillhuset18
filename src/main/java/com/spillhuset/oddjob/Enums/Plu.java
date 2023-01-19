@@ -3,10 +3,10 @@ package com.spillhuset.oddjob.Enums;
 public enum Plu {
     TELEPORT_REQUEST(50, 1),
     DEFAULT(1, 1),
-    GUILDS_CLAIMS(1000, 0.1),
-    GUILDS_HOMES(5000, 0.5),
+    GUILDS_CLAIMS(1000, 2),
+    GUILDS_HOMES(10000, 5),
     GUILDS_HOMES_TELEPORT(50,1),
-    GUILDS_OUTPOST(200000,1),
+    GUILDS_OUTPOST(200000,10),
     // 1000 (n^2 + 5)
     PLAYER_HOMES(1000,0.5),
     PLAYER_HOMES_TELEPORT(50, 1),

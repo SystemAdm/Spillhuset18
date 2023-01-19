@@ -96,7 +96,7 @@ public abstract class SubCommand {
     public void finder(CommandSender sender, String[] args) {
         if (args.length >= depth()) {
             for (SubCommand subCommand : subCommands) {
-                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                if (args.length > depth() && subCommand.getName().equalsIgnoreCase(args[depth()])) {
                     if (subCommand.can(sender, false, true)) {
                         subCommand.getCommandExecutor(sender, args);
                         return;

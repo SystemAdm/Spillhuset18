@@ -3,10 +3,13 @@ package com.spillhuset.oddjob.Commands.Guilds;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,20 +102,19 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
             return;
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (SubCommand subCommand : subCommands) {
-            String name = subCommand.getName();
-            if (args.length > depth() && name.equalsIgnoreCase(args[depth()])) {
-                if (subCommand.can(sender,false,true)) {
-                    subCommand.getCommandExecutor(sender,args);
-                    return;
-                }
-            } else if (subCommand.can(sender,false,false)) {
-                stringBuilder.append(ChatColor.GRAY).append(name).append(ChatColor.RESET).append(",");
+        if (args.length == 1) {
+            Player player = (Player) sender;
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+            if (guild == null) {
+                MessageManager.guilds_not_associated(sender);
+                return;
             }
+            List<String> homes = OddJob.getInstance().getHomesManager().getList(guild.getUuid());
+            MessageManager.guilds_homes_info(sender,guild,homes);
+            return;
         }
-        if (!stringBuilder.isEmpty()) stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
-        MessageManager.sendSyntax(getPlugin(), stringBuilder.toString(), sender);
+
+        finder(sender,args);
     }
 
     @Override

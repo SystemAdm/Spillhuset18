@@ -1,9 +1,14 @@
 package com.spillhuset.oddjob.Commands.Guilds;
 
+import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +18,7 @@ public class GuildsBuyCommand extends SubCommand {
     public GuildsBuyCommand() {
         subCommands.add(new GuildsBuyHomesCommand());
         subCommands.add(new GuildsBuyClaimsCommand());
+        subCommands.add(new GuildsBuyOutpostCommand());
     }
 
     @Override
@@ -88,6 +94,13 @@ public class GuildsBuyCommand extends SubCommand {
 
         if (!argsLength(sender, args.length)) {
             return;
+        }
+
+        if (args.length == 1) {
+            Player player =(Player) sender;
+            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+
+            MessageManager.guilds_to_buy(sender,guild);
         }
 
         finder(sender, args);

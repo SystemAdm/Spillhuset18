@@ -5,6 +5,7 @@ import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class GuildsBuyHomesCommand extends SubCommand {
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -83,8 +84,12 @@ public class GuildsBuyHomesCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-
-        OddJob.getInstance().getGuildsManager().buyHomes(sender);
+        Player player = (Player) sender;
+        if (args.length == 3 && args[2].equalsIgnoreCase("confirm")) {
+            OddJob.getInstance().getGuildsManager().buyHomesConfirm(player);
+        } else {
+            OddJob.getInstance().getGuildsManager().buyHomes(player);
+        }
     }
 
     @Override

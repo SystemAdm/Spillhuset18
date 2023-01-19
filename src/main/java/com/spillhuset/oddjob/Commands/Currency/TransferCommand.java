@@ -64,10 +64,10 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
         //transfer <accountSender> guild <to_guild> bank <value>
         //transfer <accountSender> <to_account> <value>
 
-        Account accountSender = null;
-        Account accountReciever = null;
-        UUID uuidTarget = null;
-        double value = 0d;
+        Account accountSender;
+        Account accountReciever;
+        UUID uuidTarget;
+        double value;
         Player player = (Player) sender;
 
         List<String> accounts = new ArrayList<>();
@@ -130,7 +130,7 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
             MessageManager.currency_invalid_account(sender, args[1]);
             return true;
         }
-
+        OddJob.getInstance().log(args[1]);
         OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, player.getUniqueId(), accountReciever, uuidTarget, value);
 
         return true;

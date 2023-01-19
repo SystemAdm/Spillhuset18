@@ -56,7 +56,6 @@ public class OnPlayerJoinEvent implements Listener {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Chunk chunk = player.getLocation().getChunk();
-        pm.setInside(player.getUniqueId(), gm.getGuildByCords(chunk.getX(), chunk.getZ(), chunk.getWorld()).getUuid());
 
         Score chunk_xy = objective.getScore("Chunk x & y: " + chunk.getX() + " " + chunk.getZ());
         chunk_xy.setScore(1);
@@ -65,6 +64,7 @@ public class OnPlayerJoinEvent implements Listener {
         if (in == null) {
             in = gm.getGuildByZone(Zone.WILD);
         }
+        pm.setInside(player.getUniqueId(),in.getUuid());
         Score inGuild = objective.getScore("Inside guild: " + in.getName());
         inGuild.setScore(1);
         if (guild != null) {

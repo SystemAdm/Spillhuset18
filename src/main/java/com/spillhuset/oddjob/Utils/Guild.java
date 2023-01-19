@@ -148,7 +148,10 @@ public class Guild {
     }
     public int getMaxHomes() {
         int max = ConfigManager.getInt("guilds.default.homes");
+        OddJob.getInstance().log("config: "+max);
         max += getBoughtHomes();
+        OddJob.getInstance().log("bought: "+getBoughtHomes());
+        OddJob.getInstance().log("max: "+max);
         return max;
     }
 
@@ -166,5 +169,10 @@ public class Guild {
             }
         }
         return list;
+    }
+
+    public void incBoughtHomes() {
+        boughtHomes++;
+        OddJob.getInstance().getGuildsManager().save(this);
     }
 }

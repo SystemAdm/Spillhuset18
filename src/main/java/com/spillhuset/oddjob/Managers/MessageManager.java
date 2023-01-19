@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Account;
+import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
@@ -400,6 +401,7 @@ public class MessageManager {
     public static void guilds_claiming(CommandSender sender, Chunk chunk, Guild guild) {
         success(Plugin.guilds, sender, "You have successfully claimed x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
     }
+
     public static void guilds_unClaiming(CommandSender sender, Chunk chunk, Guild guild) {
         success(Plugin.guilds, sender, "You have successfully unClaimed x:" + cValue + chunk.getX() + cSuccess + ",z:" + cValue + chunk.getZ() + cSuccess + " to " + cGuild + guild.getName());
     }
@@ -532,7 +534,7 @@ public class MessageManager {
         for (UUID uuid : guild.getMembers(guild.getUuid())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                info(Plugin.guilds, player,  cPlayer + target.getName() + cInfo + " declined the invitation to join the guild");
+                info(Plugin.guilds, player, cPlayer + target.getName() + cInfo + " declined the invitation to join the guild");
             }
         }
         danger(Plugin.guilds, target, "You have declined the invitation to join the guild " + cGuild + guild.getName());
@@ -549,5 +551,82 @@ public class MessageManager {
         Player player = Bukkit.getPlayer(target.getUuid());
         if (player != null)
             danger(Plugin.guilds, player, "Your request to join the guild " + cGuild + guild.getName() + cDanger + " has been declined");
+    }
+
+    public static void guilds_homes_info(CommandSender sender, Guild guild, List<String> homes) {
+        info(Plugin.guilds, sender, "The guild have used " + cValue+homes.size() +cInfo+ " of a max " + cValue+guild.getMaxHomes());
+        info(Plugin.guilds, sender, "To by more use the command `"+cValue+"/guilds buy homes"+cInfo+"`");
+    }
+
+    public static void guilds_to_buy(CommandSender sender, Guild guild) {
+        double claim = Plu.GUILDS_CLAIMS.getValue() * (guild.getBoughtClaims() + 1 * Plu.GUILDS_CLAIMS.getMultiplier());
+        double home = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
+        double outpost = Plu.GUILDS_OUTPOST.getValue() * (guild.getBoughtOutposts() + 1 * Plu.GUILDS_OUTPOST.getMultiplier());
+        info(Plugin.guilds, sender, "You can buy `" + cValue + "claims" + cInfo + "`, next will cost " + cValue + claim);
+        info(Plugin.guilds, sender, "You can buy `" + cValue + "homes" + cInfo + "`, next will cost " + cValue + home);
+        info(Plugin.guilds, sender, "You can buy `" + cValue + "outpost" + cInfo + "`, next will cost " + cValue + outpost);
+    }
+
+    public static void essentials_feed_self(CommandSender sender) {
+        success(Plugin.essentials, sender, "You have feed yourself");
+    }
+
+    public static void essentials_feed(CommandSender sender) {
+        info(Plugin.essentials, sender, "You have been feed");
+    }
+
+    public static void essentials_feed_all(CommandSender sender, List<String> players) {
+        essentials_feed_many(sender, players);
+    }
+
+    public static void essentials_feed_many(CommandSender sender, List<String> players) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String name : players) {
+            stringBuilder.append(cPlayer).append(name).append(cSuccess).append(", ");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(", "));
+        success(Plugin.essentials, sender, "You have feed: " + stringBuilder);
+    }
+
+    public static void essentials_feed_one(CommandSender sender, String name) {
+        success(Plugin.essentials, sender, "You have feed: " + cPlayer + name);
+    }
+
+    public static void essentials_heal_self(CommandSender sender) {
+        success(Plugin.essentials, sender, "You have healed yourself");
+    }
+
+    public static void essentials_healed(CommandSender sender) {
+        info(Plugin.essentials, sender, "You have been feed");
+    }
+
+    public static void essentials_heal_all(CommandSender sender, List<String> players) {
+        essentials_heal_many(sender, players);
+    }
+
+    public static void essentials_heal_many(CommandSender sender, List<String> players) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String name : players) {
+            stringBuilder.append(cPlayer).append(name).append(cSuccess).append(", ");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(", "));
+        success(Plugin.essentials, sender, "You have healed: " + stringBuilder);
+    }
+
+    public static void essentials_heal_one(CommandSender sender, String name) {
+        success(Plugin.essentials, sender, "You have healed: " + cPlayer + name);
+    }
+
+    public static void guilds_buy_homes(CommandSender sender, double price, boolean has) {
+        info(Plugin.guilds, sender, "You are about to use " + cValue + price + cInfo + " to increase the amount of available homes for your guild.");
+        if (has) {
+            success(Plugin.guilds, sender,"Your guild has enough funding, please use `" + cValue + "/guilds buy homes confirm" + cSuccess + "` to purchase");
+        } else {
+        danger(Plugin.guilds, sender, "Your guild has not enough funding, please transfer to guild account: `" + cValue + "/transfer <bank|pocket> guild <amount>" + cDanger + "`");}
+    }
+
+    public static void guilds_homes_bought(CommandSender sender, double price, int maxHomes) {
+        success(Plugin.guilds, sender, "You have successfully increased the maximal number of homes for the guild to " + cValue + maxHomes + cSuccess + ", next purchase will cost you " + cValue + price);
+        info(Plugin.guilds, sender, "To use your new home, use the command `" + cValue + "/guilds homes add <name>" + cInfo + "`");
     }
 }

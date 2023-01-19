@@ -200,7 +200,32 @@ public class GuildsManager extends Managers {
         GuildSQL.removePending(player.getUuid(), guild.getUuid());
     }
 
-    public void buyHomes(CommandSender sender) {
+    public void buyHomes(Player player) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        double price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
+        boolean has = (OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(),price));
+        MessageManager.guilds_buy_homes(player,price,has);
+    }
+    public void buyHomesConfirm(Player player) {
+        Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        double price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
+        if (!OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(),price)) {
+            MessageManager.insufficient_funds(player);
+            return;
+        }
+        OddJob.getInstance().getCurrencyManager().subBank(guild.getUuid(),price);
+        guild.incBoughtHomes();
+        save(guild);
+        price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
+        MessageManager.guilds_homes_bought(player,price,guild.getMaxHomes());
     }
 
     public void claim(Player player, boolean outpost) {
@@ -330,6 +355,13 @@ public class GuildsManager extends Managers {
     public void claim(Player player, Guild guild) {
     }
 
+    public void create() {
+        if (getGuildByName("SafeZone") == null) create("SafeZone", Zone.SAFE);
+        if (getGuildByName("WarZone") == null) create("WarZone", Zone.WAR);
+        if (getGuildByName("ArenaZone") == null) create("ArenaZone", Zone.ARENA);
+        if (getGuildByName("WildZone") == null) create("WildZone", Zone.WILD);
+        save(false,null);
+    }
     public void create(String name, Zone zone) {
         Guild guild = new Guild(UUID.randomUUID(), name, zone);
         GuildSQL.save(guild);
@@ -339,6 +371,7 @@ public class GuildsManager extends Managers {
         if (getGuildByName("SafeZone") == null) create("SafeZone", Zone.SAFE);
         if (getGuildByName("WarZone") == null) create("WarZone", Zone.WAR);
         if (getGuildByName("ArenaZone") == null) create("ArenaZone", Zone.ARENA);
+        if (getGuildByName("WildZone") == null) create("WildZone", Zone.WILD);
 
         if (getGuildByName(name) != null) {
             MessageManager.guilds_exists(player, name);
@@ -578,4 +611,6 @@ public class GuildsManager extends Managers {
         }
         return null;
     }
+
+
 }

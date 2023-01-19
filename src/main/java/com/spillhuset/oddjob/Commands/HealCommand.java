@@ -62,7 +62,7 @@ public class HealCommand extends SubCommandInterface implements CommandExecutor 
         if (args.length == 0) {
             OddJob.getInstance().getPlayerManager().healOne(sender);
         } else if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
-            OddJob.getInstance().getPlayerManager().healAll();
+            OddJob.getInstance().getPlayerManager().healAll(sender);
         } else if (args.length == 1) {
             OddJob.getInstance().getPlayerManager().healOne(args[0], sender);
         } else {

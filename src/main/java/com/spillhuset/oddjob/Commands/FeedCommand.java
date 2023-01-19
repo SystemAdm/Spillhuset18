@@ -62,7 +62,7 @@ public class FeedCommand extends SubCommandInterface implements CommandExecutor 
         if (args.length == 0) {
             OddJob.getInstance().getPlayerManager().feedOne(sender);
         } else if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
-            OddJob.getInstance().getPlayerManager().feedAll();
+            OddJob.getInstance().getPlayerManager().feedAll(sender);
         } else if (args.length == 1) {
             OddJob.getInstance().getPlayerManager().feedOne(args[0], sender);
         } else {

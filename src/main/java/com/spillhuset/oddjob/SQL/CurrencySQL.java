@@ -123,7 +123,14 @@ public class CurrencySQL extends MySQLManager {
             preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = `bank` + ? WHERE `uuid` = ?");
             preparedStatement.setDouble(1, value);
             preparedStatement.setString(2, uuid.toString());
-            preparedStatement.executeUpdate();
+            int affected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            if (affected == 0) {
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`bank`,`uuid`) VALUES (?,?)");
+                preparedStatement.setDouble(1, value);
+                preparedStatement.setString(2, uuid.toString());
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -137,7 +144,14 @@ public class CurrencySQL extends MySQLManager {
             preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = `pocket` + ? WHERE `uuid` = ?");
             preparedStatement.setDouble(1, value);
             preparedStatement.setString(2, uuid.toString());
-            preparedStatement.executeUpdate();
+            int affected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            if (affected == 0) {
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`pocket`,`uuid`) VALUES (?,?)");
+                preparedStatement.setDouble(1, value);
+                preparedStatement.setString(2, uuid.toString());
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
