@@ -74,6 +74,8 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnBlockBreakEvent(), this);
         pm.registerEvents(new OnPlayerMoveEvent(), this);
         pm.registerEvents(new OnPlayerQuitEvent(), this);
+        pm.registerEvents(new OnInventoryMoveEvent(), this);
+        pm.registerEvents(new OnBlockPlaceEvent(), this);
 
         // Loading
 

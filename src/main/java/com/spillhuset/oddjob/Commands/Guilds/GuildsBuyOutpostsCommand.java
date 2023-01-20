@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class GuildsBuyOutpostCommand extends SubCommand {
+public class GuildsBuyOutpostsCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;

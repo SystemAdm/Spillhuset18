@@ -1,6 +1,5 @@
 package com.spillhuset.oddjob.Commands.Guilds;
 
-import com.spillhuset.oddjob.Enums.Plu;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Managers.MessageManager;
@@ -18,7 +17,7 @@ public class GuildsBuyCommand extends SubCommand {
     public GuildsBuyCommand() {
         subCommands.add(new GuildsBuyHomesCommand());
         subCommands.add(new GuildsBuyClaimsCommand());
-        subCommands.add(new GuildsBuyOutpostCommand());
+        subCommands.add(new GuildsBuyOutpostsCommand());
     }
 
     @Override
