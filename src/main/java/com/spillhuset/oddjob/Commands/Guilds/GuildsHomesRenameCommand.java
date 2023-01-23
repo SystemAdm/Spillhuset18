@@ -89,7 +89,7 @@ public class GuildsHomesRenameCommand extends SubCommand {
         OddJob.getInstance().log("rename");
         Player player = (Player) sender;
 
-        OddJob.getInstance().getGuildsManager().setHomeRename(player, args[2], args[3]);
+        OddJob.getInstance().getGuildsManager().setHomesRename(player, args[2], args[3]);
     }
 
     @Override

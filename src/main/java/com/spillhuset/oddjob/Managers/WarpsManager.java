@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.TeleportType;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
 import com.spillhuset.oddjob.Utils.Warp;
@@ -66,7 +67,7 @@ public class WarpsManager {
             return;
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {
-            OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation());
+            OddJob.getInstance().getTeleportManager().teleport(player, warp.getLocation(), TeleportType.player);
         } else {
             player.teleport(warp.getLocation());
         }

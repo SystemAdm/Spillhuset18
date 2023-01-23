@@ -207,9 +207,10 @@ public class GuildsManager extends Managers {
             return;
         }
         double price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
-        boolean has = (OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(),price));
-        MessageManager.guilds_buy_homes(player,price,has);
+        boolean has = (OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(), price));
+        MessageManager.guilds_buy_homes(player, price, has);
     }
+
     public void buyHomesConfirm(Player player) {
         Guild guild = getGuildByMember(player.getUniqueId());
         if (guild == null) {
@@ -217,15 +218,15 @@ public class GuildsManager extends Managers {
             return;
         }
         double price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
-        if (!OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(),price)) {
+        if (!OddJob.getInstance().getCurrencyManager().checkBank(guild.getUuid(), price)) {
             MessageManager.insufficient_funds(player);
             return;
         }
-        OddJob.getInstance().getCurrencyManager().subBank(guild.getUuid(),price);
+        OddJob.getInstance().getCurrencyManager().subBank(guild.getUuid(), price);
         guild.incBoughtHomes();
         save(guild);
         price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
-        MessageManager.guilds_homes_bought(player,price,guild.getMaxHomes());
+        MessageManager.guilds_homes_bought(player, price, guild.getMaxHomes());
     }
 
     public void claim(Player player, boolean outpost) {
@@ -360,8 +361,9 @@ public class GuildsManager extends Managers {
         if (getGuildByName("WarZone") == null) create("WarZone", Zone.WAR);
         if (getGuildByName("ArenaZone") == null) create("ArenaZone", Zone.ARENA);
         if (getGuildByName("WildZone") == null) create("WildZone", Zone.WILD);
-        save(false,null);
+        save(false, null);
     }
+
     public void create(String name, Zone zone) {
         Guild guild = new Guild(UUID.randomUUID(), name, zone);
         GuildSQL.save(guild);
@@ -429,7 +431,7 @@ public class GuildsManager extends Managers {
         }
     }
 
-    public void homeAdd(Player player, String home) {
+    public void homesAdd(Player player, String home) {
         Location location = player.getLocation();
         Chunk chunk = location.getChunk();
         Guild guild = getGuildByMember(player.getUniqueId());
@@ -468,16 +470,48 @@ public class GuildsManager extends Managers {
         return chunks;
     }
 
-    public void homeRemove(Player player, String home) {
+    public void homesRemove(Player player, String home) {
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        OddJob.getInstance().getHomesManager().delGuild(player, guild, home);
     }
 
-    public void setHomeRelocate(Player player, String home) {
+    public void setHomesRelocate(Player player, String home) {
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        Location location = player.getLocation();
+        Chunk chunk = location.getChunk();
+        for (Cords cords : chunks(guild.getUuid())) {
+            if (chunk.getWorld().getUID() == cords.getWorld() && chunk.getX() == cords.getX() && chunk.getZ() == cords.getZ()) {
+                OddJob.getInstance().getHomesManager().changeGuild(player, guild, home);
+                return;
+            }
+        }
+        MessageManager.guilds_homes_must_be(player);
     }
 
-    public void setHomeRename(Player player, String oldName, String newName) {
+    public void setHomesRename(Player player, String oldName, String newName) {
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        OddJob.getInstance().getHomesManager().renameGuild(player,guild,oldName,newName);
     }
 
-    public void homeTeleport(Player player, String home) {
+    public void homesTeleport(Player player, String home) {
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(player);
+            return;
+        }
+        OddJob.getInstance().getHomesManager().teleportGuild(player,guild,home);
     }
 
     public void invite(Player player, String name) {
@@ -552,7 +586,7 @@ public class GuildsManager extends Managers {
         }
         if (remove != null) {
             chunks.remove(remove);
-            GuildSQL.removeChunk(guild,remove);
+            GuildSQL.removeChunk(guild, remove);
             MessageManager.guilds_unClaiming(player, chunk, guild);
         } else
             OddJob.getInstance().log("something wrong");

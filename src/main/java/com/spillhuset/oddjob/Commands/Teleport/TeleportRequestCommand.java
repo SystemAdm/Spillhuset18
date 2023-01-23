@@ -59,6 +59,7 @@ public class TeleportRequestCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -73,9 +74,9 @@ public class TeleportRequestCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("le");
         if (!argsLength(sender, args.length)) {
             return;
         }
@@ -83,7 +84,8 @@ public class TeleportRequestCommand extends SubCommand {
             return;
         }
 
-        OddJob.getInstance().getTeleportManager().request((Player) sender, args[1]);
+        Player player = (Player) sender;
+        OddJob.getInstance().getTeleportManager().request(player, args[1]);
     }
 
     @Override

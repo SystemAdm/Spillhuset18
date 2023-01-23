@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TeleportAcceptCommand extends SubCommand {
     @Override
@@ -84,9 +85,9 @@ public class TeleportAcceptCommand extends SubCommand {
         }
         if (sender instanceof Player player) {
             if (args.length == 2) {
-                OddJob.getInstance().getTeleportManager().accept(player,args[1]);
+                OddJob.getInstance().getTeleportManager().accept(player, UUID.fromString(args[1]));
             } else {
-                OddJob.getInstance().getTeleportManager().accept(player);
+                OddJob.getInstance().getTeleportManager().accept(player,null);
             }
         }
     }

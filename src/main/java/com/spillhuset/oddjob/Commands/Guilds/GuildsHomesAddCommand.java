@@ -91,7 +91,7 @@ public class GuildsHomesAddCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().homeAdd(player, name);
+        OddJob.getInstance().getGuildsManager().homesAdd(player, name);
     }
 
     @Override

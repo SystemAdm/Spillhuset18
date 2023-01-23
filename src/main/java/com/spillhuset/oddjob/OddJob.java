@@ -8,6 +8,9 @@ import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
+import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
+import com.spillhuset.oddjob.Commands.Teleport.TeleportRequestCommand;
+import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
@@ -60,7 +63,11 @@ public class OddJob extends JavaPlugin {
             getCommand("locks").setExecutor(new LocksCommand());
         }
         if (ConfigManager.getBoolean("plugin.shops")) shopsManager = new ShopsManager();
-        if (ConfigManager.getBoolean("plugin.teleport")) teleportManager = new TeleportManager();
+        if (ConfigManager.getBoolean("plugin.teleport")) {
+            teleportManager = new TeleportManager();
+            getCommand("teleports").setExecutor(new TeleportCommand());
+            getCommand("tpa").setExecutor(new TeleportTPACommand());
+        }
         if (ConfigManager.getBoolean("plugin.warps")) {
             warpsManager = new WarpsManager();
             getCommand("warps").setExecutor(new WarpCommand());

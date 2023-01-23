@@ -89,7 +89,7 @@ public class GuildsHomesRelocateCommand extends SubCommand {
         OddJob.getInstance().log("relocate");
         Player player = (Player) sender;
 
-        OddJob.getInstance().getGuildsManager().setHomeRelocate(player, args[2]);
+        OddJob.getInstance().getGuildsManager().setHomesRelocate(player, args[2]);
     }
 
     @Override

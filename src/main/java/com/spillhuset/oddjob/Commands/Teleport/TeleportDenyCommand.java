@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TeleportDenyCommand extends SubCommand {
     @Override
@@ -83,9 +84,9 @@ public class TeleportDenyCommand extends SubCommand {
         }
         if (sender instanceof Player player) {
             if (args.length == 2) {
-                OddJob.getInstance().getTeleportManager().deny(player,args[1]);
+                OddJob.getInstance().getTeleportManager().deny(player, UUID.fromString(args[1]));
             } else {
-                OddJob.getInstance().getTeleportManager().deny(player);
+                OddJob.getInstance().getTeleportManager().deny(player,null);
             }
         }
     }

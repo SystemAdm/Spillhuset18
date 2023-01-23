@@ -91,7 +91,7 @@ public class GuildsHomesTeleportCommand extends SubCommand {
             name = args[2];
         }
         Player player = (Player) sender;
-        OddJob.getInstance().getGuildsManager().homeTeleport(player, name);
+        OddJob.getInstance().getGuildsManager().homesTeleport(player, name);
     }
 
     @Override

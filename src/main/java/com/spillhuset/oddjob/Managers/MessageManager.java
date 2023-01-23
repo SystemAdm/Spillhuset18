@@ -8,6 +8,9 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.Warp;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -628,5 +631,59 @@ public class MessageManager {
     public static void guilds_homes_bought(CommandSender sender, double price, int maxHomes) {
         success(Plugin.guilds, sender, "You have successfully increased the maximal number of homes for the guild to " + cValue + maxHomes + cSuccess + ", next purchase will cost you " + cValue + price);
         info(Plugin.guilds, sender, "To use your new home, use the command `" + cValue + "/guilds homes add <name>" + cInfo + "`");
+    }
+
+    public static void guilds_homes_deleted(CommandSender sender, String home) {
+        success(Plugin.guilds,sender,"Home `"+cValue+home+cSuccess+"` deleted from the guild");
+    }
+
+    public static void guilds_homes_relocated(CommandSender sender, String home) {
+        success(Plugin.guilds,sender,"Home `"+cValue+home+cSuccess+"` for the guild changed");
+    }
+
+    public static void guilds_homes_must_be(CommandSender sender) {
+        danger(Plugin.guilds,sender,"Home must be set within your guild claims");
+    }
+
+    public static void guilds_homes_not_exists(CommandSender sender, String oldName) {
+        danger(Plugin.guilds,sender,"The guild has no home named `"+cValue+oldName+cDanger+"`");
+    }
+
+    public static void guilds_homes_renamed(CommandSender sender, String oldName, String newName) {
+        success(Plugin.guilds,sender,"Home `"+cValue+oldName+cSuccess+"` changed name to `"+cValue+newName+cSuccess+"`");
+    }
+
+    public static void teleport(CommandSender sender, int i) {
+        info(Plugin.teleports,sender,"Teleporting in "+cValue+i);
+    }
+
+    public static void teleport(CommandSender sender) {
+        info(Plugin.teleports,sender,"Teleporting "+cValue+"now");
+    }
+
+    public static void teleport_request_sent(Player requester, Player targetPlayer) {
+        info(Plugin.teleports,targetPlayer,"Player "+targetPlayer.getName()+" requesting to be teleported to your position.");
+
+        TextComponent accept = new TextComponent(ChatColor.GREEN+"ACCEPT");
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/teleports accept "+requester.getUniqueId()));
+
+        TextComponent deny = new TextComponent(ChatColor.RED+"DENY");
+        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/teleports deny "+requester.getUniqueId()));
+
+        accept.addExtra(" or ");
+        accept.addExtra(deny);
+        targetPlayer.spigot().sendMessage(ChatMessageType.CHAT,accept);
+
+        info(Plugin.teleports,requester,"Request sent to "+cPlayer+targetPlayer.getName());
+    }
+
+    public static void teleport_request_accepted(Player target, Player requester) {
+        success(Plugin.teleports,target,"You have accepted the teleport request from "+cPlayer+requester.getName()+cSuccess+", and will be here shortly");
+        success(Plugin.teleports,requester,cPlayer+target.getName()+cSuccess+" has accepted your teleport request");
+    }
+
+    public static void teleport_request_denied(Player target, Player requester) {
+        success(Plugin.teleports,target,"You have denied the teleport request from "+cPlayer+requester.getName());
+        danger(Plugin.teleports,requester,cPlayer+target.getName()+cDanger+" has denied your teleport request");
     }
 }

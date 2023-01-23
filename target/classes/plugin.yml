@@ -15,8 +15,10 @@ commands:
     description: Guilds
   suicide:
     description: Suicide mother f***er!
-  teleport:
+  teleports:
     description: Teleport
+  tpa:
+    description: Teleporting
   locks:
     description: Locking
   enderchest:
@@ -124,4 +126,8 @@ permissions:
   guilds.admin:
     default: op
   guilds.homes:
+    default: true
+  teleports:
+    default: true
+  teleports.request:
     default: true

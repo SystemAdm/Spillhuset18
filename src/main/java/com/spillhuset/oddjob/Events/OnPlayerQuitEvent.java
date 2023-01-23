@@ -12,6 +12,8 @@ public class OnPlayerQuitEvent implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
+        OddJob.getInstance().getTeleportManager().quit(player.getUniqueId());
+
         OddJob.getInstance().getPlayerManager().getScoreboard(player.getUniqueId());
         player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
 

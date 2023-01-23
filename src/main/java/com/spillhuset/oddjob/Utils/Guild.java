@@ -3,7 +3,6 @@ package com.spillhuset.oddjob.Utils;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.Managers.ConfigManager;
-import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.OddJob;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.UUID;
 public class Guild {
     private final UUID uuid;
     private String name;
-    private Zone zone;
+    private final Zone zone;
     private int boughtClaims;
     private int boughtHomes;
     private int boughtOutposts;
@@ -42,7 +41,7 @@ public class Guild {
         this.usedOutposts = usedOutposts;
     }
 
-    public Guild(UUID uuid, String name,Zone zone) {
+    public Guild(UUID uuid, String name, Zone zone) {
         this.uuid = uuid;
         this.name = name;
         this.zone = zone;
@@ -130,39 +129,65 @@ public class Guild {
         return OddJob.getInstance().getHomesManager().getList(uuid);
     }
 
+    public void setSpawnMobs(boolean spawnMobs) {
+        this.spawnMobs = spawnMobs;
+        save();
+    }
+
+    public void setInvitedOnly(boolean invitedOnly) {
+        this.invitedOnly = invitedOnly;
+        save();
+    }
+
+    public void setFriendlyFire(boolean friendlyFire) {
+        this.friendlyFire = friendlyFire;
+        save();
+    }
+
+    public void setPermissionInvite(Role permissionInvite) {
+        this.permissionInvite = permissionInvite;
+        save();
+    }
+
+    public void setPermissionKick(Role permissionKick) {
+        this.permissionKick = permissionKick;
+        save();
+    }
+
     public void setOpen(boolean open) {
         this.open = open;
+        save();
     }
 
     public void setName(String name) {
         this.name = name;
+        save();
     }
 
     public void useOutpost() {
         usedOutposts++;
     }
+
     public int getMaxClaims() {
         int max = ConfigManager.getInt("guilds.default.claims");
         max += getBoughtClaims();
         return max;
     }
+
     public int getMaxHomes() {
         int max = ConfigManager.getInt("guilds.default.homes");
-        OddJob.getInstance().log("config: "+max);
         max += getBoughtHomes();
-        OddJob.getInstance().log("bought: "+getBoughtHomes());
-        OddJob.getInstance().log("max: "+max);
         return max;
     }
 
     public void incBoughtClaims() {
         boughtClaims++;
-        OddJob.getInstance().getGuildsManager().save( this);
+        save();
     }
 
     public List<UUID> getMembers(UUID guild) {
         List<UUID> list = new ArrayList<>();
-        HashMap<UUID,UUID> members = OddJob.getInstance().getGuildsManager().getMembers();
+        HashMap<UUID, UUID> members = OddJob.getInstance().getGuildsManager().getMembers();
         for (UUID uuid : members.keySet()) {
             if (members.get(uuid).equals(guild)) {
                 list.add(uuid);
@@ -173,6 +198,15 @@ public class Guild {
 
     public void incBoughtHomes() {
         boughtHomes++;
+        save();
+    }
+
+    public void incBoughtOutposts() {
+        boughtOutposts++;
+        save();
+    }
+
+    private void save() {
         OddJob.getInstance().getGuildsManager().save(this);
     }
 }

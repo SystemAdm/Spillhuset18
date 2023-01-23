@@ -91,7 +91,7 @@ public class GuildsHomesDeleteCommand extends SubCommand {
         if (args.length == 3) {
             name = args[2];
         }
-        OddJob.getInstance().getGuildsManager().homeRemove(player, name);
+        OddJob.getInstance().getGuildsManager().homesRemove(player, name);
     }
 
     @Override
