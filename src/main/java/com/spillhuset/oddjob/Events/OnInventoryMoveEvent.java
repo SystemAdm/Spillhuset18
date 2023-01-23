@@ -18,6 +18,7 @@ public class OnInventoryMoveEvent implements Listener {
         }
         Inventory source = event.getSource();
         Location happening = source.getLocation();
+        if (happening == null) return;
         if (!OddJob.getInstance().getLocksManager().isLockable(happening.getBlock().getType())) {
             OddJob.getInstance().log("returned");
             return;
