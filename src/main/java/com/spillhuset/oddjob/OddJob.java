@@ -8,6 +8,7 @@ import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
+import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportRequestCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
@@ -40,10 +41,14 @@ public class OddJob extends JavaPlugin {
         instance = this;
         ConfigManager.load();
         playerManager = new PlayerManager();
+
+        /* Homes */
         if (ConfigManager.getBoolean("plugin.homes")) {
             homesManager = new HomesManager();
             getCommand("homes").setExecutor(new HomesCommand());
         }
+
+        /* Currency */
         if (ConfigManager.getBoolean("plugin.currency")) {
             currencyManager = new CurrencyManager();
             getCommand("transfer").setExecutor(new TransferCommand());
@@ -51,28 +56,46 @@ public class OddJob extends JavaPlugin {
             getCommand("balance").setExecutor(new BalanceCommand());
             getCommand("currency").setExecutor(new CurrencyCommand());
         }
+
+        /* Guilds */
         if (ConfigManager.getBoolean("plugin.guilds")) {
             guildsManager = new GuildsManager();
             guildsManager.load();
             getCommand("guilds").setExecutor(new GuildsCommand());
         }
+
+        /* Arena */
         if (ConfigManager.getBoolean("plugin.arena")) arenaManager = new ArenaManager();
+
+        /* Auctions */
         if (ConfigManager.getBoolean("plugin.auctions")) auctionsManager = new AuctionsManager();
+
+        /* Locks */
         if (ConfigManager.getBoolean("plugin.locks")) {
             locksManager = new LocksManager();
             getCommand("locks").setExecutor(new LocksCommand());
         }
-        if (ConfigManager.getBoolean("plugin.shops")) shopsManager = new ShopsManager();
+
+        /* Shops */
+        if (ConfigManager.getBoolean("plugin.shops")) {
+            shopsManager = new ShopsManager();
+            getCommand("shops").setExecutor(new ShopsCommand());
+        }
+
+        /* Teleport */
         if (ConfigManager.getBoolean("plugin.teleport")) {
             teleportManager = new TeleportManager();
             getCommand("teleports").setExecutor(new TeleportCommand());
             getCommand("tpa").setExecutor(new TeleportTPACommand());
         }
+
+        /* Warps*/
         if (ConfigManager.getBoolean("plugin.warps")) {
             warpsManager = new WarpsManager();
             getCommand("warps").setExecutor(new WarpCommand());
         }
 
+        /* Misc */
         getCommand("loaded").setExecutor(new LoadedCommand());
 
         PluginManager pm = getServer().getPluginManager();

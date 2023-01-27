@@ -28,7 +28,7 @@ public class CurrencyManager {
         MessageManager.currency_holding(player, CurrencySQL.getPocket(player.getUniqueId()), CurrencySQL.getBank(player.getUniqueId()));
     }
 
-    public void sub(CommandSender sender, String account, String value) {
+    public void sub(CommandSender sender, Account account, double value) {
     }
 
     public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double value) {

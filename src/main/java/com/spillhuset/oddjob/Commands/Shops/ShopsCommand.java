@@ -14,6 +14,7 @@ import java.util.List;
 public class ShopsCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
     public ShopsCommand() {
         subCommands.add(new ShopsSellCommand());
+        subCommands.add(new ShopsPriceCommand());
     }
     @Override
     public boolean denyConsole() {

@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class MessageManager {
     private static final ChatColor cAccount = ChatColor.YELLOW;
     private static final ChatColor cValue = ChatColor.GRAY;
     private static final ChatColor cList = ChatColor.WHITE;
+    private static final ChatColor cItem = ChatColor.BLUE;
 
     private static void danger(Plugin plugin, CommandSender sender, String message) {
         sender.sendMessage(cDanger + message);
@@ -557,8 +559,8 @@ public class MessageManager {
     }
 
     public static void guilds_homes_info(CommandSender sender, Guild guild, List<String> homes) {
-        info(Plugin.guilds, sender, "The guild have used " + cValue+homes.size() +cInfo+ " of a max " + cValue+guild.getMaxHomes());
-        info(Plugin.guilds, sender, "To by more use the command `"+cValue+"/guilds buy homes"+cInfo+"`");
+        info(Plugin.guilds, sender, "The guild have used " + cValue + homes.size() + cInfo + " of a max " + cValue + guild.getMaxHomes());
+        info(Plugin.guilds, sender, "To by more use the command `" + cValue + "/guilds buy homes" + cInfo + "`");
     }
 
     public static void guilds_to_buy(CommandSender sender, Guild guild) {
@@ -623,9 +625,10 @@ public class MessageManager {
     public static void guilds_buy_homes(CommandSender sender, double price, boolean has) {
         info(Plugin.guilds, sender, "You are about to use " + cValue + price + cInfo + " to increase the amount of available homes for your guild.");
         if (has) {
-            success(Plugin.guilds, sender,"Your guild has enough funding, please use `" + cValue + "/guilds buy homes confirm" + cSuccess + "` to purchase");
+            success(Plugin.guilds, sender, "Your guild has enough funding, please use `" + cValue + "/guilds buy homes confirm" + cSuccess + "` to purchase");
         } else {
-        danger(Plugin.guilds, sender, "Your guild has not enough funding, please transfer to guild account: `" + cValue + "/transfer <bank|pocket> guild <amount>" + cDanger + "`");}
+            danger(Plugin.guilds, sender, "Your guild has not enough funding, please transfer to guild account: `" + cValue + "/transfer <bank|pocket> guild <amount>" + cDanger + "`");
+        }
     }
 
     public static void guilds_homes_bought(CommandSender sender, double price, int maxHomes) {
@@ -634,56 +637,76 @@ public class MessageManager {
     }
 
     public static void guilds_homes_deleted(CommandSender sender, String home) {
-        success(Plugin.guilds,sender,"Home `"+cValue+home+cSuccess+"` deleted from the guild");
+        success(Plugin.guilds, sender, "Home `" + cValue + home + cSuccess + "` deleted from the guild");
     }
 
     public static void guilds_homes_relocated(CommandSender sender, String home) {
-        success(Plugin.guilds,sender,"Home `"+cValue+home+cSuccess+"` for the guild changed");
+        success(Plugin.guilds, sender, "Home `" + cValue + home + cSuccess + "` for the guild changed");
     }
 
     public static void guilds_homes_must_be(CommandSender sender) {
-        danger(Plugin.guilds,sender,"Home must be set within your guild claims");
+        danger(Plugin.guilds, sender, "Home must be set within your guild claims");
     }
 
     public static void guilds_homes_not_exists(CommandSender sender, String oldName) {
-        danger(Plugin.guilds,sender,"The guild has no home named `"+cValue+oldName+cDanger+"`");
+        danger(Plugin.guilds, sender, "The guild has no home named `" + cValue + oldName + cDanger + "`");
     }
 
     public static void guilds_homes_renamed(CommandSender sender, String oldName, String newName) {
-        success(Plugin.guilds,sender,"Home `"+cValue+oldName+cSuccess+"` changed name to `"+cValue+newName+cSuccess+"`");
+        success(Plugin.guilds, sender, "Home `" + cValue + oldName + cSuccess + "` changed name to `" + cValue + newName + cSuccess + "`");
     }
 
     public static void teleport(CommandSender sender, int i) {
-        info(Plugin.teleports,sender,"Teleporting in "+cValue+i);
+        info(Plugin.teleports, sender, "Teleporting in " + cValue + i);
     }
 
     public static void teleport(CommandSender sender) {
-        info(Plugin.teleports,sender,"Teleporting "+cValue+"now");
+        info(Plugin.teleports, sender, "Teleporting " + cValue + "now");
     }
 
     public static void teleport_request_sent(Player requester, Player targetPlayer) {
-        info(Plugin.teleports,targetPlayer,"Player "+targetPlayer.getName()+" requesting to be teleported to your position.");
+        info(Plugin.teleports, targetPlayer, "Player " + targetPlayer.getName() + " requesting to be teleported to your position.");
 
-        TextComponent accept = new TextComponent(ChatColor.GREEN+"ACCEPT");
-        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/teleports accept "+requester.getUniqueId()));
+        TextComponent accept = new TextComponent(ChatColor.GREEN + "ACCEPT");
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/teleports accept " + requester.getUniqueId()));
 
-        TextComponent deny = new TextComponent(ChatColor.RED+"DENY");
-        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/teleports deny "+requester.getUniqueId()));
+        TextComponent deny = new TextComponent(ChatColor.RED + "DENY");
+        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/teleports deny " + requester.getUniqueId()));
 
         accept.addExtra(" or ");
         accept.addExtra(deny);
-        targetPlayer.spigot().sendMessage(ChatMessageType.CHAT,accept);
+        targetPlayer.spigot().sendMessage(ChatMessageType.CHAT, accept);
 
-        info(Plugin.teleports,requester,"Request sent to "+cPlayer+targetPlayer.getName());
+        info(Plugin.teleports, requester, "Request sent to " + cPlayer + targetPlayer.getName());
     }
 
     public static void teleport_request_accepted(Player target, Player requester) {
-        success(Plugin.teleports,target,"You have accepted the teleport request from "+cPlayer+requester.getName()+cSuccess+", and will be here shortly");
-        success(Plugin.teleports,requester,cPlayer+target.getName()+cSuccess+" has accepted your teleport request");
+        success(Plugin.teleports, target, "You have accepted the teleport request from " + cPlayer + requester.getName() + cSuccess + ", and will be here shortly");
+        success(Plugin.teleports, requester, cPlayer + target.getName() + cSuccess + " has accepted your teleport request");
     }
 
     public static void teleport_request_denied(Player target, Player requester) {
-        success(Plugin.teleports,target,"You have denied the teleport request from "+cPlayer+requester.getName());
-        danger(Plugin.teleports,requester,cPlayer+target.getName()+cDanger+" has denied your teleport request");
+        success(Plugin.teleports, target, "You have denied the teleport request from " + cPlayer + requester.getName());
+        danger(Plugin.teleports, requester, cPlayer + target.getName() + cDanger + " has denied your teleport request");
+    }
+
+    public static void shops_price_sell(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+        info(Plugin.shops, sender, "One of " + cItem + item.getType().name() + cInfo + " can be sold for " + cValue + normal + cInfo + ", the whole stack of " + cValue + amount + cInfo + " can be sold for " + cValue + price + cInfo + ", next item can be sold for " + cValue + temp);
+    }
+
+    public static void shops_price_buy(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+        info(Plugin.shops, sender, "One of " + cItem + item.getType().name() + cInfo + " can be bought for " + cValue + normal + cInfo + ", the whole stack of " + cValue + amount + cInfo + " can be bought for " + cValue + price + cInfo + ", next item can be bought for " + cValue + temp);
+    }
+
+    public static void shops_not_sellable(CommandSender sender, ItemStack item) {
+        danger(Plugin.shops, sender, cInfo + item.getType().name() + cDanger + " is not sellable");
+    }
+
+    public static void shops_sold_info(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+        success(Plugin.shops, sender, "You have sold " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
+    }
+
+    public static void shops_bought_info(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+        success(Plugin.shops, sender, "You have bought " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
     }
 }
