@@ -10,7 +10,6 @@ import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
-import com.spillhuset.oddjob.Commands.Teleport.TeleportRequestCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
@@ -106,6 +105,9 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerQuitEvent(), this);
         pm.registerEvents(new OnInventoryMoveEvent(), this);
         pm.registerEvents(new OnBlockPlaceEvent(), this);
+        pm.registerEvents(new OnEntityExplodeEvent(), this);
+        pm.registerEvents(new OnBlockFromToEvent(), this);
+        pm.registerEvents(new OnEntityDamageEvent(), this);
 
         // Loading
 

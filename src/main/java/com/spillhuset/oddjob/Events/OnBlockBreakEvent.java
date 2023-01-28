@@ -20,13 +20,28 @@ public class OnBlockBreakEvent implements Listener {
     @EventHandler
     public void breakGuild(BlockBreakEvent event) {
         Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(event.getPlayer().getUniqueId());
-        Chunk chunk = event.getPlayer().getLocation().getChunk();
+        Chunk chunk = event.getBlock().getChunk();
         Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(chunk.getX(), chunk.getZ(), event.getPlayer().getWorld());
-        if (guildChunk == null || guildPlayer == null) return;
-        if (guildChunk.getUuid().equals(guildPlayer.getUuid())) {
-
+        OddJob.getInstance().log("C");
+        // Chunk has no owning guild
+        if (guildChunk == null) {
+            return;
         }
+
+        // Chunk is owned by the same guild as the player is in
+        if (guildPlayer != null && guildChunk.getUuid().equals(guildPlayer.getUuid())) {
+            return;
+        }
+
+        // Has permission
+        if (event.getPlayer().hasPermission("guilds.override") || event.getPlayer().isOp()) {
+            return;
+        }
+
+        event.setCancelled(true);
+        MessageManager.guilds_owned(event.getPlayer(), guildChunk.getName());
     }
+
     @EventHandler
     public void breakLock(BlockBreakEvent event) {
         Block block = event.getBlock();

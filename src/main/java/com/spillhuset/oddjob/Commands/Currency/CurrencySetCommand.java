@@ -1,4 +1,5 @@
 package com.spillhuset.oddjob.Commands.Currency;
+
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
@@ -7,12 +8,10 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.MessageCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class CurrencySetCommand extends SubCommand {
     @Override
@@ -90,15 +89,15 @@ public class CurrencySetCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
-/*            0       1            2       3    */
-/* /currency set <bank|pocket> <player> <value> */
-/* /currency set <bank|pocket> <value>          */
+        /*            0       1            2       3    */
+        /* /currency set <bank|pocket> <player> <value> */
+        /* /currency set <bank|pocket> <value>          */
         OddPlayer target = null;
         Account account = null;
         double value = 0.0;
 
         for (Account acc : Account.values()) {
-            if (acc.name().equalsIgnoreCase(args[1])){
+            if (acc.name().equalsIgnoreCase(args[1])) {
                 account = acc;
             }
         }
@@ -106,14 +105,14 @@ public class CurrencySetCommand extends SubCommand {
         if (args.length == 4) {
             OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(args[2]);
             if (oddPlayer == null) {
-                MessageManager.errors_find_player(getPlugin(),args[2],sender);
+                MessageManager.errors_find_player(getPlugin(), args[2], sender);
                 return;
             }
             target = oddPlayer;
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
-                MessageManager.errors_number(getPlugin(),args[3],sender);
+                MessageManager.errors_number(getPlugin(), args[3], sender);
             }
         }
         if (args.length == 3 && sender instanceof Player player) {
@@ -121,10 +120,10 @@ public class CurrencySetCommand extends SubCommand {
             try {
                 value = Double.parseDouble(args[2]);
             } catch (NumberFormatException e) {
-                MessageManager.errors_number(getPlugin(),args[2],sender);
+                MessageManager.errors_number(getPlugin(), args[2], sender);
             }
         }
-        OddJob.getInstance().getCurrencyManager().add(sender,target,account,value);
+        OddJob.getInstance().getCurrencyManager().add(sender, target, account, value);
     }
 
     @Override

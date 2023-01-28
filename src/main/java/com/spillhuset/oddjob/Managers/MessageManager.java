@@ -709,4 +709,8 @@ public class MessageManager {
     public static void shops_bought_info(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
         success(Plugin.shops, sender, "You have bought " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
     }
+
+    public static void guilds_owned(CommandSender sender, String name) {
+        danger(Plugin.guilds,sender,"This chunk is owned by "+cGuild+name);
+    }
 }

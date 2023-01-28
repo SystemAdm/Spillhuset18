@@ -1,11 +1,20 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.protocol.packet.Chat;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
@@ -14,6 +23,7 @@ public class PlayerManager {
     private final HashMap<UUID, OddPlayer> players;
     private final HashMap<UUID, Scoreboard> scoreboards = new HashMap<>();
     private final HashMap<UUID, UUID> inside = new HashMap<>();
+    private final HashMap<UUID,BukkitTask> combat = new HashMap<>();
 
     public PlayerManager() {
         players = PlayerSQL.load();
@@ -144,5 +154,25 @@ public class PlayerManager {
 
     public void setInside(UUID player, UUID guild) {
         inside.put(player, guild);
+    }
+
+    public void combat(Entity entity) {
+        if (entity instanceof Player player) {
+            OddJob.getInstance().log("UUID in: "+player.getUniqueId());
+            if (combat.get(player.getUniqueId()) == null) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent(ChatColor.RED+"In combat"));
+            }
+            combat.remove(player.getUniqueId());
+            combat.put(player.getUniqueId(),Bukkit.getScheduler().runTaskLaterAsynchronously(OddJob.getInstance(), () -> removeCombat(player.getUniqueId()),200));
+        }
+    }
+
+    private void removeCombat(UUID uniqueId) {
+        combat.remove(uniqueId);
+        OddJob.getInstance().log("UUID out: "+uniqueId);
+        Player player = Bukkit.getPlayer(uniqueId);
+        if (player != null) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent(ChatColor.GREEN+"Out of combat"));
+        }
     }
 }

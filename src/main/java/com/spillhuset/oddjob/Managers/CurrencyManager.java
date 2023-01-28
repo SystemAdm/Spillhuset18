@@ -30,6 +30,8 @@ public class CurrencyManager {
 
     public void sub(CommandSender sender, Account account, double value) {
     }
+    public void sub(CommandSender sender, OddPlayer oddPlayer,Account account, double value) {
+    }
 
     public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double value) {
         boolean sender_guild = false;

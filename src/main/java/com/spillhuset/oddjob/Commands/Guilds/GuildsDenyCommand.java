@@ -119,7 +119,7 @@ public class GuildsDenyCommand extends SubCommand {
                     }
                 }
                 MessageManager.guilds_invitation_not_found(sender);
-            }else {
+            } else {
                 // I am in guild, list requests
                 List<UUID> targets = OddJob.getInstance().getGuildsManager().getPending(inGuild.getUuid(), true);
                 UUID target;
@@ -128,7 +128,7 @@ public class GuildsDenyCommand extends SubCommand {
                     // Find the first and only one
                     target = targets.get(0);
                     OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(target);
-                    OddJob.getInstance().getGuildsManager().denyPending(oddPlayer,inGuild);
+                    OddJob.getInstance().getGuildsManager().denyPending(oddPlayer, inGuild);
                     return;
                 }
                 // list them up
@@ -139,7 +139,7 @@ public class GuildsDenyCommand extends SubCommand {
                         target = UUID.fromString(args[1]);
                         // is it the same as I was expecting
                         if (target.equals(oddPlayer.getUuid())) {
-                            OddJob.getInstance().getGuildsManager().denyPending(oddPlayer,inGuild);
+                            OddJob.getInstance().getGuildsManager().denyPending(oddPlayer, inGuild);
                             return;
                         }
                     }
