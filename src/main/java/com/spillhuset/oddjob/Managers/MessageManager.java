@@ -713,4 +713,8 @@ public class MessageManager {
     public static void guilds_owned(CommandSender sender, String name) {
         danger(Plugin.guilds,sender,"This chunk is owned by "+cGuild+name);
     }
+
+    public static void shops_material_not_found(CommandSender sender,String material) {
+        danger(Plugin.shops,sender,"Item "+cItem+material+cDanger+" not found, check your spelling");
+    }
 }

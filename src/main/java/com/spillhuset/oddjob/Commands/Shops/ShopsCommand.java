@@ -15,6 +15,7 @@ public class ShopsCommand extends SubCommandInterface implements CommandExecutor
     public ShopsCommand() {
         subCommands.add(new ShopsSellCommand());
         subCommands.add(new ShopsPriceCommand());
+        subCommands.add(new ShopsBuyCommand());
     }
     @Override
     public boolean denyConsole() {

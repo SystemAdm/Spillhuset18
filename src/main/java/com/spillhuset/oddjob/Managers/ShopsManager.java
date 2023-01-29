@@ -39,7 +39,8 @@ public class ShopsManager {
         }
     }
 
-    public void buy(Player player, ItemStack item, int amount) {
+    public void buy(Player player, ItemStack item) {
+        int amount = item.getAmount();
         PriceList plu = null;
         for (PriceList unit : PriceList.values()) {
             if (unit.name().equalsIgnoreCase(item.getType().name())) {
@@ -51,10 +52,12 @@ public class ShopsManager {
             OddJob.getInstance().log("wrong: " + item.getType().name());
             return;
         }
+        // Is enabled
         if (!plu.isEnabled()) {
             MessageManager.shops_not_sellable(player, item);
             return;
         }
+        // Is buy able
         if (!plu.isBuyAble() || plu.getNormal() == 0) {
             MessageManager.shops_not_sellable(player, item);
         } else {
