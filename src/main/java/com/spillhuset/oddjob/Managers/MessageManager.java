@@ -711,10 +711,51 @@ public class MessageManager {
     }
 
     public static void guilds_owned(CommandSender sender, String name) {
-        danger(Plugin.guilds,sender,"This chunk is owned by "+cGuild+name);
+        danger(Plugin.guilds, sender, "This chunk is owned by " + cGuild + name);
     }
 
-    public static void shops_material_not_found(CommandSender sender,String material) {
-        danger(Plugin.shops,sender,"Item "+cItem+material+cDanger+" not found, check your spelling");
+    public static void shops_material_not_found(CommandSender sender, String material) {
+        danger(Plugin.shops, sender, "Item " + cItem + material + cDanger + " not found, check your spelling");
+    }
+
+    public static void death_timer(UUID owner, int i) {
+        Player player = Bukkit.getPlayer(owner);
+        String string = "";
+        switch (i) {
+            case 1200 -> {
+                string = "20 min";
+            }
+            case 600 -> {
+                string = "10 min";
+            }
+            case 300 -> {
+                string = "5 min";
+            }
+            case 60 -> {
+                string = "1 min";
+            }
+            default -> {
+                string = i + " sec";
+            }
+        }
+        if (player != null) {
+            if (i == 1200) info(Plugin.deaths, player, "Your spirit is leaving this world in " + cValue + string);
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(cInfo + "Your spirit is leaving this world in " + cValue + string));
+        }
+    }
+
+    public static void death_ooops(Player player, UUID owner) {
+        if (player.getUniqueId().equals(owner)) {
+            danger(Plugin.deaths, player, "You broke your f***ing spirit");
+        } else {
+            OddPlayer target = OddJob.getInstance().getPlayerManager().get(owner);
+            if (target != null) {
+                Player targetPlayer = Bukkit.getPlayer(target.getUuid());
+                if (targetPlayer != null) {
+                    danger(Plugin.deaths, targetPlayer, "Some motherf***er brok your spirit, you are doomed");
+                }
+                info(Plugin.deaths, player, "You broke the spirit of " + cPlayer + target.getName() + cInfo + ", may them rest in peace");
+            }
+        }
     }
 }

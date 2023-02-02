@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class OnPlayerInteractAtEntityEvent implements Listener {
-
+    // Right click
     @EventHandler
     public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
         OddJob.getInstance().log("PlayerInteractAtEntityEvent");
@@ -22,6 +22,7 @@ public class OnPlayerInteractAtEntityEvent implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         OddJob.getInstance().log("PlayerInteractEvent");
+        // Click
     }
 
 }

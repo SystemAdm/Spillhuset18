@@ -39,7 +39,7 @@ public class EnderchestCommand extends SubCommandInterface implements CommandExe
 
     @Override
     public String getPermission() {
-        return "admin";
+        return "essentials.enderchest";
     }
 
     @Override

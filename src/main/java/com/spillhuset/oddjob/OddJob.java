@@ -9,6 +9,7 @@ import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
+import com.spillhuset.oddjob.Commands.SuicideCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
@@ -93,11 +94,15 @@ public class OddJob extends JavaPlugin {
             warpsManager = new WarpsManager();
             getCommand("warps").setExecutor(new WarpCommand());
         }
+        
+        /* Suicide */
+        getCommand("suicide").setExecutor(new SuicideCommand());
 
         /* Misc */
         getCommand("loaded").setExecutor(new LoadedCommand());
 
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
         pm.registerEvents(new OnPlayerInteractEvent(), this);
         pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnBlockBreakEvent(), this);
@@ -108,9 +113,9 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnEntityExplodeEvent(), this);
         pm.registerEvents(new OnBlockFromToEvent(), this);
         pm.registerEvents(new OnEntityDamageEvent(), this);
+        pm.registerEvents(new OnPlayerDeathEvent(), this);
 
         // Loading
-
     }
 
     public void onDisable() {

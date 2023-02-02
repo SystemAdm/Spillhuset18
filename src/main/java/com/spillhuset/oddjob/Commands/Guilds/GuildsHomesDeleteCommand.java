@@ -29,7 +29,7 @@ public class GuildsHomesDeleteCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "delete";
+        return "del";
     }
 
     @Override

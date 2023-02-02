@@ -52,7 +52,7 @@ public class GuildsBuyCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds.buy";
+        return "guilds.use";
     }
 
     @Override

@@ -43,7 +43,7 @@ public class GuildsBuyClaimsCommand extends SubCommand implements GuildInterface
 
     @Override
     public String getPermission() {
-        return "guilds.buy";
+        return "guilds.use";
     }
 
     @Override

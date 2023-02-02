@@ -96,14 +96,14 @@ public class CurrencyAddCommand extends SubCommand {
             } catch (NumberFormatException ignored) {
             }
             OddJob.getInstance().getCurrencyManager().add(sender, account, value);
-        } else if (args.length == 4 && can(sender,true,true)) {
+        } else if (args.length == 4 && can(sender, true, true)) {
             oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
             account = findAccount(args[2]);
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException ignored) {
             }
-            OddJob.getInstance().getCurrencyManager().add(sender, oddPlayer,account,value);
+            OddJob.getInstance().getCurrencyManager().add(sender, oddPlayer, account, value);
         }
     }
 
@@ -117,7 +117,7 @@ public class CurrencyAddCommand extends SubCommand {
         double value;
         if (args.length == 2) {
             list.addAll(finderAccount(args[1]));
-            if (can(sender,true,false)) {
+            if (can(sender, true, false)) {
                 for (OddPlayer odd : OddJob.getInstance().getPlayerManager().getAll()) {
                     if (args[1].isEmpty() || odd.getName().startsWith(args[1])) {
                         list.add(odd.getName());
@@ -127,7 +127,7 @@ public class CurrencyAddCommand extends SubCommand {
         }
         if (args.length == 3) {
             account = findAccount(args[1]);
-            if (account == null && can(sender,true,false)) {
+            if (account == null && can(sender, true, false)) {
                 oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
                 if (oddPlayer == null) {
                     list.add("Error player!!");
@@ -145,7 +145,7 @@ public class CurrencyAddCommand extends SubCommand {
                 }
             }
         }
-        if (args.length == 4 && can(sender,true,false)) {
+        if (args.length == 4 && can(sender, true, false)) {
             oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
             account = findAccount(args[2]);
             if (!args[2].isEmpty()) {
