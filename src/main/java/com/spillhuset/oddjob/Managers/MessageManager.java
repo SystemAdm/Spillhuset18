@@ -758,4 +758,15 @@ public class MessageManager {
             }
         }
     }
+
+    public static void death_lucky(Player player) {
+        success(Plugin.deaths,player,"Lucky bastard! Next time, don't die.");
+    }
+
+    public static void death_bastard(Player player, Player owner) {
+        if (owner != null) {
+            danger(Plugin.deaths,owner,"This time you were a complete bastard.");
+            success(Plugin.deaths,player,"Now you got this fu**er!");
+        }
+    }
 }

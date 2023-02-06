@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerManager {
     private final HashMap<UUID, UUID> spiritsOwner = new HashMap<>();
@@ -162,18 +163,28 @@ public class PlayerManager {
 
     public void combat(Entity entity) {
         if (entity instanceof Player player) {
-            OddJob.getInstance().log("UUID in: " + player.getUniqueId());
             if (combat.get(player.getUniqueId()) == null) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "In combat"));
+            } else {
+                combat.get(player.getUniqueId()).cancel();
             }
             combat.remove(player.getUniqueId());
-            combat.put(player.getUniqueId(), Bukkit.getScheduler().runTaskLaterAsynchronously(OddJob.getInstance(), () -> removeCombat(player.getUniqueId()), 200));
+            AtomicInteger i = new AtomicInteger(20);
+            combat.put(player.getUniqueId(), Bukkit.getScheduler().runTaskTimer(OddJob.getInstance(), () -> {
+                i.getAndDecrement();
+
+                if (i.get() == 0)
+                    removeCombat(player.getUniqueId());
+                else
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "In combat"));
+            }, 20, 20));
         }
     }
 
     private void removeCombat(UUID uniqueId) {
+        combat.get(uniqueId).cancel();
         combat.remove(uniqueId);
-        OddJob.getInstance().log("UUID out: " + uniqueId);
+
         Player player = Bukkit.getPlayer(uniqueId);
         if (player != null) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Out of combat"));
@@ -195,7 +206,7 @@ public class PlayerManager {
         MessageManager.death_timer(owner, ref.i);
         player.setCompassTarget(player.getLocation());
         spiritTimer.put(uuid, Bukkit.getScheduler().runTaskTimer(OddJob.getInstance(), () -> {
-            armorStand.setCustomName(ChatColor.GREEN+"Spirit of " +ChatColor.GOLD+player.getName()+ChatColor.GREEN+" leaving in "+ChatColor.GRAY+ref.i);
+            armorStand.setCustomName(ChatColor.GREEN + "Spirit of " + ChatColor.GOLD + player.getName() + ChatColor.GREEN + " leaving in " + ChatColor.GRAY + ref.i);
             {
                 if (ref.i == 600) {
                     MessageManager.death_timer(owner, ref.i);
@@ -210,35 +221,33 @@ public class PlayerManager {
                     MessageManager.death_timer(owner, ref.i);
                 }
                 if (ref.i == 0) {
-                    removeArmorstand(uuid, world);
+                    removeArmorstand(uuid);
                 }
                 ref.i--;
             }
         }, 20, 20));
     }
 
-    public UUID removeArmorstand(UUID armorStandUUID, UUID worldUUID) {
+    public UUID removeArmorstand(UUID armorStandUUID) {
+        Entity armor = Bukkit.getEntity(armorStandUUID);
+        World world = armor.getWorld();
         UUID owner = spiritsOwner.get(armorStandUUID);
+
+        // removing and cancelling
         spiritTimer.get(armorStandUUID).cancel();
         spiritTimer.remove(armorStandUUID);
         spiritContents.remove(armorStandUUID);
         spiritsOwner.remove(armorStandUUID);
-        World world = Bukkit.getWorld(worldUUID);
-        if (world != null) {
-            OddJob.getInstance().log("world " + world.getName());
-            for (Entity entity : world.getEntities()) {
-                if (entity.getType() == EntityType.ARMOR_STAND) {
-                    OddJob.getInstance().log(entity.getName());
-                    ArmorStand armorStand = (ArmorStand) entity;
-                    if (armorStand.getCustomName() != null && armorStand.getCustomName().startsWith(ChatColor.GREEN+"Spirit of ")) {
-                        OddJob.getInstance().log("Spirit " + armorStand.getUniqueId());
-                        armorStand.remove();
-                        return owner;
-                    }
+
+        for (Entity entity : world.getEntities()) {
+            if (entity.getType() == EntityType.ARMOR_STAND) {
+                ArmorStand armorStand = (ArmorStand) entity;
+                if (armorStand.getCustomName() != null && ChatColor.stripColor(armorStand.getCustomName()).startsWith("Spirit of ")) {
+                    armorStand.remove();
+                    return owner;
                 }
             }
         }
-        OddJob.getInstance().log("Spirit removed " + armorStandUUID);
 
         return owner;
     }
@@ -246,5 +255,23 @@ public class PlayerManager {
 
     public HashMap<UUID, UUID> getSpirits() {
         return spiritsOwner;
+    }
+
+    public void removeInventory(Inventory inventory, Player player) {
+        for (UUID uuid : spiritContents.keySet()) {
+            if (spiritContents.get(uuid).equals(inventory)) {
+                if (spiritsOwner.get(uuid).equals(player.getUniqueId())) {
+                    MessageManager.death_lucky(player);
+                } else {
+                    Player owner = Bukkit.getPlayer(spiritsOwner.get(uuid));
+                    MessageManager.death_bastard(player, owner);
+                }
+                removeArmorstand(uuid);
+            }
+        }
+    }
+
+    public void openArmorstand(UUID armorstand, Player player) {
+        player.openInventory(spiritContents.get(armorstand));
     }
 }

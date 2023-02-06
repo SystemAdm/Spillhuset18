@@ -102,18 +102,23 @@ public class OddJob extends JavaPlugin {
         getCommand("loaded").setExecutor(new LoadedCommand());
 
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new OnBlockBreakEvent(), this);
+        pm.registerEvents(new OnBlockFromToEvent(), this);
+        pm.registerEvents(new OnBlockPlaceEvent(), this);
+
+        pm.registerEvents(new OnEntityDamageEvent(), this);
+        pm.registerEvents(new OnEntityExplodeEvent(), this);
+        pm.registerEvents(new OnEntitySpawnEvent(),this);
+
+        pm.registerEvents(new OnInventoryMoveEvent(), this);
+
+        pm.registerEvents(new OnPlayerDeathEvent(), this);
         pm.registerEvents(new OnPlayerInteractAtEntityEvent(), this);
         pm.registerEvents(new OnPlayerInteractEvent(), this);
+        pm.registerEvents(new OnPlayerInventoryCloseEvent(), this);
         pm.registerEvents(new OnPlayerJoinEvent(), this);
-        pm.registerEvents(new OnBlockBreakEvent(), this);
         pm.registerEvents(new OnPlayerMoveEvent(), this);
         pm.registerEvents(new OnPlayerQuitEvent(), this);
-        pm.registerEvents(new OnInventoryMoveEvent(), this);
-        pm.registerEvents(new OnBlockPlaceEvent(), this);
-        pm.registerEvents(new OnEntityExplodeEvent(), this);
-        pm.registerEvents(new OnBlockFromToEvent(), this);
-        pm.registerEvents(new OnEntityDamageEvent(), this);
-        pm.registerEvents(new OnPlayerDeathEvent(), this);
 
         // Loading
     }

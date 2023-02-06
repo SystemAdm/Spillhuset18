@@ -1,6 +1,11 @@
 package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.OddJob;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -12,6 +17,13 @@ public class OnPlayerInteractAtEntityEvent implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
         OddJob.getInstance().log("PlayerInteractAtEntityEvent");
+        Player player = event.getPlayer();
+        Entity entity = event.getRightClicked();
+        if (entity.getType().equals(EntityType.ARMOR_STAND)) {
+            if (entity.getCustomName() != null && ChatColor.stripColor(entity.getCustomName()).startsWith("Spirit of ")) {
+                OddJob.getInstance().getPlayerManager().openArmorstand(entity.getUniqueId(),player);
+            }
+        }
     }
 
     @EventHandler

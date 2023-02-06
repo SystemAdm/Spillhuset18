@@ -23,15 +23,27 @@ public class OnEntityDamageEvent implements Listener {
         Entity entityDamage = event.getDamager();
         Guild guildTarget = null;
         Guild guildDamage = null;
+        // Target is a player
         if (entityTarget.getType().equals(EntityType.PLAYER)) {
             guildTarget = OddJob.getInstance().getGuildsManager().getGuildByMember(entityTarget.getUniqueId());
             OddJob.getInstance().getPlayerManager().combat(entityTarget);
         }
+        // Damager is a player
         if (entityDamage.getType().equals(EntityType.PLAYER)) {
             guildDamage = OddJob.getInstance().getGuildsManager().getGuildByMember(entityDamage.getUniqueId());
             OddJob.getInstance().getPlayerManager().combat(entityDamage);
         }
+        // Target has no guild
         if (guildTarget == null) return;
+
+        // From same guild
+        if (guildDamage != null && guildDamage.getUuid().equals(guildTarget.getUuid())) {
+            // Is set to friendly fire
+            if (guildDamage.isFriendlyFire()) {
+                return;
+            }
+            event.setCancelled(true);
+        }
         event.setCancelled(true);
     }
 
@@ -39,10 +51,10 @@ public class OnEntityDamageEvent implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getEntityType().equals(EntityType.ARMOR_STAND) && event.getDamager().getType().equals(EntityType.PLAYER)) {
             Entity target = event.getEntity();
-            Player player = (Player)event.getDamager();
-            if (target.getCustomName() != null && target.getCustomName().startsWith(ChatColor.GREEN+"Spirit of ")) {
-                UUID owner = OddJob.getInstance().getPlayerManager().removeArmorstand(target.getUniqueId(),target.getWorld().getUID());
-                MessageManager.death_ooops(player,owner);
+            Player player = (Player) event.getDamager();
+            if (target.getCustomName() != null && target.getCustomName().startsWith(ChatColor.GREEN + "Spirit of ")) {
+                UUID owner = OddJob.getInstance().getPlayerManager().removeArmorstand(target.getUniqueId());
+                MessageManager.death_ooops(player, owner);
                 return;
             }
         }
