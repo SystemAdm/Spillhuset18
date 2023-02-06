@@ -131,3 +131,5 @@ permissions:
     default: true
   teleports.request:
     default: true
+  shops:
+    default: true

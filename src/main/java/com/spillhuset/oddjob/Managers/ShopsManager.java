@@ -3,10 +3,17 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.PriceList;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.OddPlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class ShopsManager {
+
+    private final HashMap<UUID, UUID> trades = new HashMap<UUID, UUID>();
 
     public void sell(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -99,5 +106,30 @@ public class ShopsManager {
             MessageManager.shops_price_sell(player, item, plu.getNormal(), amount, priceSell, tempSell);
             MessageManager.shops_price_buy(player, item, Math.round(plu.getNormal() * 1.1), amount, priceBuy, tempBuy);
         }
+    }
+
+    public void tradeRequest(CommandSender sender, Player player) {
+        UUID trader = ((Player) sender).getUniqueId();
+
+        // traded with earlier
+        UUID old = trades.get(trader);
+        OddPlayer target = OddJob.getInstance().getPlayerManager().get(old);
+        if (old != null) {
+            if (old.equals(player.getUniqueId())) {
+                // trade cancelled
+                MessageManager.shops_trade_cancelled(sender, target);
+                //todo cancel
+                trades.remove(trader);
+                return;
+            } else {
+                // trade changed from old to new
+                MessageManager.shops_trade_changed(sender, player,target);
+            }
+            // trade with old aborted
+            MessageManager.shops_trade_aborted(sender, target);
+        }
+
+        MessageManager.shops_trade_created(sender,player);
+        trades.put(trader, player.getUniqueId());
     }
 }

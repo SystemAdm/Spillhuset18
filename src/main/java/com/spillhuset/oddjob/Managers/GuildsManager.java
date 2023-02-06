@@ -487,11 +487,9 @@ public class GuildsManager extends Managers {
         }
         Location location = player.getLocation();
         Chunk chunk = location.getChunk();
-        for (Cords cords : chunks(guild.getUuid())) {
-            if (chunk.getWorld().getUID() == cords.getWorld() && chunk.getX() == cords.getX() && chunk.getZ() == cords.getZ()) {
-                OddJob.getInstance().getHomesManager().changeGuild(player, guild, home);
-                return;
-            }
+        if(getGuildByCords(chunk.getX(), chunk.getZ(), player.getWorld()).getUuid().equals(guild.getUuid())) {
+            OddJob.getInstance().getHomesManager().changeGuild(player, guild, home);
+            return;
         }
         MessageManager.guilds_homes_must_be(player);
     }

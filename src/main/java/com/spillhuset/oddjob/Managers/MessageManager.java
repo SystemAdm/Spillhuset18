@@ -769,4 +769,39 @@ public class MessageManager {
             success(Plugin.deaths,player,"Now you got this fu**er!");
         }
     }
+
+    public static void homes_inside(CommandSender sender, String name) {
+        danger(Plugin.homes,sender,"Home "+cValue+name+cDanger+" is inside a chunk owned by a guild");
+    }
+
+    public static void shops_trade_cancelled(CommandSender sender, OddPlayer target) {
+        info(Plugin.shops,sender,"Trade with "+cPlayer+target.getName()+" cancelled");
+    }
+
+    public static void shops_trade_changed(CommandSender sender, Player player, OddPlayer target) {
+        info(Plugin.shops,sender,"Trade request changed from "+cPlayer+target.getName()+cInfo+" to "+cPlayer+player.getName());
+    }
+
+    public static void shops_trade_aborted(CommandSender sender, OddPlayer target) {
+        Player player = Bukkit.getPlayer(target.getUuid());
+        if (player != null) {
+            info(Plugin.shops,player,"Trade request from "+cPlayer+sender.getName()+ cInfo+" has been aborted");
+        }
+    }
+
+    public static void shops_trade_created(CommandSender sender, Player player) {
+        Player trader = (Player) sender;
+        info(Plugin.shops,sender,"Trade request sent to "+cPlayer+player.getName());
+
+        TextComponent accept = new TextComponent(ChatColor.GREEN+"Accept");
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/trade accept "+trader.getUniqueId()));
+
+        TextComponent deny = new TextComponent(ChatColor.RED+"Deny");
+        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/trade deny "+trader.getUniqueId()));
+
+        accept.addExtra(" or ");
+        accept.addExtra(deny);
+        info(Plugin.shops,player,"Trade request from "+cPlayer+trader.getName());
+        player.spigot().sendMessage(accept);
+    }
 }

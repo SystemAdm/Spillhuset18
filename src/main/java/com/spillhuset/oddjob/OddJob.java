@@ -12,6 +12,7 @@ import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
 import com.spillhuset.oddjob.Commands.SuicideCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
+import com.spillhuset.oddjob.Commands.TradeCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
@@ -80,6 +81,7 @@ public class OddJob extends JavaPlugin {
         if (ConfigManager.getBoolean("plugin.shops")) {
             shopsManager = new ShopsManager();
             getCommand("shops").setExecutor(new ShopsCommand());
+            getCommand("trade").setExecutor(new TradeCommand());
         }
 
         /* Teleport */

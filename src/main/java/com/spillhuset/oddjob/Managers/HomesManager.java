@@ -10,6 +10,7 @@ import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,10 +42,14 @@ public class HomesManager {
 
     public void add(CommandSender sender, OddPlayer target, String name, Location location) {
         if (ConfigManager.getBoolean("plugins.guilds")) {
-            UUID world = location.getWorld().getUID();
+            World world = location.getWorld();
             int x = location.getChunk().getX();
             int z = location.getChunk().getZ();
-            // TODO inside guild?
+
+            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x,z,world) != null) {
+                MessageManager.homes_inside(sender,name);
+                return;
+            }
         }
 
         int setHomes = HomesSQL.getList(target.getUuid()).size();
@@ -92,10 +97,14 @@ public class HomesManager {
             return;
         }
         if (ConfigManager.getBoolean("plugins.guilds")) {
-            UUID world = location.getWorld().getUID();
+            World world = location.getWorld();
             int x = location.getChunk().getX();
             int z = location.getChunk().getZ();
-            // TODO inside guild?
+
+            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x,z,world) != null) {
+                MessageManager.homes_inside(sender,name);
+                return;
+            }
         }
         HomesSQL.change(target.getUuid(), name, location);
         MessageManager.homes_successfully_changed(sender, name);
