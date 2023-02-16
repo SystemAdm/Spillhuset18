@@ -1,19 +1,15 @@
-package com.spillhuset.oddjob.Commands;
+package com.spillhuset.oddjob.Commands.Shops;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.MessageManager;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class TradeRequestCommand extends SubCommand {
+public class TradeDenyCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -28,7 +24,7 @@ public class TradeRequestCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "request";
+        return "deny";
     }
 
     @Override
@@ -78,12 +74,7 @@ public class TradeRequestCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
-            MessageManager.errors_find_player(Plugin.shops,args[1],sender);
-            return;
-        }
-        OddJob.getInstance().getShopsManager().tradeRequest(sender,player);
+
     }
 
     @Override

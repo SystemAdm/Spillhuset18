@@ -1,4 +1,4 @@
-package com.spillhuset.oddjob.Commands;
+package com.spillhuset.oddjob.Commands.Essentials;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;

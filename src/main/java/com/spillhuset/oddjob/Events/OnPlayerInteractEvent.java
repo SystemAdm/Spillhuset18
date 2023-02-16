@@ -13,11 +13,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
 public class OnPlayerInteractEvent implements Listener {
+    @EventHandler
+    public void onInventoryMove(InventoryInteractEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Inventory inventory = event.getInventory();
+        ItemStack itemStack = event.getWhoClicked().getItemOnCursor();
+        event.setCancelled(OddJob.getInstance().getShopsManager().tradeAction(player,inventory,itemStack));
+    }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLockTool(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();

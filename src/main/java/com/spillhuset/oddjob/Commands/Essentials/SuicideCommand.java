@@ -1,4 +1,4 @@
-package com.spillhuset.oddjob.Commands;
+package com.spillhuset.oddjob.Commands.Essentials;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
