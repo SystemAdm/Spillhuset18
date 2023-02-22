@@ -1,8 +1,8 @@
-package com.spillhuset.oddjob.Commands.Essentials;
+package com.spillhuset.oddjob.Commands.Player;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.OddPlayer;
+import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,12 +11,18 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlayersCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
+public class PlayerCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
+    private final List<SubCommand> subCommands = new ArrayList<>();
+
+    public PlayerCommand() {
+        subCommands.add(new PlayerSetCommand());
+    }
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -56,13 +62,26 @@ public class PlayersCommand extends SubCommandInterface implements CommandExecut
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        Player player = (Player) sender;
-        sender.sendMessage("MaxHomes: "+ OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes());
+        if (!can(sender, false, true)) {
+            return true;
+        }
+
+        if (!argsLength(sender, args.length)) {
+            return true;
+        }
+
+        if (sender instanceof Player player && args.length == depth()) {
+            OddJob.getInstance().getCurrencyManager().showPlayer(player);
+            return true;
+        }
+
+        finder(sender, args);
+
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        return null;
+        return tabs(sender, args);
     }
 }

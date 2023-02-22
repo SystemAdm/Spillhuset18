@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Events;
 
+import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.Tool;
@@ -14,26 +15,30 @@ import java.util.UUID;
 
 public class OnPlayerMoveEvent implements Listener {
 
-    private HashMap<UUID, UUID> inside = new HashMap<>();
+    private final HashMap<UUID, UUID> inside = new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
-
+        // Moving to undefined
         if (event.getTo() == null) {
             return;
         }
+
+        // Moving withing same chunk
         if (event.getFrom().getChunk().getX() == event.getTo().getChunk().getX() && event.getFrom().getChunk().getZ() == event.getTo().getChunk().getZ()) {
-            return;
-        }
-
-
-        Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
-        if (guildChunk == null) {
             return;
         }
 
         Player player = event.getPlayer();
 
+        // Is chunk owned by a guild?
+        Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
+        if (guildChunk == null) {
+            Tool.announce(player, OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD));
+            return;
+        }
+
+        // Is the chunk owned by the same guild as previous chunk?
         if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()) != null) {
             if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()).equals(guildChunk.getUuid())) {
                 Tool.announce(player, guildChunk);
@@ -43,12 +48,7 @@ public class OnPlayerMoveEvent implements Listener {
             Tool.announce(player, guildChunk);
         }
 
-        Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-        if (guildPlayer == null) {
-            return;
-        }
-
-        OddJob.getInstance().log("inside " + guildChunk.getName());
+        //OddJob.getInstance().log("inside " + guildChunk.getName());
     }
 
 }

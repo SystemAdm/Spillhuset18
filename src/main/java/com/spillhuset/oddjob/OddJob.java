@@ -4,10 +4,13 @@ import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
 import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
+import com.spillhuset.oddjob.Commands.Essentials.FeedCommand;
+import com.spillhuset.oddjob.Commands.Essentials.HealCommand;
 import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.Essentials.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
+import com.spillhuset.oddjob.Commands.Profession.ProfessionCommand;
 import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
 import com.spillhuset.oddjob.Commands.Essentials.SuicideCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
@@ -16,6 +19,7 @@ import com.spillhuset.oddjob.Commands.Shops.TradeCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
+import com.spillhuset.oddjob.Utils.Profession;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -96,9 +100,13 @@ public class OddJob extends JavaPlugin {
             warpsManager = new WarpsManager();
             getCommand("warps").setExecutor(new WarpCommand());
         }
-        
-        /* Suicide */
+
+        getCommand("professions").setExecutor(new ProfessionCommand());
+
+        /* Essentials */
         getCommand("suicide").setExecutor(new SuicideCommand());
+        getCommand("feed").setExecutor(new FeedCommand());
+        getCommand("heal").setExecutor(new HealCommand());
 
         /* Misc */
         getCommand("loaded").setExecutor(new LoadedCommand());
@@ -123,6 +131,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerQuitEvent(), this);
 
         // Loading
+        getPlayerManager().load();
     }
 
     public void onDisable() {

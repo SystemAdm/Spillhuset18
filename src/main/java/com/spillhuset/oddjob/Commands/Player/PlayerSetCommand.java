@@ -1,4 +1,4 @@
-package com.spillhuset.oddjob.Commands.Homes;
+package com.spillhuset.oddjob.Commands.Player;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
@@ -7,12 +7,19 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class HomesBuyCommand extends SubCommand {
+public class PlayerSetCommand extends SubCommand {
+    private final List<SubCommand> subCommands = new ArrayList<>();
+
+    public PlayerSetCommand() {
+        subCommands.add(new PlayerSetScoreboardCommand());
+    }
+
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -22,12 +29,12 @@ public class HomesBuyCommand extends SubCommand {
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.homes;
+        return null;
     }
 
     @Override
     public String getName() {
-        return "buy";
+        return null;
     }
 
     @Override
@@ -37,27 +44,27 @@ public class HomesBuyCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/homes buy";
+        return null;
     }
 
     @Override
     public String getPermission() {
-        return "homes";
+        return null;
     }
 
     @Override
     public int minArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int depth() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -94,4 +101,6 @@ public class HomesBuyCommand extends SubCommand {
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         return null;
     }
+
+
 }

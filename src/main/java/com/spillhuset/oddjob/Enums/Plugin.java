@@ -9,7 +9,6 @@ public enum Plugin {
     auctions(ChatColor.DARK_PURPLE, "A"),
     currency(ChatColor.GOLD, "C"),
     deaths(ChatColor.DARK_GRAY, "D"),
-
     join(ChatColor.GREEN, "+"),
     leave(ChatColor.RED, "-"),
     locks(ChatColor.YELLOW, "L"),
@@ -19,7 +18,8 @@ public enum Plugin {
     essentials(ChatColor.BLUE, "E"),
     arena(ChatColor.RED, "A"),
     world(ChatColor.BLACK, "W"),
-    plugin(ChatColor.GOLD, "P");
+    plugin(ChatColor.GOLD, "P"),
+    professions(ChatColor.DARK_GREEN, "P");
 
     private final String string;
     private final ChatColor color;

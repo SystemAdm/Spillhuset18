@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.ScoreBoard;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
@@ -16,7 +17,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +27,7 @@ public class PlayerManager {
     private final HashMap<UUID, Inventory> spiritContents = new HashMap<>();
     private final HashMap<UUID, BukkitTask> spiritTimer = new HashMap<>();
     private final HashMap<UUID, OddPlayer> players;
+    private Scoreboard scoreboard;
     private final HashMap<UUID, Scoreboard> scoreboards = new HashMap<>();
     private final HashMap<UUID, UUID> inside = new HashMap<>();
     private final HashMap<UUID, BukkitTask> combat = new HashMap<>();
@@ -273,5 +275,47 @@ public class PlayerManager {
 
     public void openArmorstand(UUID armorstand, Player player) {
         player.openInventory(spiritContents.get(armorstand));
+    }
+
+    public void load() {
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("Main", Criteria.DUMMY, "SPILLHUSET");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.getScore(ChatColor.GRAY + ">> Online").setScore(15);
+
+        Team onlineCounter = scoreboard.registerNewTeam("onlineCounter");
+        onlineCounter.addEntry(ChatColor.BLACK + "" + ChatColor.WHITE);
+
+        if (Bukkit.getOnlinePlayers().size() == 0) {
+            onlineCounter.setPrefix("0/" + Bukkit.getMaxPlayers());
+        } else {
+            onlineCounter.setPrefix(Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers());
+        }
+
+        objective.getScore("").setScore(14);
+    }
+
+    public void setScoreboard(Player player, ScoreBoard scoreboard) {
+        if (player == null) return;
+        switch (scoreboard) {
+            case Server -> {
+                player.setScoreboard(this.scoreboard);
+            }
+            case Player -> {
+                player.setScoreboard(getScoreboard(player.getUniqueId()));
+            }
+            case Guild -> {
+                UUID uuid = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()).getUuid();
+                player.setScoreboard(getScoreboard(uuid));
+            }
+
+            default -> {
+                player.setScoreboard(emptyScoreboard());
+            }
+        }
+    }
+    public Scoreboard emptyScoreboard() {
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        return scoreboardManager.getNewScoreboard();
     }
 }

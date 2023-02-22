@@ -1,6 +1,6 @@
 package com.spillhuset.oddjob.Enums;
 
-import com.spillhuset.oddjob.Utils.Job;
+import com.spillhuset.oddjob.Utils.Profession;
 
 public enum PriceList {
     AMETHYST_BLOCK(0, 0, 0, null, -1, true, true, true,0),
@@ -189,7 +189,7 @@ public enum PriceList {
     double maximum;
     double normal;
     double minimum;
-    Job job;
+    Profession profession;
     int limit;
     boolean enabled;
     boolean buyAble;
@@ -220,12 +220,12 @@ public enum PriceList {
         this.minimum = minimum;
     }
 
-    public Job getJob() {
-        return job;
+    public Profession getProfession() {
+        return profession;
     }
 
-    public void setJob(Job job) {
-        this.job = job;
+    public void setProfession(Profession profession) {
+        this.profession = profession;
     }
 
     public int getLimit() {
@@ -252,11 +252,11 @@ public enum PriceList {
         this.resetValue = resetValue;
     }
 
-    PriceList(double maximum, double normal, double minimum, Job job, int limit, boolean enabled, boolean buyAble, boolean sellAble, double resetValue) {
+    PriceList(double maximum, double normal, double minimum, Profession profession, int limit, boolean enabled, boolean buyAble, boolean sellAble, double resetValue) {
         this.maximum = maximum;
         this.normal = normal;
         this.minimum = minimum;
-        this.job = job;
+        this.profession = profession;
         this.limit = limit;
         this.enabled = enabled;
         this.buyAble = buyAble;
