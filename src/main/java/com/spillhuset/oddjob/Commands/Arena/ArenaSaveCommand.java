@@ -77,7 +77,11 @@ public class ArenaSaveCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-
+        if (!can(sender,false,true)) return;
+        if (!argsLength(sender,args.length)) return;
+        // arena save
+        Player player = (Player) sender;
+        OddJob.getInstance().getArenaManager().save(player.getUniqueId());
     }
 
     @Override

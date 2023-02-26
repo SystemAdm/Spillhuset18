@@ -39,7 +39,7 @@ public class WarpPortalEditCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "warps.portal.admin";
+        return "warps.admin";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class WarpPortalEditCommand extends SubCommand {
 
     @Override
     public int depth() {
-        return 0;
+        return 2;
     }
 
     @Override

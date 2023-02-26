@@ -120,23 +120,29 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Location location, TeleportType type) {
+        if (teleports.containsKey(player.getUniqueId())) return;
+        if (OddJob.getInstance().getPlayerManager().inCombat(player.getUniqueId())) return;
         AtomicInteger i = new AtomicInteger(10);
         player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 250, 10));
         teleports.put(player.getUniqueId(), Bukkit.getScheduler().runTaskTimer(OddJob.getInstance(), () -> {
+            if (OddJob.getInstance().getPlayerManager().inCombat(player.getUniqueId())) cancel(player.getUniqueId());
             i.set(i.get() - 1);
             if (i.get() == 0) {
                 MessageManager.teleport(player);
                 player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 cancel(player.getUniqueId());
+                teleports.remove(player.getUniqueId());
                 return;
             }
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.DARK_GREEN + "Teleporting in " + ChatColor.DARK_GRAY + i));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.DARK_GREEN + "Teleporting in " + ChatColor.WHITE + i));
+
             //MessageManager.teleport(player,i.get());
         }, 20, 20));
     }
 
     private void cancel(UUID uuid) {
         teleports.get(uuid).cancel();
+        teleports.remove(uuid);
     }
 
     public void quit(UUID uniqueId) {

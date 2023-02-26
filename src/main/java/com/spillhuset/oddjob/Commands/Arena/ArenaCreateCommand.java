@@ -8,6 +8,7 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,11 @@ public class ArenaCreateCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-
+        if (!can(sender,false,true)) return;
+        if (!argsLength(sender,args.length)) return;
+        // arena create <name>
+        Player player = (Player) sender;
+        OddJob.getInstance().getArenaManager().create(args[1],player.getWorld(),player.getUniqueId());
     }
 
     @Override

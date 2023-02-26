@@ -1,7 +1,9 @@
 package com.spillhuset.oddjob.Commands.Warps;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
+import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -9,11 +11,10 @@ import java.util.List;
 
 public class WarpPortalCommand extends SubCommand {
     public WarpPortalCommand() {
-        subCommands.add(new WarpPortalAddCommand());
+        subCommands.add(new WarpPortalCreateCommand());
         subCommands.add(new WarpPortalListCommand());
         subCommands.add(new WarpPortalEditCommand());
         subCommands.add(new WarpPortalRemoveCommand());
-        subCommands.add(new WarpPortalLinkCommand());
     }
     @Override
     public boolean denyConsole() {
@@ -47,22 +48,22 @@ public class WarpPortalCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "warps.portal";
+        return "warps.admin";
     }
 
     @Override
     public int minArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int depth() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -88,12 +89,25 @@ public class WarpPortalCommand extends SubCommand {
         if (!argsLength(sender,args.length)) {
             return;
         }
-
-
+        OddJob.getInstance().log("portals");
+        finder(sender,args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        List<String> list = new ArrayList<>();
+
+        // List commands
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.can(sender, false, false)) {
+                if (args.length == 1 || (args.length == 2 && subCommand.getName().startsWith(args[1])) && sender.hasPermission(subCommand.getPermission())) {
+                    list.add(subCommand.getName());
+                } else if (subCommand.getName().equalsIgnoreCase(args[1])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+            }
+        }
+
+        return list;
     }
 }

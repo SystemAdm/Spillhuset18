@@ -4,12 +4,74 @@ import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.NumberConversions;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.UUID;
 
+
 public class CurrencyManager {
+    private final HashMap<UUID, Double> earnings = new HashMap<>();
+    NamespacedKey key = NamespacedKey.minecraft("income");
+
+    public CurrencyManager() {
+        final double[] i = {300};
+        Bukkit.getScheduler().runTaskTimerAsynchronously(OddJob.getInstance(), () -> {
+
+            String time = "";
+            int m = NumberConversions.floor(i[0] / 60);
+            if (m > 1) time = m + " minutter ";
+            if (m == 1) time = m + " minutt ";
+            int s = NumberConversions.floor(i[0] - (m * 60));
+            if (s > 1) time += s + " sekunder";
+            if (s == 1) time += s + " sekund";
+
+            BossBar bossBar = Bukkit.getBossBar(key);
+            if (bossBar == null)
+                bossBar = Bukkit.createBossBar(key, "INCOME in " + ChatColor.GOLD + time, BarColor.GREEN, BarStyle.SEGMENTED_20);
+            bossBar.setTitle("INCOME in " + ChatColor.GOLD + time);
+            bossBar.setProgress(i[0] / 300);
+
+            for (UUID uuid : earnings.keySet()) {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    if (!bossBar.getPlayers().contains(player)) bossBar.addPlayer(player);
+                }
+            }
+
+            if (i[0] == 0) {
+                payday();
+                i[0] = 300;
+            } else {
+                i[0]--;
+            }
+        }, 0, 20);
+    }
+
+    private void payday() {
+        for (UUID uuid : earnings.keySet()) {
+            OddPlayer player = OddJob.getInstance().getPlayerManager().get(uuid);
+            add(null, player, Account.bank, earnings.get(uuid));
+        }
+        BossBar bossBar = Bukkit.getBossBar(key);
+        if (bossBar != null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (bossBar.getPlayers().contains(player)) bossBar.removePlayer(player);
+            }
+        }
+        earnings.clear();
+    }
+
+
     public boolean checkBank(UUID player, double price) {
         return CurrencySQL.hasBank(player, price);
     }
@@ -19,9 +81,26 @@ public class CurrencyManager {
     }
 
     public void add(CommandSender sender, Account account, double value) {
+        Player player = (Player) sender;
+        if (account.equals(Account.pocket)) {
+            CurrencySQL.addPocket(player.getUniqueId(), value);
+        } else {
+            CurrencySQL.addBank(player.getUniqueId(), value);
+        }
+        MessageManager.currency_added(sender, account, value);
     }
 
-    public void add(CommandSender sender, OddPlayer oddPlayer, Account account, double value) {
+    public void add(CommandSender sender, OddPlayer oddPlayer, @NotNull Account account, double value) {
+        if (account.equals(Account.pocket)) {
+            CurrencySQL.addPocket(oddPlayer.getUuid(), value);
+        } else {
+            CurrencySQL.addBank(oddPlayer.getUuid(), value);
+        }
+        if (sender != null) {
+            MessageManager.currency_added(sender, oddPlayer, account, value);
+        } else {
+            MessageManager.currency_payday(oddPlayer, value);
+        }
     }
 
     public void showPlayer(Player player) {
@@ -29,8 +108,24 @@ public class CurrencyManager {
     }
 
     public void sub(CommandSender sender, Account account, double value) {
+        Player player = (Player) sender;
+        if (account.equals(Account.pocket)) {
+            CurrencySQL.subPocket(player.getUniqueId(), value);
+        } else {
+            CurrencySQL.subBank(player.getUniqueId(), value);
+        }
+        MessageManager.currency_subbed(sender, account, value);
     }
-    public void sub(CommandSender sender, OddPlayer oddPlayer,Account account, double value) {
+
+    public void sub(CommandSender sender, OddPlayer oddPlayer, @NotNull Account account, double value) {
+        if (account.equals(Account.pocket)) {
+            CurrencySQL.subPocket(oddPlayer.getUuid(), value);
+        } else {
+            CurrencySQL.subBank(oddPlayer.getUuid(), value);
+        }
+        if (sender != null) {
+            MessageManager.currency_subbed(sender, oddPlayer, account, value);
+        }
     }
 
     public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double value) {
@@ -100,5 +195,13 @@ public class CurrencyManager {
         CurrencySQL.subPocket(player.getUniqueId(), value);
         CurrencySQL.addPocket(target, value);
         MessageManager.currency_paid(sender, name, value);
+    }
+
+    public void earnings(UUID uniqueId) {
+        double inc = 0.5;
+        if (earnings.containsKey(uniqueId)) {
+            inc += earnings.get(uniqueId);
+        }
+        earnings.put(uniqueId, inc);
     }
 }

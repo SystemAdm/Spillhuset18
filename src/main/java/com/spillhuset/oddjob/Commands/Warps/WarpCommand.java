@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands.Warps;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
@@ -18,7 +19,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
         subCommands.add(new WarpDelCommand());
         subCommands.add(new WarpListCommand());
         subCommands.add(new WarpTeleportCommand());
-        //subCommands.add(new WarpPortalCommand());
+        subCommands.add(new WarpPortalCommand());
         subCommands.add(new WarpRenameCommand());
         subCommands.add(new WarpRelocateCommand());
         subCommands.add(new WarpCostCommand());
@@ -64,7 +65,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
 
     @Override
     public int depth() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -76,6 +77,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
         if (!argsLength(sender, args.length)) {
             return true;
         }
+        OddJob.getInstance().log("warp");
         finder(sender,args);
         return true;
     }

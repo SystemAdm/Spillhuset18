@@ -5,10 +5,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -23,18 +20,51 @@ public class OnEntityDamageEvent implements Listener {
         Entity entityDamage = event.getDamager();
         Guild guildTarget = null;
         Guild guildDamage = null;
+
         // Target is a player
         if (entityTarget.getType().equals(EntityType.PLAYER)) {
             guildTarget = OddJob.getInstance().getGuildsManager().getGuildByMember(entityTarget.getUniqueId());
             OddJob.getInstance().getPlayerManager().combat(entityTarget);
         }
+
         // Damager is a player
         if (entityDamage.getType().equals(EntityType.PLAYER)) {
             guildDamage = OddJob.getInstance().getGuildsManager().getGuildByMember(entityDamage.getUniqueId());
             OddJob.getInstance().getPlayerManager().combat(entityDamage);
         }
-        // Target has no guild
+
+        if (entityDamage instanceof Player playerDamage) {
+            OddJob.getInstance().log("damage by a player " + playerDamage.getName());
+            String arenaUUIDDamage = OddJob.getInstance().getArenaManager().inArena(playerDamage.getUniqueId());
+            if (entityTarget instanceof Player playerTarget) {
+                OddJob.getInstance().log("damage to a player " + playerTarget.getName());
+                String arenaUUIDTarget = OddJob.getInstance().getArenaManager().inArena(playerDamage.getUniqueId());
+                if (arenaUUIDDamage.equals(arenaUUIDTarget)) {
+                    OddJob.getInstance().log("Both players in the same Arena");
+                    if (playerTarget.getHealth() <= event.getFinalDamage()) {
+                        OddJob.getInstance().log("Target has less health than the actual damage, dies");
+                        OddJob.getInstance().getArenaManager().died(arenaUUIDTarget, playerTarget.getUniqueId(), playerDamage.getUniqueId());
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Target has no guild, ignore it
         if (guildTarget == null) return;
+
+        // Damage is in your guild chunk, hitting on you
+        if (entityDamage instanceof Enemy) {
+            Chunk chunk = entityTarget.getLocation().getChunk();
+            Guild chunkGuild = OddJob.getInstance().getGuildsManager().getGuildByCords(chunk.getX(), chunk.getZ(), entityDamage.getWorld());
+            if (chunkGuild == null) return;
+            if (guildTarget.getUuid().equals(chunkGuild.getUuid())) {
+                entityDamage.remove();
+                event.setCancelled(true);
+                return;
+            }
+        }
 
         // From same guild
         if (guildDamage != null && guildDamage.getUuid().equals(guildTarget.getUuid())) {
@@ -71,5 +101,4 @@ public class OnEntityDamageEvent implements Listener {
             }
         }
     }
-
 }

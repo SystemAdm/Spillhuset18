@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.OddJob;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.UUID;
@@ -65,5 +66,9 @@ public class ConfigManager {
 
     public static void reload() {
         OddJob.getInstance().reloadConfig();
+    }
+
+    public static String getString(String name, String def) {
+        return OddJob.getInstance().getConfig().getString(name,def);
     }
 }

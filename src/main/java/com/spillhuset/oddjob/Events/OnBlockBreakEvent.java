@@ -11,18 +11,18 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.UUID;
 
 public class OnBlockBreakEvent implements Listener {
-    @EventHandler
+    @EventHandler (priority = EventPriority.NORMAL)
     public void breakGuild(BlockBreakEvent event) {
         Guild guildPlayer = OddJob.getInstance().getGuildsManager().getGuildByMember(event.getPlayer().getUniqueId());
         Chunk chunk = event.getBlock().getChunk();
         Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(chunk.getX(), chunk.getZ(), event.getPlayer().getWorld());
-        OddJob.getInstance().log("C");
         // Chunk has no owning guild
         if (guildChunk == null) {
             return;
@@ -42,7 +42,7 @@ public class OnBlockBreakEvent implements Listener {
         MessageManager.guilds_owned(event.getPlayer(), guildChunk.getName());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void breakLock(BlockBreakEvent event) {
         Block block = event.getBlock();
         Location location = block.getLocation();
@@ -78,5 +78,10 @@ public class OnBlockBreakEvent implements Listener {
             // Break the lock
             OddJob.getInstance().getLocksManager().breakLock(player, location);
         }
+    }
+    @EventHandler (priority = EventPriority.MONITOR)
+    public void breakBlock(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        OddJob.getInstance().getCurrencyManager().earnings(player.getUniqueId());
     }
 }

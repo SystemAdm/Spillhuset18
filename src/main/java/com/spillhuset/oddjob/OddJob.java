@@ -131,7 +131,6 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerQuitEvent(), this);
 
         // Loading
-        getPlayerManager().load();
     }
 
     public void onDisable() {

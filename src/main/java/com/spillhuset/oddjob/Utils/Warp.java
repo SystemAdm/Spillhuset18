@@ -59,4 +59,12 @@ public class Warp {
     public void setPasswd(String passwd) {
         this.passwd = passwd;
     }
+
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    public String getPasswd() {
+        return this.passwd;
+    }
 }

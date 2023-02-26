@@ -34,6 +34,7 @@ public class PlayerManager {
 
     public PlayerManager() {
         players = PlayerSQL.load();
+        load();
     }
 
     public OddPlayer get(UUID player) {
@@ -317,5 +318,9 @@ public class PlayerManager {
     public Scoreboard emptyScoreboard() {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         return scoreboardManager.getNewScoreboard();
+    }
+
+    public boolean inCombat(UUID uniqueId) {
+        return combat.containsKey(uniqueId);
     }
 }

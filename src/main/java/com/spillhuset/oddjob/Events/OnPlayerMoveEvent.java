@@ -24,6 +24,11 @@ public class OnPlayerMoveEvent implements Listener {
             return;
         }
 
+        UUID warpUUID = OddJob.getInstance().getWarpsManager().getPortal(event.getTo());
+        if (warpUUID != null) {
+            OddJob.getInstance().getWarpsManager().teleport(event.getPlayer(),warpUUID);
+        }
+
         // Moving withing same chunk
         if (event.getFrom().getChunk().getX() == event.getTo().getChunk().getX() && event.getFrom().getChunk().getZ() == event.getTo().getChunk().getZ()) {
             return;

@@ -41,7 +41,7 @@ public class WarpLinkCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "warps.link";
+        return "warps.admin";
     }
 
     @Override

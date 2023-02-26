@@ -158,7 +158,6 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         // Toggle the door!
-        OddJob.getInstance().log("I");
         if (blockState instanceof Door) {
             LockUtil.toggleDoor(block, player, location);
         }

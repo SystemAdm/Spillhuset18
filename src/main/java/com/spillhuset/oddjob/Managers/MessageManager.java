@@ -17,6 +17,7 @@ import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,6 +211,9 @@ public class MessageManager {
             if (warp.isProtected()) {
                 name += ChatColor.RED + " *";
             }
+            if (sender.isOp()) {
+                name += ChatColor.RESET+" "+warp.getUUID();
+            }
             list.add(name);
         }
         list(sender, "List of warps (" + warps.size() + ")", list);
@@ -341,7 +345,7 @@ public class MessageManager {
     }
 
     public static void currency_holding(Player sender, double pocket, double bank) {
-        info(Plugin.currency, sender, "You are currently holding `" + pocket + "` in your `" + Account.pocket.name() + "`, and `" + bank + "` in your bank account");
+        info(Plugin.currency, sender, "You are currently holding " + cValue+pocket+cInfo + " in your " + cAccount+Account.pocket.name() +cInfo+ ", and " +cValue+ bank +cInfo+ " in your "+cAccount+Account.bank.name());
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {
@@ -702,11 +706,11 @@ public class MessageManager {
         danger(Plugin.shops, sender, cInfo + item.getType().name() + cDanger + " is not sellable");
     }
 
-    public static void shops_sold_info(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+    public static void shops_sold_info(CommandSender sender, @NotNull ItemStack item, double normal, int amount, double price, double temp) {
         success(Plugin.shops, sender, "You have sold " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
     }
 
-    public static void shops_bought_info(CommandSender sender, ItemStack item, double normal, int amount, double price, double temp) {
+    public static void shops_bought_info(CommandSender sender, @NotNull ItemStack item, double normal, int amount, double price, double temp) {
         success(Plugin.shops, sender, "You have bought " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
     }
 
@@ -744,7 +748,7 @@ public class MessageManager {
         }
     }
 
-    public static void death_ooops(Player player, UUID owner) {
+    public static void death_ooops(@NotNull Player player, UUID owner) {
         if (player.getUniqueId().equals(owner)) {
             danger(Plugin.deaths, player, "You broke your f***ing spirit");
         } else {
@@ -774,15 +778,15 @@ public class MessageManager {
         danger(Plugin.homes,sender,"Home "+cValue+name+cDanger+" is inside a chunk owned by a guild");
     }
 
-    public static void shops_trade_cancelled(CommandSender sender, OddPlayer target) {
+    public static void shops_trade_cancelled(CommandSender sender, @NotNull OddPlayer target) {
         info(Plugin.shops,sender,"Trade with "+cPlayer+target.getName()+" cancelled");
     }
 
-    public static void shops_trade_changed(CommandSender sender, Player player, OddPlayer target) {
+    public static void shops_trade_changed(CommandSender sender, @NotNull Player player, @NotNull OddPlayer target) {
         info(Plugin.shops,sender,"Trade request changed from "+cPlayer+target.getName()+cInfo+" to "+cPlayer+player.getName());
     }
 
-    public static void shops_trade_aborted(CommandSender sender, OddPlayer target) {
+    public static void shops_trade_aborted(CommandSender sender, @NotNull OddPlayer target) {
         Player player = Bukkit.getPlayer(target.getUuid());
         if (player != null) {
             info(Plugin.shops,player,"Trade request from "+cPlayer+sender.getName()+ cInfo+" has been aborted");
@@ -803,5 +807,28 @@ public class MessageManager {
         accept.addExtra(deny);
         info(Plugin.shops,player,"Trade request from "+cPlayer+trader.getName());
         player.spigot().sendMessage(accept);
+    }
+
+    public static void currency_added(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        success(Plugin.currency,sender,"Successfully add "+cValue+value+cSuccess+" to "+cPlayer+oddPlayer.getName()+cSuccess+"s "+cValue+account.name());
+    }
+
+    public static void currency_subbed(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        success(Plugin.currency,sender,"Successfully subtracted "+cValue+value+cSuccess+" from "+cPlayer+oddPlayer.getName()+cSuccess+"s "+cValue+account.name());
+    }
+
+    public static void currency_payday(OddPlayer oddPlayer, double value) {
+        Player player = Bukkit.getPlayer(oddPlayer.getUuid());
+        if (player != null) {
+            info(Plugin.currency,player,"Payday is here! You've got "+cValue+value+cInfo+" to your "+cAccount+Account.bank.name()+cInfo+" account");
+        }
+    }
+
+    public static void currency_added(CommandSender sender, Account account, double value) {
+        success(Plugin.currency,sender,"Successfully add "+cValue+value+cSuccess+" to your "+cValue+account.name());
+    }
+
+    public static void currency_subbed(CommandSender sender, Account account, double value) {
+        success(Plugin.currency,sender,"Successfully subtracted "+cValue+value+cSuccess+" from your "+cValue+account.name());
     }
 }
