@@ -212,7 +212,7 @@ public class MessageManager {
                 name += ChatColor.RED + " *";
             }
             if (sender.isOp()) {
-                name += ChatColor.RESET+" "+warp.getUUID();
+                name += ChatColor.RESET + " " + warp.getUUID();
             }
             list.add(name);
         }
@@ -345,7 +345,7 @@ public class MessageManager {
     }
 
     public static void currency_holding(Player sender, double pocket, double bank) {
-        info(Plugin.currency, sender, "You are currently holding " + cValue+pocket+cInfo + " in your " + cAccount+Account.pocket.name() +cInfo+ ", and " +cValue+ bank +cInfo+ " in your "+cAccount+Account.bank.name());
+        info(Plugin.currency, sender, "You are currently holding " + cValue + pocket + cInfo + " in your " + cAccount + Account.pocket.name() + cInfo + ", and " + cValue + bank + cInfo + " in your " + cAccount + Account.bank.name());
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {
@@ -764,71 +764,71 @@ public class MessageManager {
     }
 
     public static void death_lucky(Player player) {
-        success(Plugin.deaths,player,"Lucky bastard! Next time, don't die.");
+        success(Plugin.deaths, player, "Lucky bastard! Next time, don't die.");
     }
 
     public static void death_bastard(Player player, Player owner) {
         if (owner != null) {
-            danger(Plugin.deaths,owner,"This time you were a complete bastard.");
-            success(Plugin.deaths,player,"Now you got this fu**er!");
+            danger(Plugin.deaths, owner, "This time you were a complete bastard.");
+            success(Plugin.deaths, player, "Now you got this fu**er!");
         }
     }
 
     public static void homes_inside(CommandSender sender, String name) {
-        danger(Plugin.homes,sender,"Home "+cValue+name+cDanger+" is inside a chunk owned by a guild");
+        danger(Plugin.homes, sender, "Home " + cValue + name + cDanger + " is inside a chunk owned by a guild");
     }
 
     public static void shops_trade_cancelled(CommandSender sender, @NotNull OddPlayer target) {
-        info(Plugin.shops,sender,"Trade with "+cPlayer+target.getName()+" cancelled");
+        info(Plugin.shops, sender, "Trade with " + cPlayer + target.getName() + " cancelled");
     }
 
     public static void shops_trade_changed(CommandSender sender, @NotNull Player player, @NotNull OddPlayer target) {
-        info(Plugin.shops,sender,"Trade request changed from "+cPlayer+target.getName()+cInfo+" to "+cPlayer+player.getName());
+        info(Plugin.shops, sender, "Trade request changed from " + cPlayer + target.getName() + cInfo + " to " + cPlayer + player.getName());
     }
 
     public static void shops_trade_aborted(CommandSender sender, @NotNull OddPlayer target) {
         Player player = Bukkit.getPlayer(target.getUuid());
         if (player != null) {
-            info(Plugin.shops,player,"Trade request from "+cPlayer+sender.getName()+ cInfo+" has been aborted");
+            info(Plugin.shops, player, "Trade request from " + cPlayer + sender.getName() + cInfo + " has been aborted");
         }
     }
 
     public static void shops_trade_created(CommandSender sender, Player player) {
         Player trader = (Player) sender;
-        info(Plugin.shops,sender,"Trade request sent to "+cPlayer+player.getName());
+        info(Plugin.shops, sender, "Trade request sent to " + cPlayer + player.getName());
 
-        TextComponent accept = new TextComponent(ChatColor.GREEN+"Accept");
-        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/trade accept "+trader.getUniqueId()));
+        TextComponent accept = new TextComponent(ChatColor.GREEN + "Accept");
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/trade accept " + trader.getUniqueId()));
 
-        TextComponent deny = new TextComponent(ChatColor.RED+"Deny");
-        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/trade deny "+trader.getUniqueId()));
+        TextComponent deny = new TextComponent(ChatColor.RED + "Deny");
+        deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/trade deny " + trader.getUniqueId()));
 
         accept.addExtra(" or ");
         accept.addExtra(deny);
-        info(Plugin.shops,player,"Trade request from "+cPlayer+trader.getName());
+        info(Plugin.shops, player, "Trade request from " + cPlayer + trader.getName());
         player.spigot().sendMessage(accept);
     }
 
     public static void currency_added(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
-        success(Plugin.currency,sender,"Successfully add "+cValue+value+cSuccess+" to "+cPlayer+oddPlayer.getName()+cSuccess+"s "+cValue+account.name());
+        success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
 
     public static void currency_subbed(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
-        success(Plugin.currency,sender,"Successfully subtracted "+cValue+value+cSuccess+" from "+cPlayer+oddPlayer.getName()+cSuccess+"s "+cValue+account.name());
+        success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
 
     public static void currency_payday(OddPlayer oddPlayer, double value) {
         Player player = Bukkit.getPlayer(oddPlayer.getUuid());
         if (player != null) {
-            info(Plugin.currency,player,"Payday is here! You've got "+cValue+value+cInfo+" to your "+cAccount+Account.bank.name()+cInfo+" account");
+            info(Plugin.currency, player, "Payday is here! You've got " + cValue + value + cInfo + " to your " + cAccount + Account.bank.name() + cInfo + " account");
         }
     }
 
     public static void currency_added(CommandSender sender, Account account, double value) {
-        success(Plugin.currency,sender,"Successfully add "+cValue+value+cSuccess+" to your "+cValue+account.name());
+        success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to your " + cValue + account.name());
     }
 
     public static void currency_subbed(CommandSender sender, Account account, double value) {
-        success(Plugin.currency,sender,"Successfully subtracted "+cValue+value+cSuccess+" from your "+cValue+account.name());
+        success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from your " + cValue + account.name());
     }
 }
