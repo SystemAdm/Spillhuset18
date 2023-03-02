@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.ScoreBoard;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -166,12 +167,11 @@ public class PlayerManager {
 
     public void combat(Entity entity) {
         if (entity instanceof Player player) {
-            if (combat.get(player.getUniqueId()) == null) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "In combat"));
-            } else {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "In combat"));
+            if (inCombat(player.getUniqueId())) {
                 combat.get(player.getUniqueId()).cancel();
+                combat.remove(player.getUniqueId());
             }
-            combat.remove(player.getUniqueId());
             AtomicInteger i = new AtomicInteger(20);
             combat.put(player.getUniqueId(), Bukkit.getScheduler().runTaskTimer(OddJob.getInstance(), () -> {
                 i.getAndDecrement();
@@ -233,6 +233,7 @@ public class PlayerManager {
 
     public UUID removeArmorstand(UUID armorStandUUID) {
         Entity armor = Bukkit.getEntity(armorStandUUID);
+        if (armor == null) return null;
         World world = armor.getWorld();
         UUID owner = spiritsOwner.get(armorStandUUID);
 
@@ -279,7 +280,9 @@ public class PlayerManager {
     }
 
     public void load() {
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        if (scoreboardManager == null) return;
+        scoreboard = scoreboardManager.getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("Main", Criteria.DUMMY, "SPILLHUSET");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.getScore(ChatColor.GRAY + ">> Online").setScore(15);
@@ -299,25 +302,23 @@ public class PlayerManager {
     public void setScoreboard(Player player, ScoreBoard scoreboard) {
         if (player == null) return;
         switch (scoreboard) {
-            case Server -> {
-                player.setScoreboard(this.scoreboard);
-            }
-            case Player -> {
-                player.setScoreboard(getScoreboard(player.getUniqueId()));
-            }
+            case Server -> player.setScoreboard(this.scoreboard);
+            case Player -> player.setScoreboard(getScoreboard(player.getUniqueId()));
             case Guild -> {
-                UUID uuid = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId()).getUuid();
-                player.setScoreboard(getScoreboard(uuid));
+                Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+                if (guild != null) {
+                    UUID uuid = guild.getUuid();
+                    player.setScoreboard(getScoreboard(uuid));
+                }
             }
 
-            default -> {
-                player.setScoreboard(emptyScoreboard());
-            }
+            default -> player.setScoreboard(emptyScoreboard());
         }
     }
+
     public Scoreboard emptyScoreboard() {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-        return scoreboardManager.getNewScoreboard();
+        return scoreboardManager != null ? scoreboardManager.getNewScoreboard() : null;
     }
 
     public boolean inCombat(UUID uniqueId) {

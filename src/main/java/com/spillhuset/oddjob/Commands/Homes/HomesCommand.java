@@ -94,13 +94,13 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
             int max = OddJob.getInstance().getPlayerManager().get(player.getUniqueId()).getMaxHomes();
 
             MessageManager.homes_info(sender, used, max, price);
-
+            return true;
         }
 
-        if(args.length == 1 && sender instanceof Player player) {
+        if (args.length == 1 && sender instanceof Player player) {
             for (String name : HomesSQL.getList(player.getUniqueId())) {
                 if (args[0].equalsIgnoreCase(name)) {
-                    OddJob.getInstance().getHomesManager().teleport(sender,OddJob.getInstance().getPlayerManager().get(player.getUniqueId()),name );
+                    OddJob.getInstance().getHomesManager().teleport(sender, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), name);
                 }
             }
         }

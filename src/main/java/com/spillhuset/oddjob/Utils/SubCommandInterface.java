@@ -90,8 +90,8 @@ public abstract class SubCommandInterface {
             OddJob.getInstance().log("args: "+args.length+" depth: "+depth());
             for (SubCommand subCommand : subCommands) {
                 OddJob.getInstance().log("command: "+subCommand.getName());
-                OddJob.getInstance().log("like: "+args[depth()-1]);
-                if (subCommand.getName().equalsIgnoreCase(args[depth()-1])) {
+                OddJob.getInstance().log("like: "+args[depth()]);
+                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
                     if (subCommand.can(sender,false,true)) {
                         subCommand.getCommandExecutor(sender,args);
                         return;

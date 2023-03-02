@@ -103,8 +103,8 @@ public class WarpPortalCreateCommand extends SubCommand {
             OddJob.getInstance().log("some error");
             return;
         }
-
-        OddJob.getInstance().getWarpsManager().portalCreate(player, region, UUID.fromString(args[2]));
+        // /warps portal create <name> <warp_id> <warp_name>
+        OddJob.getInstance().getWarpsManager().portalCreate(args[2],player, region, UUID.fromString(args[2]));
 
 
         OddJob.getInstance().log("x:" + region.getCenter().getX());

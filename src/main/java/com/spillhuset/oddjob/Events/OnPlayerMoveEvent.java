@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Events;
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.Portal;
 import com.spillhuset.oddjob.Utils.Tool;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,9 +25,9 @@ public class OnPlayerMoveEvent implements Listener {
             return;
         }
 
-        UUID warpUUID = OddJob.getInstance().getWarpsManager().getPortal(event.getTo());
-        if (warpUUID != null) {
-            OddJob.getInstance().getWarpsManager().teleport(event.getPlayer(),warpUUID);
+        Portal portal = OddJob.getInstance().getWarpsManager().getPortal(event.getTo());
+        if (portal != null) {
+            OddJob.getInstance().getWarpsManager().teleport(event.getPlayer(),portal.getWarp());
         }
 
         // Moving withing same chunk

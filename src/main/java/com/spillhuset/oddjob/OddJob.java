@@ -6,20 +6,20 @@ import com.spillhuset.oddjob.Commands.Currency.PayCommand;
 import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
 import com.spillhuset.oddjob.Commands.Essentials.FeedCommand;
 import com.spillhuset.oddjob.Commands.Essentials.HealCommand;
+import com.spillhuset.oddjob.Commands.Essentials.LoadedCommand;
+import com.spillhuset.oddjob.Commands.Essentials.SuicideCommand;
 import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
-import com.spillhuset.oddjob.Commands.Essentials.LoadedCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
 import com.spillhuset.oddjob.Commands.Profession.ProfessionCommand;
 import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
-import com.spillhuset.oddjob.Commands.Essentials.SuicideCommand;
+import com.spillhuset.oddjob.Commands.Shops.TradeCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportCommand;
 import com.spillhuset.oddjob.Commands.Teleport.TeleportTPACommand;
-import com.spillhuset.oddjob.Commands.Shops.TradeCommand;
 import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
-import com.spillhuset.oddjob.Utils.Profession;
+import com.spillhuset.oddjob.Utils.GMIHandler;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,6 +37,7 @@ public class OddJob extends JavaPlugin {
     private ShopsManager shopsManager;
     private TeleportManager teleportManager;
     private WarpsManager warpsManager;
+    private GMIHandler gmiHandler;
 
     public static OddJob getInstance() {
         return instance;
@@ -118,7 +119,8 @@ public class OddJob extends JavaPlugin {
 
         pm.registerEvents(new OnEntityDamageEvent(), this);
         pm.registerEvents(new OnEntityExplodeEvent(), this);
-        pm.registerEvents(new OnEntitySpawnEvent(),this);
+        pm.registerEvents(new OnEntitySpawnEvent(), this);
+        pm.registerEvents(new OnEntityPickupItemEvent(),this);
 
         pm.registerEvents(new OnInventoryMoveEvent(), this);
 
@@ -129,8 +131,11 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerJoinEvent(), this);
         pm.registerEvents(new OnPlayerMoveEvent(), this);
         pm.registerEvents(new OnPlayerQuitEvent(), this);
+        pm.registerEvents(new OnPlayerGameModeChangeEvent(), this);
+        pm.registerEvents(new OnPlayerDropItemEvent(), this);
 
         // Loading
+        gmiHandler = new GMIHandler();
     }
 
     public void onDisable() {
@@ -179,6 +184,10 @@ public class OddJob extends JavaPlugin {
 
     public WarpsManager getWarpsManager() {
         return warpsManager;
+    }
+
+    public GMIHandler getInventoryHandler() {
+        return gmiHandler;
     }
 }
 

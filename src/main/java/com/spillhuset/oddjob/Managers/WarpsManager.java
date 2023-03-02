@@ -4,6 +4,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.spillhuset.oddjob.Enums.TeleportType;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
+import com.spillhuset.oddjob.Utils.Portal;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +16,7 @@ import java.util.*;
 
 public class WarpsManager {
     private final HashMap<UUID, Warp> warps;
-    private HashMap<Location,UUID> portals = new HashMap<>();
+    private HashMap<Location, Portal> portals = new HashMap<Location, Portal>();
 
     public WarpsManager() {
         warps = load();
@@ -125,7 +126,7 @@ public class WarpsManager {
         MessageManager.warps_successfully_passwd(sender, name, passwd);
     }
 
-    public void portalCreate(Player player, Region region,UUID warpUUID) {
+    public void portalCreate(String name, Player player, Region region, UUID warpUUID) {
         Warp warp = warps.get(warpUUID);
         if (warp == null) {
             OddJob.getInstance().log("not existing");
@@ -138,6 +139,8 @@ public class WarpsManager {
         int yMax = region.getMaximumPoint().getBlockY();
         int yMin = region.getMinimumPoint().getBlockY();
 
+        Portal portal = new Portal(name,warpUUID);
+
         for (int x = xMin; x <= xMax; x++) {
             for (int z = zMin; z <= zMax; z++) {
                 for (int y = yMin; y <= yMax; y++) {
@@ -147,8 +150,8 @@ public class WarpsManager {
                     if (block.getType().equals(Material.AIR)) {
                         block.setType(frame, false);
                     }
-                    portals.put(location,warpUUID);
-                    WarpSQL.savePortal(location,warpUUID);
+                    portals.put(location,portal);
+                    WarpSQL.savePortal(location,portal);
                 }
             }
         }
@@ -163,7 +166,7 @@ public class WarpsManager {
         }
     }
 
-    public UUID getPortal(Location location) {
+    public Portal getPortal(Location location) {
         for (Location portal : portals.keySet()) {
             if (location.getBlockX() == portal.getBlockX() &&location.getBlockY() == portal.getBlockY() &&location.getBlockZ() == portal.getBlockZ()&& location.getWorld().getUID().equals(portal.getWorld().getUID())) {
                 return portals.get(portal);
@@ -176,7 +179,7 @@ public class WarpsManager {
         return this.warps.values();
     }
 
-    public HashMap<Location,UUID> loadPortals() {
+    public HashMap<Location, Portal> loadPortals() {
         return WarpSQL.loadPortals();
     }
 }

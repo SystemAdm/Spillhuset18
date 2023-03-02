@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.SQL;
 
 import com.spillhuset.oddjob.Managers.MySQLManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Portal;
 import com.spillhuset.oddjob.Utils.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -70,17 +71,17 @@ public class WarpSQL extends MySQLManager {
 
     public static Warp get(String name) {
         Warp warp = null;
-        Location location = null;
-        World world = null;
-        UUID worldUuid = null;
-        double x = 0;
-        double y = 0;
-        double z = 0;
-        float yaw = 0;
-        float pitch = 0;
-        String passwd = "";
-        UUID uuid = null;
-        double cost = 0d;
+        Location location;
+        World world;
+        UUID worldUuid;
+        double x;
+        double y;
+        double z;
+        float yaw;
+        float pitch;
+        String passwd;
+        UUID uuid;
+        double cost;
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_warps` WHERE `server` = ? AND `name` = ?");
@@ -225,7 +226,7 @@ public class WarpSQL extends MySQLManager {
         }
     }
 
-    public static void savePortal(Location location, UUID warpUUID) {
+    public static void savePortal(Location location, Portal portal) {
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();
@@ -241,22 +242,24 @@ public class WarpSQL extends MySQLManager {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_warps_portals` SET `warp` = ? WHERE `world` = ? AND `x`= ? AND `y`= ? AND `z`= ? AND `server` =?");
-                preparedStatement.setString(1, warpUUID.toString());
-                preparedStatement.setString(2, world.getUID().toString());
-                preparedStatement.setInt(3, x);
-                preparedStatement.setInt(4, y);
-                preparedStatement.setInt(5, z);
-                preparedStatement.setString(6, server);
+                preparedStatement = connection.prepareStatement("UPDATE `mine_warps_portals` SET `warp` = ?, `name` = ? WHERE `world` = ? AND `x`= ? AND `y`= ? AND `z`= ? AND `server` =?");
+                preparedStatement.setString(1, portal.getWarp().toString());
+                preparedStatement.setString(2, portal.getName());
+                preparedStatement.setString(3, world.getUID().toString());
+                preparedStatement.setInt(4, x);
+                preparedStatement.setInt(5, y);
+                preparedStatement.setInt(6, z);
+                preparedStatement.setString(7, server);
                 preparedStatement.executeUpdate();
             } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO `mine_warps_portals` (`warp`,`world`,`x`,`y`,`z`,`server`) VALUES (?,?,?,?,?,?)");
-                preparedStatement.setString(1, warpUUID.toString());
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_warps_portals` (`warp`,`world`,`x`,`y`,`z`,`server`,`name`) VALUES (?,?,?,?,?,?,?)");
+                preparedStatement.setString(1, portal.getWarp().toString());
                 preparedStatement.setString(2, world.getUID().toString());
                 preparedStatement.setInt(3, x);
                 preparedStatement.setInt(4, y);
                 preparedStatement.setInt(5, z);
                 preparedStatement.setString(6, server);
+                preparedStatement.setString(7, portal.getName());
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -266,20 +269,20 @@ public class WarpSQL extends MySQLManager {
         }
     }
 
-    public static HashMap<Location, UUID> loadPortals() {
-        HashMap<Location,UUID> portals = new HashMap<>();
-
+    public static HashMap<Location, Portal> loadPortals() {
+        HashMap<Location, Portal> portals = new HashMap<>();
         try {
             connect();
             preparedStatement = connection.prepareStatement("SELECT * FROM `mine_warps_portals` WHERE `server` = ?");
-            preparedStatement.setString(1,server);
+            preparedStatement.setString(1, server);
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 World world = Bukkit.getWorld(UUID.fromString(resultSet.getString("world")));
                 if (world != null) {
-                    Location location = new Location(world,resultSet.getInt("x"),resultSet.getInt("y"),resultSet.getInt("z"));
-                    portals.put(location,UUID.fromString(resultSet.getString("warp")));
+                    Location location = new Location(world, resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));
+                    Portal portal = new Portal(resultSet.getString("name"), UUID.fromString(resultSet.getString("warp")));
+                    portals.put(location, portal);
                 }
             }
         } catch (SQLException ex) {
