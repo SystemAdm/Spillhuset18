@@ -19,6 +19,12 @@ public class OnPlayerDeathEvent implements Listener {
         Player player = event.getEntity();
         Location location = player.getLocation();
 
+        if(player.hasPermission("gmi.sod")) {
+            OddJob.getInstance().getInventoryHandler().saveOnDeath(player);
+            event.getDrops().clear();
+            return;
+        }
+
         World world = location.getWorld();
         if (world != null) {
             ArmorStand armorStand = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);

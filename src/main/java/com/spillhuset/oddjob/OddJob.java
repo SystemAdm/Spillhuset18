@@ -22,6 +22,7 @@ import com.spillhuset.oddjob.Managers.*;
 import com.spillhuset.oddjob.Utils.GMIHandler;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.logging.Level;
 
@@ -133,6 +134,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerQuitEvent(), this);
         pm.registerEvents(new OnPlayerGameModeChangeEvent(), this);
         pm.registerEvents(new OnPlayerDropItemEvent(), this);
+        pm.registerEvents(new OnPlayerRespawnEvent(),this);
 
         // Loading
         gmiHandler = new GMIHandler();
@@ -188,6 +190,10 @@ public class OddJob extends JavaPlugin {
 
     public GMIHandler getInventoryHandler() {
         return gmiHandler;
+    }
+
+    public BukkitScheduler getScheduler() {
+        return getServer().getScheduler();
     }
 }
 
