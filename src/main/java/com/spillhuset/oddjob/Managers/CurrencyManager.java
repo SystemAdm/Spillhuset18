@@ -43,8 +43,10 @@ public class CurrencyManager {
 
             for (UUID uuid : earnings.keySet()) {
                 Player player = Bukkit.getPlayer(uuid);
-                if (player != null) {
-                    if (!bossBar.getPlayers().contains(player)) bossBar.addPlayer(player);
+                if (player != null && player.isOnline()) {
+                    if (!bossBar.getPlayers().contains(player)) {
+                        bossBar.addPlayer(player);
+                    }
                 }
             }
 
