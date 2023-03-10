@@ -228,7 +228,10 @@ public class GuildsManager extends Managers {
         price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());
         MessageManager.guilds_homes_bought(player, price, guild.getMaxHomes());
     }
-
+    public void claim(Chunk chunk, Guild guild) {
+        chunks.put(new Cords(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID(), guild.getUuid()), guild.getUuid());
+        GuildSQL.saveChunk(chunk, guild);
+    }
     public void claim(Player player, boolean outpost) {
         // find guild
         Guild guild = getGuildByMember(player.getUniqueId());
@@ -643,6 +646,7 @@ public class GuildsManager extends Managers {
         }
         return null;
     }
+
 
 
 }

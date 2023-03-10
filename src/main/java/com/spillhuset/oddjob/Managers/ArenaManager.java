@@ -1,51 +1,78 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.Region;
+import com.spillhuset.oddjob.Enums.Zone;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.ArenaSQL;
 import com.spillhuset.oddjob.Utils.Arena;
+import com.spillhuset.oddjob.Utils.Guild;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class ArenaManager {
-    /**
-     * Player UUID | Arena name
-     */
-    private final HashMap<UUID, String> inside = new HashMap<>();
-    private final HashMap<UUID, String> arenaEdit = new HashMap<>();
-    private HashMap<String, Arena> arenas = new HashMap<>();
+    private HashMap<Chunk, Arena> chunks = new HashMap<>();
+    private HashMap<UUID, Arena> arenas;
 
-    /**
-     * Returns UUID of Arena, if inside one
-     *
-     * @param uniqueId UUID Player
-     * @return String Arena name
-     */
-    public String inArena(UUID uniqueId) {
-        return inside.get(uniqueId);
+    public void create() {
+
     }
 
-    public void died(String arenaUUID, UUID targetUUID, UUID damageUUID) {
-    }
+    public void create(String name, Player player, Region region) {
+        List<BlockVector2> chunks = new ArrayList<>();
+        boolean error = false;
 
-    public void create(String name, World world, UUID playerUUID) {
-        if (arenas.containsKey(name)) {
-            // exists
-        } else {
-            arenas.put(name, new Arena(name, world));
-            // created
-            arenaEdit.put(playerUUID, name);
+        // New Arena
+        Arena arena = new Arena(name, player.getWorld());
+        // Find the chunks
+        BlockVector2 ch = region.getChunks().iterator().next();
+
+        int maxX = ch.getX();
+        int maxZ = ch.getZ();
+        int minX = ch.getX();
+        int minZ = ch.getZ();
+
+        // Check world
+        World world = Bukkit.getWorld(player.getWorld().getUID());
+        if (world == null) return;
+
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.ARENA);
+
+        // Check if chunk is owned by a guild
+        for (BlockVector2 chunk : region.getChunks()) {
+            int x = chunk.getBlockX();
+            int z = chunk.getBlockZ();
+            maxX = Math.max(x, maxX);
+            minX = Math.min(x, minX);
+            maxZ = Math.max(z, maxZ);
+            minZ = Math.min(z, minZ);
+            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x, z, player.getWorld()) == null) {
+                chunks.add(chunk);
+            } else {
+                error = true;
+            }
         }
-    }
+        if (error) {
+            OddJob.getInstance().log("area not unguilded");
+            return;
+        }
 
-    public void save(UUID playerUUID) {
-        String name = arenaEdit.get(playerUUID);
-        arenaEdit.remove(playerUUID);
-        save(name);
-    }
+        // Claim the chunks
+        for (BlockVector2 vector2 : chunks) {
+            Chunk chunk = world.getChunkAt(vector2.getX(), vector2.getZ());
+            OddJob.getInstance().getGuildsManager().claim(chunk, guild);
+            this.chunks.put(chunk, arena);
+        }
 
-    private void save(String name) {
-        ArenaSQL.save(arenas.get(name));
-        // Saved
+        // Save
+        arenas.put(arena.getUuid(), arena);
+        ArenaSQL.save(arena);
     }
 }

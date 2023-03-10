@@ -10,7 +10,7 @@ public class OnPlayerRespawnEvent implements Listener {
         Player player = event.getPlayer();
 
         if (player.hasPermission("gmi.sod")) {
-            OddJob.getInstance().getScheduler().scheduleSyncDelayedTask(OddJob.getInstance(), () -> {
+            OddJob.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(OddJob.getInstance(), () -> {
                 OddJob.getInstance().getInventoryHandler().restoreOnSpawn(player);
             });
         }

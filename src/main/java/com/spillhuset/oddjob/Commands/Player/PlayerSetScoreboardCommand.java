@@ -3,10 +3,7 @@ package com.spillhuset.oddjob.Commands.Player;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.ScoreBoard;
-import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.ListInterface;
-import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -82,6 +79,7 @@ public class PlayerSetScoreboardCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        // player set scoreboard <scoreboard>
         if (!can(sender, false, true)) {
             return;
         }
@@ -89,22 +87,14 @@ public class PlayerSetScoreboardCommand extends SubCommand {
             return;
         }
 
-        OddPlayer target = null;
-        if (args.length == 2) {
-            target = OddJob.getInstance().getPlayerManager().get(args[1]);
-            if (target == null) {
-                MessageManager.errors_find_player(getPlugin(), args[1], sender);
-                return;
-            }
-        } else if (sender instanceof Player) {
-            target = OddJob.getInstance().getPlayerManager().get(((Player) sender).getUniqueId());
-        }
-
-        if (target == null) {
-            MessageManager.errors_something_somewhere(getPlugin(), sender);
+        ScoreBoard scoreBoard;
+        try {
+            scoreBoard = ScoreBoard.valueOf(args[2]);
+        } catch (IllegalArgumentException ex) {
             return;
         }
-        OddJob.getInstance().getHomesManager().sendList(sender, target);
+        Player player = (Player) sender;
+        OddJob.getInstance().getPlayerManager().setScoreboard(player, scoreBoard);
     }
 
     @Override

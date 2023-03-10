@@ -1,11 +1,17 @@
 package com.spillhuset.oddjob.Commands.Arena;
 
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.session.SessionManager;
+import com.sk89q.worldedit.world.World;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Arena;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -85,7 +91,23 @@ public class ArenaCreateCommand extends SubCommand {
         if (!argsLength(sender,args.length)) return;
         // arena create <name>
         Player player = (Player) sender;
-        OddJob.getInstance().getArenaManager().create(args[1],player.getWorld(),player.getUniqueId());
+
+        com.sk89q.worldedit.entity.Player actor = BukkitAdapter.adapt(player);
+        SessionManager manager = WorldEdit.getInstance().getSessionManager();
+        LocalSession localSession = manager.get(actor);
+
+        Region region;
+        World selectionWorld = localSession.getSelectionWorld();
+
+        try {
+            if (selectionWorld == null) throw new IncompleteRegionException();
+            region = localSession.getSelection(selectionWorld);
+        } catch (IncompleteRegionException ex) {
+            OddJob.getInstance().log("some error");
+            return;
+        }
+
+        OddJob.getInstance().getArenaManager().create(args[1],player,region);
     }
 
     @Override

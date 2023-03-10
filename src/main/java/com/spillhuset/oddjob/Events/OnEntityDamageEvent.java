@@ -36,14 +36,14 @@ public class OnEntityDamageEvent implements Listener {
         if (entityDamage instanceof Player playerDamage) {
             OddJob.getInstance().log("damage by a player " + playerDamage.getName());
             if (entityTarget instanceof Player playerTarget) {
-                String arenaUUIDDamage = OddJob.getInstance().getArenaManager().inArena(playerDamage.getUniqueId());
+                UUID gameUUIDDamage = OddJob.getInstance().getGameManager().in(playerDamage.getUniqueId());
                 OddJob.getInstance().log("damage to a player " + playerTarget.getName());
-                String arenaUUIDTarget = OddJob.getInstance().getArenaManager().inArena(playerDamage.getUniqueId());
-                if (arenaUUIDDamage.equals(arenaUUIDTarget)) {
+                UUID gameUUIDTarget = OddJob.getInstance().getGameManager().in(playerDamage.getUniqueId());
+                if (gameUUIDDamage.equals(gameUUIDTarget)) {
                     OddJob.getInstance().log("Both players in the same Arena");
                     if (playerTarget.getHealth() <= event.getFinalDamage()) {
                         OddJob.getInstance().log("Target has less health than the actual damage, dies");
-                        OddJob.getInstance().getArenaManager().died(arenaUUIDTarget, playerTarget.getUniqueId(), playerDamage.getUniqueId());
+                        OddJob.getInstance().getGameManager().died(gameUUIDTarget, playerTarget.getUniqueId(), playerDamage.getUniqueId());
                         event.setCancelled(true);
                         return;
                     }

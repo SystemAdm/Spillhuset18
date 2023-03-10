@@ -148,4 +148,15 @@ public class TeleportManager {
     public void quit(UUID uniqueId) {
         requests.remove(uniqueId);
     }
+
+    public boolean request(UUID target, Location lobby) {
+        Player player = Bukkit.getPlayer(target);
+        if (player == null) return false;
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(OddJob.getInstance(), () -> {
+            player.sendMessage("T");
+        }, 300L);
+
+        return true;
+    }
 }

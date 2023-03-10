@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob;
 
+import com.google.common.base.Predicates;
 import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
@@ -22,7 +23,6 @@ import com.spillhuset.oddjob.Managers.*;
 import com.spillhuset.oddjob.Utils.GMIHandler;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.logging.Level;
 
@@ -39,6 +39,7 @@ public class OddJob extends JavaPlugin {
     private TeleportManager teleportManager;
     private WarpsManager warpsManager;
     private GMIHandler gmiHandler;
+    private GameManager gameManager;
 
     public static OddJob getInstance() {
         return instance;
@@ -72,7 +73,10 @@ public class OddJob extends JavaPlugin {
         }
 
         /* Arena */
-        if (ConfigManager.getBoolean("plugin.arena")) arenaManager = new ArenaManager();
+        if (ConfigManager.getBoolean("plugin.games")) {
+            arenaManager = new ArenaManager();
+            gameManager = new GameManager();
+        }
 
         /* Auctions */
         if (ConfigManager.getBoolean("plugin.auctions")) auctionsManager = new AuctionsManager();
@@ -121,7 +125,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnEntityDamageEvent(), this);
         pm.registerEvents(new OnEntityExplodeEvent(), this);
         pm.registerEvents(new OnEntitySpawnEvent(), this);
-        pm.registerEvents(new OnEntityPickupItemEvent(),this);
+        pm.registerEvents(new OnEntityPickupItemEvent(), this);
 
         pm.registerEvents(new OnInventoryMoveEvent(), this);
 
@@ -134,7 +138,7 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnPlayerQuitEvent(), this);
         pm.registerEvents(new OnPlayerGameModeChangeEvent(), this);
         pm.registerEvents(new OnPlayerDropItemEvent(), this);
-        pm.registerEvents(new OnPlayerRespawnEvent(),this);
+        pm.registerEvents(new OnPlayerRespawnEvent(), this);
 
         // Loading
         gmiHandler = new GMIHandler();
@@ -192,8 +196,8 @@ public class OddJob extends JavaPlugin {
         return gmiHandler;
     }
 
-    public BukkitScheduler getScheduler() {
-        return getServer().getScheduler();
+    public GameManager getGameManager() {
+        return gameManager;
     }
 }
 
