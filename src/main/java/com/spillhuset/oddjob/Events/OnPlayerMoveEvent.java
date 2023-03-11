@@ -2,6 +2,7 @@ package com.spillhuset.oddjob.Events;
 
 import com.spillhuset.oddjob.Enums.Zone;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Cords;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.Portal;
 import com.spillhuset.oddjob.Utils.Tool;
@@ -36,6 +37,22 @@ public class OnPlayerMoveEvent implements Listener {
         }
 
         Player player = event.getPlayer();
+
+        OddJob.getInstance().log("x:"+event.getTo().getChunk().getX()+" z:"+event.getTo().getChunk().getZ());
+        int x = 0;
+        int z = 0;
+        int w = 0;
+        int g = 0;
+        int xz = 0;
+        for (Cords cords :OddJob.getInstance().getGuildsManager().chunks.keySet()) {
+            if (cords.getX() == event.getTo().getChunk().getX()) x++;
+            if (cords.getZ() == event.getTo().getChunk().getZ()) z++;
+            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ()) xz++;
+            if (cords.getWorld().equals(event.getTo().getWorld().getUID())) w++;
+            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ() && cords.getWorld().equals(event.getTo().getWorld().getUID())) g++;
+        }
+
+        OddJob.getInstance().log("x:"+x+" z:"+z+" xz:"+xz+" w:"+w+" g:"+g);
 
         // Is chunk owned by a guild?
         Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());

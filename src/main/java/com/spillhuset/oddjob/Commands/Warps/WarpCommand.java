@@ -65,7 +65,7 @@ public class WarpCommand extends SubCommandInterface implements CommandExecutor,
 
     @Override
     public int depth() {
-        return 1;
+        return 0;
     }
 
     @Override

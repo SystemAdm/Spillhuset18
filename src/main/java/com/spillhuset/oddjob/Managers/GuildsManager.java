@@ -20,7 +20,7 @@ public class GuildsManager extends Managers {
     /**
      * UUID Guild, Guild
      */
-    private HashMap<UUID, Guild> guilds = new HashMap<>();
+    private final HashMap<UUID, Guild> guilds = new HashMap<>();
     /**
      * UUID Player, Role
      */
@@ -32,7 +32,7 @@ public class GuildsManager extends Managers {
     /**
      * Cords, UUID Guild
      */
-    private HashMap<Cords, UUID> chunks = new HashMap<>();
+    public HashMap<Cords, UUID> chunks = new HashMap<>();
 
     public void buyClaims(CommandSender sender) {
         Player player = (Player) sender;
@@ -620,6 +620,9 @@ public class GuildsManager extends Managers {
         GuildSQL.loadGuild(null);
         GuildSQL.loadMembersRoles();
         chunks = GuildSQL.loadChunks();
+        OddJob.getInstance().log("chunks: "+chunks.size());
+        OddJob.getInstance().log("guilds: "+guilds.size());
+        OddJob.getInstance().log("members: "+members.size());
     }
 
     public void save(Guild guild) {
@@ -648,5 +651,10 @@ public class GuildsManager extends Managers {
     }
 
 
-
+    public void save() {
+        for (UUID uuid : guilds.keySet()) {
+            save(guilds.get(uuid));
+        }
+        save(true,null);
+    }
 }

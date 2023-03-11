@@ -87,25 +87,26 @@ public abstract class SubCommandInterface {
 
     public void finder(CommandSender sender, String[] args) {
         if (args.length >= depth()) {
-            OddJob.getInstance().log("args: "+args.length+" depth: "+depth());
+            OddJob.getInstance().log("args: " + args.length + " depth: " + depth());
             for (SubCommand subCommand : subCommands) {
-                OddJob.getInstance().log("command: "+subCommand.getName());
-                OddJob.getInstance().log("like: "+args[depth()]);
+                OddJob.getInstance().log("command: " + subCommand.getName());
+                OddJob.getInstance().log("like: " + args[depth()]);
                 if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    if (subCommand.can(sender,false,true)) {
-                        subCommand.getCommandExecutor(sender,args);
+                    if (subCommand.can(sender, false, true)) {
+                        subCommand.getCommandExecutor(sender, args);
                         return;
                     }
                 }
             }
         }
-        MessageManager.sendSyntax(getPlugin(),list(sender),sender);
+        MessageManager.sendSyntax(getPlugin(), list(sender), sender);
     }
+
     public List<String> tabs(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         for (SubCommand subCommand : subCommands) {
             if (can(sender, false, false)) {
-                if (subCommand.hasGuild(sender,false)) {
+                if (subCommand.hasGuild(sender, false)) {
                     if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
                         return subCommand.getTabCompleter(sender, args);
                     } else if ((args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()]))) {
@@ -120,7 +121,7 @@ public abstract class SubCommandInterface {
     public String list(CommandSender sender) {
         StringBuilder stringBuilder = new StringBuilder();
         for (SubCommand subCommand : subCommands) {
-            if (subCommand.can(sender,false,false)) {
+            if (subCommand.can(sender, false, false)) {
                 stringBuilder.append(ChatColor.GRAY).append(subCommand.getName()).append(ChatColor.RESET).append(",");
             }
         }

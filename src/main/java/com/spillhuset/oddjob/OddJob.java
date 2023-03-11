@@ -21,6 +21,8 @@ import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
 import com.spillhuset.oddjob.Utils.GMIHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -142,10 +144,16 @@ public class OddJob extends JavaPlugin {
 
         // Loading
         gmiHandler = new GMIHandler();
+        MySQLManager.enable();
+        log("loaded: "+Bukkit.getWorld("world").getUID().toString());
     }
 
     public void onDisable() {
-
+        if (playerManager != null) playerManager.save();
+        if (warpsManager != null) warpsManager.save();
+        if (guildsManager != null) guildsManager.save();
+        if (arenaManager != null) arenaManager.save();
+        if (gameManager != null) gameManager.save();
     }
 
     public PlayerManager getPlayerManager() {

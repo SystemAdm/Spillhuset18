@@ -22,4 +22,10 @@ public class GameManager {
     public Game get(UUID game) {
         return games.get(game);
     }
+
+    public void died(UUID gameUUIDTarget, UUID uniqueId, UUID uniqueId1) {
+    }
+
+    public void save() {
+    }
 }

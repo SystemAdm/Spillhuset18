@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.OddJob;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MySQLManager {
@@ -123,5 +125,42 @@ public class MySQLManager {
             list.add(UUID.fromString(unit));
         }
         return list;
+    }
+
+    public static void enable() {
+        try {
+            connect();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `mine_server` WHERE `uuid` =?");
+            preparedStatement.setString(1, server);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_server` SET `name` = ?, `version` = ?, `spillhuset` = ?, `online` = ?, `maxplayers` = ?, `operators` = ?, `bannedplayers` = ? WHERE `uuid` = ?");
+                preparedStatement.setString(1, Bukkit.getServer().getMotd());
+                preparedStatement.setString(2, Bukkit.getBukkitVersion());
+                preparedStatement.setString(3, Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Spillhuset")).getDescription().getVersion());
+                preparedStatement.setInt(4, Bukkit.getOnlinePlayers().size());
+                preparedStatement.setInt(5, Bukkit.getMaxPlayers());
+                preparedStatement.setInt(6, Bukkit.getOperators().size());
+                preparedStatement.setInt(7, Bukkit.getBannedPlayers().size());
+                preparedStatement.setString(8, server);
+                preparedStatement.executeUpdate();
+            } else {
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_server` (`uuid`, `name`, `version`, `spillhuset`, `online`, `maxplayers`, `operators`, `bannedplayers`) VALUES (?,?,?,?,?,?,?,?)");
+                preparedStatement.setString(1, server);
+                preparedStatement.setString(2, Bukkit.getServer().getMotd());
+                preparedStatement.setString(3, Bukkit.getBukkitVersion());
+                preparedStatement.setString(4, Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Spillhuset")).getDescription().getVersion());
+                preparedStatement.setInt(5, Bukkit.getOnlinePlayers().size());
+                preparedStatement.setInt(6, Bukkit.getMaxPlayers());
+                preparedStatement.setInt(7, Bukkit.getOperators().size());
+                preparedStatement.setInt(8, Bukkit.getBannedPlayers().size());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close();
+        }
     }
 }

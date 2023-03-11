@@ -324,4 +324,13 @@ public class PlayerManager {
     public boolean inCombat(UUID uniqueId) {
         return combat.containsKey(uniqueId);
     }
+
+    public void save() {
+        int i = 0;
+        for (UUID uuid : players.keySet()) {
+            PlayerSQL.save(players.get(uuid));
+            i++;
+        }
+        OddJob.getInstance().log("Saved players "+i);
+    }
 }

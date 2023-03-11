@@ -101,6 +101,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
             for (String name : HomesSQL.getList(player.getUniqueId())) {
                 if (args[0].equalsIgnoreCase(name)) {
                     OddJob.getInstance().getHomesManager().teleport(sender, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), name);
+                    return true;
                 }
             }
         }

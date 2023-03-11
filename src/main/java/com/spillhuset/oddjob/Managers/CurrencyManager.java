@@ -29,11 +29,11 @@ public class CurrencyManager {
 
             String time = "";
             int m = NumberConversions.floor(i[0] / 60);
-            if (m > 1) time = m + " minutter ";
-            if (m == 1) time = m + " minutt ";
+            if (m > 1) time = m + " minutes ";
+            if (m == 1) time = m + " minute ";
             int s = NumberConversions.floor(i[0] - (m * 60));
-            if (s > 1) time += s + " sekunder";
-            if (s == 1) time += s + " sekund";
+            if (s > 1) time += s + " seconds";
+            if (s == 1) time += s + " second";
 
             BossBar bossBar = Bukkit.getBossBar(key);
             if (bossBar == null)

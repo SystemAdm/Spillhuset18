@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffect;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -213,7 +214,7 @@ public class Tool {
         return gson.toJson(itemJson);
     }
 
-    public static void announce(Player player, Guild guild) {
+    public static void announce(Player player,@Nonnull Guild guild) {
         String name = "";
         if (guild.getZone().equals(Zone.GUILD)) {
             name = guild.getZone().getColoredString(guild.getName());

@@ -189,8 +189,6 @@ public class WarpSQL extends MySQLManager {
     }
 
     public static void save(HashMap<UUID, Warp> warps) {
-
-
         try {
             for (UUID uuid : warps.keySet()) {
                 Location location = warps.get(uuid).getLocation();

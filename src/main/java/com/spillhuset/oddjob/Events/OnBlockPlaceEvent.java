@@ -55,6 +55,9 @@ public class OnBlockPlaceEvent implements Listener {
         if (owner.equals(event.getPlayer().getUniqueId())) {
             return;
         }
+        if (event.getPlayer().hasPermission("locks.override")) {
+            return;
+        }
         event.setCancelled(true);
         OddJob.getInstance().log("locked");
 

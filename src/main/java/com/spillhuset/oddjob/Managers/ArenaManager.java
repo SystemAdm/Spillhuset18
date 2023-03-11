@@ -75,4 +75,13 @@ public class ArenaManager {
         arenas.put(arena.getUuid(), arena);
         ArenaSQL.save(arena);
     }
+
+    public void save() {
+        int i = 0;
+        for (UUID uuid : arenas.keySet()) {
+            ArenaSQL.save(arenas.get(uuid));
+            i++;
+        }
+        OddJob.getInstance().log("Saved arenas "+i);
+    }
 }

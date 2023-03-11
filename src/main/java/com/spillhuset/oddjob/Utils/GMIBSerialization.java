@@ -22,7 +22,7 @@ public class GMIBSerialization {
                     if (is != null && is.getType().equals(Material.PLAYER_HEAD)) {
                         if (is.hasItemMeta()) {
                             SkullMeta skullMeta = (SkullMeta) is.getItemMeta();
-                            if (skullMeta.getOwnerProfile() == null) {
+                            if (skullMeta != null && skullMeta.getOwnerProfile() == null) {
                                 is.setItemMeta(null);
                             }
                         }
