@@ -1,31 +1,34 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.SQL.GameSQL;
 import com.spillhuset.oddjob.Utils.Game;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class GameManager {
-    /**
-     * UUID Player | UUID Game
-     */
-    private final HashMap<UUID, UUID> playerGame = new HashMap<>();
-    /**
-     * UUID Game | Game
-     */
-    private final HashMap<UUID, Game> games = new HashMap<>();
+    private HashMap<UUID, Game> games;
+    public GameManager() {
+        load();
+    }
 
+    public void load() {
+        games = GameSQL.load();
+    }
+
+    @Nullable
     public UUID in(UUID player) {
-        return playerGame.get(player);
+        for (Game game :games.values()) {
+            if (game.in(player)) return game.getUuid();
+        }
+        return null;
     }
 
-    public Game get(UUID game) {
-        return games.get(game);
-    }
-
-    public void died(UUID gameUUIDTarget, UUID uniqueId, UUID uniqueId1) {
+    public void died(UUID game, UUID target, UUID damage) {
     }
 
     public void save() {
+        GameSQL.save(games);
     }
 }
