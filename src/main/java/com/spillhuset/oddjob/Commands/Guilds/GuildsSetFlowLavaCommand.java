@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsInfoCommand extends SubCommand {
+public class GuildsSetFlowLavaCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -27,7 +27,7 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "info";
+        return "lava";
     }
 
     @Override
@@ -47,17 +47,17 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int depth() {
-        return 1;
+        return 3;
     }
 
     @Override
@@ -67,39 +67,31 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public boolean needGuild() {
-        return false;
+        return true;
     }
 
     @Override
     public Role guildRole() {
-        return null;
+        return Role.Master;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!argsLength(sender, args.length)) {
-            return;
-        }
+        OddJob.getInstance().log("lava");
         if (!can(sender, false, true)) {
             return;
         }
-        if (args.length == 1) {
-            OddJob.getInstance().getGuildsManager().info(sender, null,true);
+        if (!argsLength(sender, args.length)) {
             return;
         }
-        OddJob.getInstance().getGuildsManager().info(sender, args[1],false);
+        OddJob.getInstance().getGuildsManager().setLavaFlow(sender, args[3]);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            for (String name: OddJob.getInstance().getGuildsManager().list()) {
-                if (args[1].isEmpty() || name.startsWith(args[1])) {
-                    list.add(name);
-                }
-            }
-        }
+        list.add("true");
+        list.add("false");
         return list;
     }
 }

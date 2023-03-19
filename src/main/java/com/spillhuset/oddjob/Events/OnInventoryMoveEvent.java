@@ -20,7 +20,7 @@ public class OnInventoryMoveEvent implements Listener {
         Location happening = source.getLocation();
         if (happening == null) return;
         if (!OddJob.getInstance().getLocksManager().isLockable(happening.getBlock().getType())) {
-            OddJob.getInstance().log("returned");
+            //OddJob.getInstance().log("returned");
             return;
         }
         if (source.getType() == InventoryType.CHEST) {

@@ -101,16 +101,16 @@ public class GuildsManager extends Managers {
             MessageManager.guilds_not_associated(player);
             return;
         }
-        info(player, guild.getName());
+        info(player, guild.getName(),true);
     }
 
     public HashMap<UUID, Role> getRoles() {
         return roles;
     }
 
-    public void info(CommandSender sender, String name) {
+    public void info(CommandSender sender, String name, boolean own) {
         String master = "";
-        if (name == null) {
+        if (own) {
             if (sender instanceof Player player) {
                 Guild guild = getGuildByMember(player.getUniqueId());
                 if (guild == null) {
@@ -656,5 +656,19 @@ public class GuildsManager extends Managers {
             save(guilds.get(uuid));
         }
         save(true,null);
+    }
+
+    public void setWaterFlow(CommandSender sender, String arg) {
+        Player player = (Player) sender;
+        Guild guild = getGuildByMember(player.getUniqueId());
+        boolean flow = arg.equalsIgnoreCase("true");
+        guild.setFlowWater(flow);
+    }
+
+    public void setLavaFlow(CommandSender sender, String arg) {
+        Player player = (Player) sender;
+        Guild guild = getGuildByMember(player.getUniqueId());
+        boolean flow = arg.equalsIgnoreCase("true");
+        guild.setFlowLava(flow);
     }
 }

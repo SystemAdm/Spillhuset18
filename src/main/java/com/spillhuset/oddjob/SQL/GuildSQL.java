@@ -50,8 +50,10 @@ public class GuildSQL extends MySQLManager {
                 uuid = UUID.fromString(resultSet.getString("uuid"));
                 int boughtOutposts = resultSet.getInt("boughtOutposts");
                 int usedOutposts = resultSet.getInt("usedOutposts");
+                boolean waterFlow = resultSet.getInt("waterflow") == 1;
+                boolean lavaFlow = resultSet.getInt("lavaflow") == 1;
 
-                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite, boughtOutposts, usedOutposts));
+                OddJob.getInstance().getGuildsManager().loadGuild(new Guild(uuid, name, zone, boughtClaims, boughtHomes, spawnMobs, open, invitedOnly, friendlyFire, permissionKick, permissionInvite, boughtOutposts, usedOutposts,waterFlow,lavaFlow));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -75,9 +77,9 @@ public class GuildSQL extends MySQLManager {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_guilds` SET `name` = ?, `zone` = ?, `invited_only`=?,`friendly_fire`=?,`permission_kick`=?,`permission_invite`=?,`open`=?,`boughtClaims`=?,`boughtHomes`=?,`spawnmobs`=?,`boughtOutposts` = ?,`usedOutposts` = ? WHERE `uuid` = ? AND `server` = ?");
+                preparedStatement = connection.prepareStatement("UPDATE `mine_guilds` SET `name` = ?, `zone` = ?, `invited_only`=?,`friendly_fire`=?,`permission_kick`=?,`permission_invite`=?,`open`=?,`boughtClaims`=?,`boughtHomes`=?,`spawnmobs`=?,`boughtOutposts` = ?,`usedOutposts` = ?,`waterflow` = ?,`lavaflow` = ? WHERE `uuid` = ? AND `server` = ?");
             } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds` (`name`, `zone` , `invited_only`,`friendly_fire`,`permission_kick`,`permission_invite`,`open`,`boughtClaims`,`boughtHomes`,`spawnmobs` ,`boughtOutposts`,`usedOutposts`,`uuid` ,`server`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                preparedStatement = connection.prepareStatement("INSERT INTO `mine_guilds` (`name`, `zone` , `invited_only`,`friendly_fire`,`permission_kick`,`permission_invite`,`open`,`boughtClaims`,`boughtHomes`,`spawnmobs` ,`boughtOutposts`,`usedOutposts`,`waterflow`,`lavaflow`,`uuid` ,`server`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             }
             preparedStatement.setString(1, guild.getName());
             preparedStatement.setString(2, guild.getZone().name());
@@ -91,8 +93,10 @@ public class GuildSQL extends MySQLManager {
             preparedStatement.setInt(10, guild.isSpawnMobs() ? 1 : 0);
             preparedStatement.setInt(11, guild.getBoughtOutposts());
             preparedStatement.setInt(12, guild.getUsedOutposts());
-            preparedStatement.setString(13, guild.getUuid().toString());
-            preparedStatement.setString(14, server);
+            preparedStatement.setInt(13,guild.getFlowWater()?1:0);
+            preparedStatement.setInt(14,guild.getFlowLava()?1:0);
+            preparedStatement.setString(15, guild.getUuid().toString());
+            preparedStatement.setString(16, server);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

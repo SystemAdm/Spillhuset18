@@ -1,6 +1,5 @@
 package com.spillhuset.oddjob;
 
-import com.google.common.base.Predicates;
 import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
@@ -21,11 +20,13 @@ import com.spillhuset.oddjob.Commands.Warps.WarpCommand;
 import com.spillhuset.oddjob.Events.*;
 import com.spillhuset.oddjob.Managers.*;
 import com.spillhuset.oddjob.Utils.GMIHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 
 public class OddJob extends JavaPlugin {
@@ -124,6 +125,8 @@ public class OddJob extends JavaPlugin {
         pm.registerEvents(new OnBlockFromToEvent(), this);
         pm.registerEvents(new OnBlockPlaceEvent(), this);
 
+        pm.registerEvents(new OnChunkLoadEvent(), this);
+
         pm.registerEvents(new OnEntityDamageEvent(), this);
         pm.registerEvents(new OnEntityExplodeEvent(), this);
         pm.registerEvents(new OnEntitySpawnEvent(), this);
@@ -145,7 +148,7 @@ public class OddJob extends JavaPlugin {
         // Loading
         gmiHandler = new GMIHandler();
         MySQLManager.enable();
-        log("loaded: "+Bukkit.getWorld("world").getUID().toString());
+        //log("loaded: "+Bukkit.getWorld("world").getUID().toString());
     }
 
     public void onDisable() {
@@ -206,6 +209,28 @@ public class OddJob extends JavaPlugin {
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public void logToFile(String message) {
+        File dataFolder = getDataFolder();
+        if (!dataFolder.exists()) dataFolder.mkdir();
+        File saveTo = new File(getDataFolder(), "data.txt");
+        if (!saveTo.exists()) {
+            try {
+                saveTo.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            FileWriter fw = new FileWriter(saveTo,true);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.println(message);
+            pw.flush();
+            pw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

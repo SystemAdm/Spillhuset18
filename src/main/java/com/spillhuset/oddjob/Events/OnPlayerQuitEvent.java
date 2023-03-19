@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.Date;
+
 public class OnPlayerQuitEvent implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
@@ -16,6 +18,6 @@ public class OnPlayerQuitEvent implements Listener {
 
         OddJob.getInstance().getPlayerManager().getScoreboard(player.getUniqueId());
         player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-
+        OddJob.getInstance().logToFile(new Date().getTime()+" quit: "+player.getName());
     }
 }

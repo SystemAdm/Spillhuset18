@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +53,6 @@ public class OnPlayerJoinEvent implements Listener {
         // Setup Scoreboard
         ScoreBoard scoreboard = pm.get(player.getUniqueId()).getScoreBoard();
         pm.setScoreboard(player,scoreboard);
-
+        OddJob.getInstance().logToFile(new Date().getTime()+" joined: "+player.getName());
     }
 }

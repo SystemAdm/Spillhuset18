@@ -122,7 +122,6 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
         List<String> list = new ArrayList<>();
         for (SubCommand subCommand : subCommands) {
             String name = subCommand.getName();
-
             if (args.length == depth() + 1) {
                 if (name.equalsIgnoreCase(args[depth()])) {
                     return subCommand.getTabCompleter(sender, args);

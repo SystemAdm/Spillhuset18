@@ -28,7 +28,7 @@ public class OnPlayerMoveEvent implements Listener {
 
         Portal portal = OddJob.getInstance().getWarpsManager().getPortal(event.getTo());
         if (portal != null) {
-            OddJob.getInstance().getWarpsManager().teleport(event.getPlayer(),portal.getWarp());
+            OddJob.getInstance().getWarpsManager().teleport(event.getPlayer(), portal.getWarp());
         }
 
         // Moving withing same chunk
@@ -38,32 +38,35 @@ public class OnPlayerMoveEvent implements Listener {
 
         Player player = event.getPlayer();
 
-        OddJob.getInstance().log("x:"+event.getTo().getChunk().getX()+" z:"+event.getTo().getChunk().getZ());
+        //OddJob.getInstance().log("x:" + event.getTo().getChunk().getX() + " z:" + event.getTo().getChunk().getZ());
         int x = 0;
         int z = 0;
         int w = 0;
         int g = 0;
         int xz = 0;
-        for (Cords cords :OddJob.getInstance().getGuildsManager().chunks.keySet()) {
+        for (Cords cords : OddJob.getInstance().getGuildsManager().chunks.keySet()) {
             if (cords.getX() == event.getTo().getChunk().getX()) x++;
             if (cords.getZ() == event.getTo().getChunk().getZ()) z++;
-            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ()) xz++;
+            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ())
+                xz++;
             if (cords.getWorld().equals(event.getTo().getWorld().getUID())) w++;
-            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ() && cords.getWorld().equals(event.getTo().getWorld().getUID())) g++;
+            if (cords.getX() == event.getTo().getChunk().getX() && cords.getZ() == event.getTo().getChunk().getZ() && cords.getWorld().equals(event.getTo().getWorld().getUID()))
+                g++;
         }
 
-        OddJob.getInstance().log("x:"+x+" z:"+z+" xz:"+xz+" w:"+w+" g:"+g);
+        //OddJob.getInstance().log("x:" + x + " z:" + z + " xz:" + xz + " w:" + w + " g:" + g);
 
         // Is chunk owned by a guild?
         Guild guildChunk = OddJob.getInstance().getGuildsManager().getGuildByCords(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
-        if (guildChunk == null) {
+        /*if (guildChunk == null) {
             Tool.announce(player, OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD));
             return;
-        }
-
+        }*/
+        if (guildChunk == null) guildChunk = OddJob.getInstance().getGuildsManager().getGuildByZone(Zone.WILD);
+        //OddJob.getInstance().log("guild: "+guildChunk.getName());
         // Is the chunk owned by the same guild as previous chunk?
         if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()) != null) {
-            if (OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()).equals(guildChunk.getUuid())) {
+            if (!OddJob.getInstance().getPlayerManager().getInside(player.getUniqueId()).equals(guildChunk.getUuid())) {
                 Tool.announce(player, guildChunk);
             }
         } else {

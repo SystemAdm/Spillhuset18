@@ -24,8 +24,10 @@ public class Guild {
     private boolean spawnMobs;
     private Role permissionInvite;
     private Role permissionKick;
+    private boolean waterFlow;
+    private boolean lavaFlow;
 
-    public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invitedOnly, boolean friendlyFire, Role permissionKick, Role permissionInvite, int boughtOutposts, int usedOutposts) {
+    public Guild(UUID uuid, String name, Zone zone, int boughtClaims, int boughtHomes, boolean spawnMobs, boolean open, boolean invitedOnly, boolean friendlyFire, Role permissionKick, Role permissionInvite, int boughtOutposts, int usedOutposts,boolean waterFlow,boolean lavaFlow) {
         this.uuid = uuid;
         this.name = name;
         this.zone = zone;
@@ -39,6 +41,8 @@ public class Guild {
         this.permissionKick = permissionKick;
         this.boughtOutposts = boughtOutposts;
         this.usedOutposts = usedOutposts;
+        this.waterFlow = waterFlow;
+        this.lavaFlow = lavaFlow;
     }
 
     public Guild(UUID uuid, String name, Zone zone) {
@@ -55,6 +59,8 @@ public class Guild {
         this.permissionKick = Role.Master;
         this.boughtOutposts = 0;
         this.usedOutposts = 0;
+        this.waterFlow = true;
+        this.lavaFlow = true;
     }
 
     public Guild(UUID uuid, String name) {
@@ -71,6 +77,8 @@ public class Guild {
         this.permissionKick = Role.Master;
         this.boughtOutposts = 0;
         this.usedOutposts = 0;
+        this.waterFlow = false;
+        this.lavaFlow = false;
     }
 
     public boolean isOpen() {
@@ -208,5 +216,22 @@ public class Guild {
 
     private void save() {
         OddJob.getInstance().getGuildsManager().save(this);
+    }
+
+    public void setFlowWater(boolean flow) {
+        waterFlow = flow;
+        save();
+    }
+    public boolean getFlowWater() {
+        return waterFlow;
+    }
+
+    public boolean getFlowLava() {
+        return lavaFlow;
+    }
+
+    public void setFlowLava(boolean flow) {
+        lavaFlow = flow;
+        save();
     }
 }

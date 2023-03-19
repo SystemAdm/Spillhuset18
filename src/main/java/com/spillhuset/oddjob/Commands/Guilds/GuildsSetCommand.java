@@ -2,21 +2,22 @@ package com.spillhuset.oddjob.Commands.Guilds;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.MessageManager;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsSetCommand extends SubCommand {
-    private final List<SubCommand> subCommands = new ArrayList<>();
+
     public GuildsSetCommand() {
         subCommands.add(new GuildsSetOpenCommand());
         subCommands.add(new GuildsSetRenameCommand());
         subCommands.add(new GuildsSetAreaCommand());
+        subCommands.add(new GuildsSetFlowCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return false;
@@ -66,6 +67,7 @@ public class GuildsSetCommand extends SubCommand {
     public int depth() {
         return 1;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -80,38 +82,33 @@ public class GuildsSetCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        StringBuilder sub = new StringBuilder();
-
-        for (SubCommand subCommand : subCommands) {
-            String name = subCommand.getName();
-            if (subCommand.can(sender,false,true)) {
-                if (args.length >=1 && subCommand.getName().startsWith(args[1])) {
-                    subCommand.getCommandExecutor(sender,args);
-                    return;
-                } else {
-                    sub.append(ChatColor.GRAY).append(name).append(ChatColor.RESET).append(",");
-                }
-            }
+        OddJob.getInstance().log("set");
+        if (!argsLength(sender, args.length)) {
+            return;
         }
-        if (!sub.isEmpty()) {
-            sub.deleteCharAt(sub.lastIndexOf(","));
-            MessageManager.sendSyntax(Plugin.guilds,sub.toString(),sender);
+        if (!can(sender, false, true)) {
+            return;
         }
+        finder(sender, args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
 
+        //guilds set
         // List commands
         for (SubCommand subCommand : subCommands) {
-            if (subCommand.can(sender, false, false)) {
-                if (args.length == 1 || (args.length == 2 && subCommand.getName().startsWith(args[1]))) {
-                    list.add(subCommand.getName());
-                } else if (subCommand.getName().equalsIgnoreCase(args[1])) {
+            String name = subCommand.getName();
+            if (args.length > depth()) {
+                if (name.equalsIgnoreCase(args[depth()])) {
                     return subCommand.getTabCompleter(sender, args);
+                }
+                if (args[depth()].isEmpty() || name.startsWith(args[depth()])) {
+                    list.add(name);
                 }
             }
         }

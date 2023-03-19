@@ -9,15 +9,21 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildsInfoCommand extends SubCommand {
+public class GuildsSetFlowCommand extends SubCommand {
+
+    public GuildsSetFlowCommand() {
+        subCommands.add(new GuildsSetFlowWaterCommand());
+        subCommands.add(new GuildsSetFlowLavaCommand());
+    }
+
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean denyOp() {
-        return false;
+        return true;
     }
 
     @Override
@@ -27,7 +33,7 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "info";
+        return "flow";
     }
 
     @Override
@@ -47,17 +53,17 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int maxArgs() {
-        return 2;
+        return 0;
     }
 
     @Override
     public int depth() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -67,39 +73,43 @@ public class GuildsInfoCommand extends SubCommand {
 
     @Override
     public boolean needGuild() {
-        return false;
+        return true;
     }
 
     @Override
     public Role guildRole() {
-        return null;
+        return Role.Master;
     }
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        OddJob.getInstance().log("flow");
         if (!argsLength(sender, args.length)) {
             return;
         }
         if (!can(sender, false, true)) {
             return;
         }
-        if (args.length == 1) {
-            OddJob.getInstance().getGuildsManager().info(sender, null,true);
-            return;
-        }
-        OddJob.getInstance().getGuildsManager().info(sender, args[1],false);
+        finder(sender, args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            for (String name: OddJob.getInstance().getGuildsManager().list()) {
-                if (args[1].isEmpty() || name.startsWith(args[1])) {
+        // List commands
+        for (SubCommand subCommand : subCommands) {
+            OddJob.getInstance().log(subCommand.toString());
+            String name = subCommand.getName();
+            if (args.length > depth()) {
+                if (name.equalsIgnoreCase(args[depth()])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+                if (args[depth()].isEmpty() || name.startsWith(args[depth()])) {
                     list.add(name);
                 }
             }
         }
+
         return list;
     }
 }

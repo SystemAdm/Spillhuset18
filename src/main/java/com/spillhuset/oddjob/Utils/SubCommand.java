@@ -67,7 +67,6 @@ public abstract class SubCommand {
             return false;
         }
         if (sender instanceof Player && (!sender.hasPermission(getPermission()) && !sender.isOp())) {
-
             if (response) MessageManager.errors_denied_players(getPlugin(), sender);
             return false;
         }
@@ -94,13 +93,19 @@ public abstract class SubCommand {
     }
 
     public void finder(CommandSender sender, String[] args) {
+        OddJob.getInstance().log("args: "+args.length +" depth: "+depth());
         if (args.length >= depth()) {
+            OddJob.getInstance().log("subs: "+subCommands.size());
             for (SubCommand subCommand : subCommands) {
+                OddJob.getInstance().log("sub: "+subCommand.getName()+" arg: "+args[depth()]);
                 if (args.length >= depth() && subCommand.getName().equalsIgnoreCase(args[depth()])) {
+                    OddJob.getInstance().log("hit");
                     if (subCommand.can(sender, false, true)) {
+                        OddJob.getInstance().log("perm");
                         subCommand.getCommandExecutor(sender, args);
                         return;
                     }
+                    OddJob.getInstance().log("!perm");
                 }
             }
         }
