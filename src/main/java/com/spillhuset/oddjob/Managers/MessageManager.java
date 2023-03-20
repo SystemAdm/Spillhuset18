@@ -831,4 +831,22 @@ public class MessageManager {
     public static void currency_subbed(CommandSender sender, Account account, double value) {
         success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from your " + cValue + account.name());
     }
+
+    public static void guilds_set_flow_water(CommandSender sender, Guild guild, boolean flow) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                info(Plugin.guilds, player, cPlayer+sender.getName()+cInfo+" changed guild settings "+cValue+"flow of water"+cInfo+" to "+cValue+flow);
+            }
+        }
+    }
+
+    public static void guilds_set_flow_lava(CommandSender sender, Guild guild, boolean flow) {
+        for (UUID uuid : guild.getMembers(guild.getUuid())) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                info(Plugin.guilds, player, cPlayer+sender.getName()+cInfo+" changed guild settings "+cValue+"flow of lava"+cInfo+" to "+cValue+flow);
+            }
+        }
+    }
 }

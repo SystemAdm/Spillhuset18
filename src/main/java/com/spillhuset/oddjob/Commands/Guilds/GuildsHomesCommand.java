@@ -7,7 +7,6 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.GuildInterface;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuildsHomesCommand extends SubCommand implements GuildInterface {
-    private final List<SubCommand> subCommands = new ArrayList<>();
 
     public GuildsHomesCommand() {
         subCommands.add(new GuildsHomesAddCommand());
@@ -98,11 +96,11 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
         if (!argsLength(sender, args.length)) {
             return;
         }
-        if (!hasGuild(sender,true)) {
+        if (!hasGuild(sender, true)) {
             return;
         }
 
-        if (args.length == 1) {
+        if (args.length == depth()) {
             Player player = (Player) sender;
             Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
             if (guild == null) {
@@ -110,19 +108,27 @@ public class GuildsHomesCommand extends SubCommand implements GuildInterface {
                 return;
             }
             List<String> homes = OddJob.getInstance().getHomesManager().getList(guild.getUuid());
-            MessageManager.guilds_homes_info(sender,guild,homes);
+            MessageManager.guilds_homes_info(sender, guild, homes);
             return;
         }
 
-        finder(sender,args);
+        finder(sender, args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
+        Player player = (Player) sender;
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) return new ArrayList<>();
+        for (String name : guild.listHomes()) {
+            if (args.length == depth() + 1 && (args[depth()].isEmpty() || name.toLowerCase().startsWith(args[depth()].toLowerCase()))) {
+                list.add(name);
+            }
+        }
         for (SubCommand subCommand : subCommands) {
             String name = subCommand.getName();
-            if (args.length == depth() + 1) {
+            if (args.length > depth()) {
                 if (name.equalsIgnoreCase(args[depth()])) {
                     return subCommand.getTabCompleter(sender, args);
                 }

@@ -133,7 +133,7 @@ public class Guild {
         return usedOutposts;
     }
 
-    public List<String> listHomes(UUID uuid) {
+    public List<String> listHomes() {
         return OddJob.getInstance().getHomesManager().getList(uuid);
     }
 

@@ -43,7 +43,7 @@ public class GuildsHomesAddCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "guilds.homes";
+        return "guilds";
     }
 
     @Override
@@ -97,7 +97,7 @@ public class GuildsHomesAddCommand extends SubCommand {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 3) list.add("[name]");
+        if (args.length == depth() + 1) list.add("[name]");
         return list;
     }
 }

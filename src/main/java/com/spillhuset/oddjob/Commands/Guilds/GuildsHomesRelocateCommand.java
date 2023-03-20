@@ -95,12 +95,13 @@ public class GuildsHomesRelocateCommand extends SubCommand {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (sender instanceof Player player && args.length == 3) {
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-            for (String name: guild.listHomes(guild.getUuid())) {
-                if (args[2].isEmpty() || name.startsWith(args[2])) {
-                    list.add(name);
-                }
+        Player player = (Player) sender;
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) return new ArrayList<>();
+        OddJob.getInstance().log("g" + guild.listHomes().size());
+        for (String name : guild.listHomes()) {
+            if (args.length > depth() && (args[depth()].isEmpty() || name.toLowerCase().startsWith(args[depth()].toLowerCase()))) {
+                list.add(name);
             }
         }
         return list;

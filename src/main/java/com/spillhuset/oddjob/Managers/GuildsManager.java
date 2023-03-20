@@ -661,14 +661,24 @@ public class GuildsManager extends Managers {
     public void setWaterFlow(CommandSender sender, String arg) {
         Player player = (Player) sender;
         Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(sender);
+            return;
+        }
         boolean flow = arg.equalsIgnoreCase("true");
         guild.setFlowWater(flow);
+        MessageManager.guilds_set_flow_water(sender,guild,flow);
     }
 
     public void setLavaFlow(CommandSender sender, String arg) {
         Player player = (Player) sender;
         Guild guild = getGuildByMember(player.getUniqueId());
+        if (guild == null) {
+            MessageManager.guilds_not_associated(sender);
+            return;
+        }
         boolean flow = arg.equalsIgnoreCase("true");
         guild.setFlowLava(flow);
+        MessageManager.guilds_set_flow_lava(sender,guild,flow);
     }
 }

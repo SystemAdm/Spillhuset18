@@ -95,12 +95,12 @@ public class GuildsHomesRenameCommand extends SubCommand {
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (sender instanceof Player player && args.length == 3) {
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-            for (String name: guild.listHomes(guild.getUuid())) {
-                if (args[2].isEmpty() || name.startsWith(args[2])) {
-                    list.add(name);
-                }
+        Player player = (Player) sender;
+        Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
+        if (guild == null) return new ArrayList<>();
+        for (String name : guild.listHomes()) {
+            if (args.length == depth() + 1 && (args[depth()].isEmpty() || name.toLowerCase().startsWith(args[depth()].toLowerCase()))) {
+                list.add(name);
             }
         }
         if (args.length == 4) list.add("<new_name>");

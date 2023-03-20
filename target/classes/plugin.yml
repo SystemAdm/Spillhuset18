@@ -50,6 +50,8 @@ commands:
   transfer:
   pay:
   balance:
+  trade:
+  professions:
 
 
 permissions:
