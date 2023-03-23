@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands.Shops;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
@@ -17,6 +18,7 @@ public class ShopsCommand extends SubCommandInterface implements CommandExecutor
         subCommands.add(new ShopsPriceCommand());
         subCommands.add(new ShopsBuyCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return false;
@@ -62,11 +64,14 @@ public class ShopsCommand extends SubCommandInterface implements CommandExecutor
         if (!can(sender, false, true)) {
             return true;
         }
-
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        finder(sender,args);
+        if (args[0].equalsIgnoreCase("common")) {
+            OddJob.getInstance().getShopsManager().commonShop(sender);
+            return true;
+        }
+        finder(sender, args);
         return true;
     }
 

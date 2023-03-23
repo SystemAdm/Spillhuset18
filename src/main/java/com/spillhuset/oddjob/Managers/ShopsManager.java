@@ -20,8 +20,35 @@ import java.util.UUID;
 
 public class ShopsManager {
 
-    private final HashMap<UUID, UUID> trades = new HashMap<UUID, UUID>();
+    private final HashMap<UUID, UUID> trades = new HashMap<>();
     private final HashMap<UUID, Integer> values = new HashMap<>();
+    private final Inventory common = Bukkit.createInventory(null, 27, "COMMONSHOP");
+
+    public ShopsManager() {
+        ItemStack is = new ItemStack(Material.DIRT, 1);
+        ItemMeta im = is.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add("Sold: " + PriceList.DIRT.getNormal() * 1.5);
+        lore.add("Bought: " + PriceList.DIRT.getNormal());
+        im.setLore(lore);
+        is.setItemMeta(im);
+        common.setItem(1, is);
+
+        is = new ItemStack(Material.STONE, 1);
+        im = is.getItemMeta();
+        lore.clear();
+        lore = new ArrayList<>();
+        lore.add("Sold: " + PriceList.STONE.getNormal() * 1.5);
+        lore.add("Bought: " + PriceList.STONE.getNormal());
+        im.setLore(lore);
+        is.setItemMeta(im);
+        common.setItem(2, is);
+    }
+
+    public void commonShop(CommandSender sender) {
+        Player player =(Player) sender;
+        player.openInventory(common);
+    }
 
     public void sell(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();

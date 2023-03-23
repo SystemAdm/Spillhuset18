@@ -61,7 +61,7 @@ public enum PriceList {
     DARK_PRISMARINE(0, 0, 0, null, -1, true, true, true,0),
     DEEPSLATE_BRICK(0, 0, 0, null, -1, false, true, true,0),
     DEEPSLATE_TILE(0, 0, 0, null, -1, false, true, true,0),
-    DIRT(100, 10, 1, null, -1, true, true, true,0),
+    DIRT(10, 1, 0.1, null, -1, true, true, true,0),
     DIRT_PATH(0, 0, 0, null, -1, false, true, true,0),
     DISPENSER(0, 0, 0, null, -1, false, true, true,0),
     DRIED_KELP(0, 0, 0, null, -1, true, true, true,0),
@@ -185,7 +185,8 @@ public enum PriceList {
     WET_SPONGE(0, 0, 0, null, -1, true, true, true,0),
     WOOD(0, 0, 0, null, -1, true, true, true,0),
     WOOL(0, 0, 0, null, -1, true, true, true,0),
-    WORKBENCH(0, 0, 0, null, -1, false, true, true,0);
+    WORKBENCH(0, 0, 0, null, -1, false, true, true,0),
+    STONE(10,1 ,0.1 , null,-1 ,true , true, true, 1);
     double maximum;
     double normal;
     double minimum;
