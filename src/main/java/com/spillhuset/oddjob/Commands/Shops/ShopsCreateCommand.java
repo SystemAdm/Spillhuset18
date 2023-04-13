@@ -4,17 +4,14 @@ import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class ShopsPriceCommand extends SubCommand {
+public class ShopsCreateCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
-        return false;
+        return true;
     }
 
     @Override
@@ -29,32 +26,32 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "price";
+        return "create";
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "";
     }
 
     @Override
     public String getSyntax() {
-        return null;
+        return "";
     }
 
     @Override
     public String getPermission() {
-        return "shops";
+        return "shops.admin";
     }
 
     @Override
     public int minArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -79,21 +76,15 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
+        OddJob.getInstance().log("create");
         if (!argsLength(sender, args.length)) {
             return;
         }
+        OddJob.getInstance().log("args ok");
         if (!can(sender, false, true)) {
             return;
         }
-        Player player = (Player) sender;
-        if (args.length == depth()) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType().equals(Material.AIR)) {
-                return;
-            }
-
-            OddJob.getInstance().getShopsManager().getPrice(player,item);
-        }
+        OddJob.getInstance().getShopsManager().create(sender,args[1]);
     }
 
     @Override

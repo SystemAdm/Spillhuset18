@@ -14,6 +14,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,6 +64,13 @@ public class MessageManager {
         sender.sendMessage(cInfo + title);
         for (int i = 0; i < list.size(); i++) {
             sender.sendMessage((i + 1) + ".) " + list.get(i));
+        }
+        sender.sendMessage(ChatColor.GRAY + "___________________________");
+    }
+    private static void listComponent(CommandSender sender, String title, List<TextComponent> list) {
+        sender.sendMessage(cInfo + title);
+        for (TextComponent textComponent : list) {
+            sender.spigot().sendMessage(textComponent);
         }
         sender.sendMessage(ChatColor.GRAY + "___________________________");
     }
@@ -702,16 +710,16 @@ public class MessageManager {
         info(Plugin.shops, sender, "One of " + cItem + item.getType().name() + cInfo + " can be bought for " + cValue + normal + cInfo + ", the whole stack of " + cValue + amount + cInfo + " can be bought for " + cValue + price + cInfo + ", next item can be bought for " + cValue + temp);
     }
 
-    public static void shops_not_sellable(CommandSender sender, ItemStack item) {
-        danger(Plugin.shops, sender, cInfo + item.getType().name() + cDanger + " is not sellable");
+    public static void shops_not_sellable(CommandSender sender, Material item) {
+        danger(Plugin.shops, sender, cInfo + item.name() + cDanger + " is not sellable");
     }
 
-    public static void shops_sold_info(CommandSender sender, @NotNull ItemStack item, double normal, int amount, double price, double temp) {
-        success(Plugin.shops, sender, "You have sold " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
+    public static void shops_sold_info(CommandSender sender, Material item, int amount, double price) {
+        success(Plugin.shops, sender, "You have sold " + cValue + amount + cSuccess + " " + cItem + item.name() + cSuccess + " for " + cValue + price);
     }
 
-    public static void shops_bought_info(CommandSender sender, @NotNull ItemStack item, double normal, int amount, double price, double temp) {
-        success(Plugin.shops, sender, "You have bought " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price + cSuccess + ", next item is sold for " + cValue + temp);
+    public static void shops_bought_info(CommandSender sender, @NotNull ItemStack item, int amount, double price) {
+        success(Plugin.shops, sender, "You have bought " + cValue + amount + cSuccess + " " + cItem + item.getType().name() + cSuccess + " for " + cValue + price);
     }
 
     public static void guilds_owned(CommandSender sender, String name) {
@@ -848,5 +856,26 @@ public class MessageManager {
                 info(Plugin.guilds, player, cPlayer+sender.getName()+cInfo+" changed guild settings "+cValue+"flow of lava"+cInfo+" to "+cValue+flow);
             }
         }
+    }
+
+    public static void shops_list(CommandSender sender, List<TextComponent> names) {
+        listComponent(sender,"Shops",names);
+    }
+
+
+    public static void shops_set_open(CommandSender sender, String name, boolean result) {
+        success(Plugin.shops,sender,"Set shop "+cValue+name+cSuccess+" to "+cValue+result);
+    }
+
+    public static void shops_inventory_full(CommandSender sender) {
+        danger(Plugin.shops,sender,ChatColor.BOLD+"Inventory is full!");
+    }
+
+    public static void shops_exists(CommandSender sender, String name) {
+        danger(Plugin.shops,sender,"Shop with name "+cValue+name+cDanger+" does already exist!");
+    }
+
+    public static void shops_created(CommandSender sender, String name) {
+        success(Plugin.shops,sender,"Shop with name "+cValue+name+cSuccess+" created!");
     }
 }

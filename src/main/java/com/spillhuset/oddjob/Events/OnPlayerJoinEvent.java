@@ -53,6 +53,6 @@ public class OnPlayerJoinEvent implements Listener {
         // Setup Scoreboard
         ScoreBoard scoreboard = pm.get(player.getUniqueId()).getScoreBoard();
         pm.setScoreboard(player,scoreboard);
-        OddJob.getInstance().logToFile(new Date().getTime()+" joined: "+player.getName());
+        OddJob.getInstance().logToFile(new Date().getTime()+" joined: "+player.getName(),"join_quit.txt");
     }
 }

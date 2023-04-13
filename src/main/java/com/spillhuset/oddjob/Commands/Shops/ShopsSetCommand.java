@@ -2,16 +2,16 @@ package com.spillhuset.oddjob.Commands.Shops;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ShopsPriceCommand extends SubCommand {
+public class ShopsSetCommand extends SubCommand {
+    public ShopsSetCommand(){
+        subCommands.add(new ShopsSetOpenCommand());
+    }
     @Override
     public boolean denyConsole() {
         return false;
@@ -29,7 +29,7 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "price";
+        return "set";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "shops";
+        return "shops.admin";
     }
 
     @Override
@@ -85,19 +85,24 @@ public class ShopsPriceCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-        Player player = (Player) sender;
-        if (args.length == depth()) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType().equals(Material.AIR)) {
-                return;
-            }
-
-            OddJob.getInstance().getShopsManager().getPrice(player,item);
-        }
+        finder(sender,args);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+
+        // List commands
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.can(sender, false, false)) {
+                if (args.length == 1 || (args.length == 2 && subCommand.getName().startsWith(args[1]))) {
+                    list.add(subCommand.getName());
+                } else if (subCommand.getName().equalsIgnoreCase(args[1])) {
+                    return subCommand.getTabCompleter(sender, args);
+                }
+            }
+        }
+
+        return list;
     }
 }

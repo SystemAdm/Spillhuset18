@@ -1,9 +1,11 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.spillhuset.oddjob.Enums.Account;
-import com.spillhuset.oddjob.Enums.PriceList;
+import com.spillhuset.oddjob.Enums.Price;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.SQL.ShopsSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
+import com.spillhuset.oddjob.Utils.Shop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,7 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,103 +25,184 @@ import java.util.UUID;
 
 public class ShopsManager {
 
+    private final double INDEX_SELL =1.01;
+    private final double INDEX_BUY = 0.09;
+    private final double DIFFERENCE = 1.3;
+
     private final HashMap<UUID, UUID> trades = new HashMap<>();
     private final HashMap<UUID, Integer> values = new HashMap<>();
-    private final Inventory common = Bukkit.createInventory(null, 27, "COMMONSHOP");
+    public HashMap<String, Shop> shops = new HashMap<>();
+    private final HashMap<String, Inventory> inventories = new HashMap<>();
+    public HashMap<String, Price> priceList = new HashMap<>();
+
 
     public ShopsManager() {
-        ItemStack is = new ItemStack(Material.DIRT, 1);
-        ItemMeta im = is.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        lore.add("Sold: " + PriceList.DIRT.getNormal() * 1.5);
-        lore.add("Bought: " + PriceList.DIRT.getNormal());
-        im.setLore(lore);
-        is.setItemMeta(im);
-        common.setItem(1, is);
-
-        is = new ItemStack(Material.STONE, 1);
-        im = is.getItemMeta();
-        lore.clear();
-        lore = new ArrayList<>();
-        lore.add("Sold: " + PriceList.STONE.getNormal() * 1.5);
-        lore.add("Bought: " + PriceList.STONE.getNormal());
-        im.setLore(lore);
-        is.setItemMeta(im);
-        common.setItem(2, is);
+        loadShops();
     }
 
-    public void commonShop(CommandSender sender) {
-        Player player =(Player) sender;
-        player.openInventory(common);
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    private ItemStack createItem(Price plu, int amount) {
+        if (!plu.isEnabled()) return new ItemStack(Material.AIR);
+        ItemStack is = new ItemStack(Material.valueOf(plu.getMaterial().name()), amount);
+        ItemMeta im = is.getItemMeta();
+        if (im == null) return new ItemStack(Material.AIR);
+        List<String> lore = new ArrayList<>();
+        if (plu.isSellAble()) {
+            lore.add("Left Click to Sell: " + ChatColor.GOLD + plu.getNormal() * amount);
+        } else lore.add("");
+        if (plu.isBuyAble()) {
+            lore.add("Right Click to Buy: " + ChatColor.GOLD + plu.getNormal() * DIFFERENCE * amount);
+        } else lore.add("");
+        OddJob.getInstance().log("buyable: "+plu.isBuyAble());
+        OddJob.getInstance().log("normal: "+plu.getNormal());
+        OddJob.getInstance().log("diff: "+DIFFERENCE);
+        OddJob.getInstance().log("new: "+plu.getNormal()*DIFFERENCE);
+        im.setLore(lore);
+        is.setItemMeta(im);
+        return is;
+    }
+
+    private void loadShops() {
+        priceList = ShopsSQL.loadPrices();
+        shops = ShopsSQL.load();
+        for (Shop shop : shops.values()) {
+            int i = 0;
+            Inventory inventory = (inventories.get(shop.getUuid()) != null) ? inventories.get(shop.getUuid()) : Bukkit.createInventory(null, 27, shop.getUuid() + " shop");
+            for (Price plu : priceList.values()) {
+                if (plu.getProfession() == null || (!shop.listProfessions().isEmpty() && !shop.listProfessions().contains(plu.getProfession().name()))) {
+                    continue;
+                }
+                boolean singel = plu.isSingel();
+                int stack = plu.getStack();
+                if (!singel) inventory.setItem(i++, createItem(plu, stack));
+                inventory.setItem(i++, createItem(plu, 1));
+            }
+            inventories.put(shop.getUuid(), inventory);
+        }
+    }
+
+    private void saveShops() {
+        ShopsSQL.save(shops);
+    }
+
+    public void commonShop(CommandSender sender, String arg) {
+        Player player = (Player) sender;
+        for (Shop shop : shops.values()) {
+            if (shop.getName().equalsIgnoreCase(arg)) {
+                player.openInventory(inventories.get(shop.getUuid()));
+                return;
+            }
+        }
     }
 
     public void sell(Player player) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        PriceList plu = null;
-        for (PriceList unit : PriceList.values()) {
-            if (unit.name().equalsIgnoreCase(item.getType().name())) {
+        sell(player, player.getInventory().getItemInMainHand().getType(), player.getInventory().getItemInMainHand().getAmount(), priceList.get(player.getInventory().getItemInMainHand().getType().name()).getNormal());
+    }
+
+    public void sell(Player player, Material type, int amount, double price) {
+        OddJob.getInstance().log("selling");
+        Price plu = null;
+        for (Price unit : priceList.values()) {
+            if (unit.getMaterial().name().equalsIgnoreCase(type.name())) {
                 plu = unit;
                 break;
             }
         }
         if (plu == null) {
-            OddJob.getInstance().log("wrong: " + item.getType().name());
+            OddJob.getInstance().log("wrong: " + type.name());
             return;
         }
+        OddJob.getInstance().log("priceList");
         if (!plu.isEnabled()) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, type);
             return;
         }
+        OddJob.getInstance().log("enabled");
         if (!plu.isSellAble() || plu.getNormal() == 0) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, type);
         } else {
-            int amount = item.getAmount();
-            double price = Math.round(plu.getNormal() * amount);
-            double temp = Math.round(Math.max(plu.getNormal() * 0.9, plu.getMinimum()));
-
-            OddJob.getInstance().getCurrencyManager().add(player, Account.bank, price);
-            player.getInventory().remove(item);
-            MessageManager.shops_sold_info(player, item, plu.getNormal(), amount, price, temp);
-            plu.setNormal(temp);
+            OddJob.getInstance().log("sellable");
+            // Finding value for next transaction
+            double temp = round(Math.max(plu.getNormal() * INDEX_SELL, plu.getMinimum()), 2);
+            // Calculating the price
+            price = price * amount;
+            OddJob.getInstance().log("min: " + temp);
+            // Creating item
+            ItemStack is = new ItemStack(type, amount);
+            // Does the player have the item
+            if (player.getInventory().contains(is)) {
+                // Making money transaction
+                OddJob.getInstance().getCurrencyManager().add(player, Account.bank, price);
+                // Finds the first item in players inventory
+                int i = player.getInventory().first(is);
+                // Removes the item from the player inventory
+                player.getInventory().setItem(i, null);
+                MessageManager.shops_sold_info(player, type, amount, price);
+                // Setting the new transaction value
+                plu.setNormal(temp);
+                // Updates shop
+                update();
+            }
         }
     }
 
+    public void update() {
+        loadShops();
+    }
+
     public void buy(Player player, ItemStack item) {
-        int amount = item.getAmount();
-        PriceList plu = null;
-        for (PriceList unit : PriceList.values()) {
-            if (unit.name().equalsIgnoreCase(item.getType().name())) {
+
+    }
+
+    public void buy(Player player, Material material, int amount, double price) {
+        Price plu = null;
+        for (Price unit : priceList.values()) {
+            if (unit.getMaterial().name().equalsIgnoreCase(material.name())) {
                 plu = unit;
                 break;
             }
         }
         if (plu == null) {
-            OddJob.getInstance().log("wrong: " + item.getType().name());
+            OddJob.getInstance().log("wrong: " + material.name());
             return;
         }
         // Is enabled
         if (!plu.isEnabled()) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, material);
             return;
         }
         // Is buy able
         if (!plu.isBuyAble() || plu.getNormal() == 0) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, material);
         } else {
-            double price = Math.round(plu.getNormal() * amount * 1.1);
-            double temp = Math.min(plu.getNormal() * 1.1, plu.getMaximum());
+            double temp = round(Math.min(plu.getNormal() * INDEX_BUY, plu.getMaximum()), 2);
 
-            OddJob.getInstance().getCurrencyManager().sub(player, Account.bank, price);
-            player.getInventory().addItem(item);
-            MessageManager.shops_bought_info(player, item, plu.getNormal(), amount, price, temp);
-            plu.setNormal(temp);
+            ItemStack is = new ItemStack(material, amount);
+            int i = player.getInventory().firstEmpty();
+            if (i >= 0) {
+                price = price * amount;
+                OddJob.getInstance().getCurrencyManager().sub(player, Account.bank, price);
+                player.getInventory().setItem(i, is);
+                MessageManager.shops_bought_info(player, is, amount, price);
+                plu.setNormal(temp);
+            } else {
+                player.closeInventory();
+                MessageManager.shops_inventory_full(player);
+            }
         }
     }
 
     public void getPrice(Player player, ItemStack item) {
-        PriceList plu = null;
-        for (PriceList unit : PriceList.values()) {
-            if (unit.name().equalsIgnoreCase(item.getType().name())) {
+        Price plu = null;
+        for (Price unit : priceList.values()) {
+            if (unit.getMaterial().name().equalsIgnoreCase(item.getType().name())) {
                 plu = unit;
                 break;
             }
@@ -126,11 +212,11 @@ public class ShopsManager {
             return;
         }
         if (!plu.isEnabled()) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, item.getType());
             return;
         }
         if (!plu.isSellAble() || plu.getNormal() == 0) {
-            MessageManager.shops_not_sellable(player, item);
+            MessageManager.shops_not_sellable(player, item.getType());
         } else {
             int amount = item.getAmount();
             double priceSell = Math.round(plu.getNormal() * amount);
@@ -226,7 +312,7 @@ public class ShopsManager {
         int i = values.get(uniqueId) != null ? values.get(uniqueId) : 0;
         ItemStack targetTotal = new ItemStack(Material.GOLD_INGOT);
         ItemMeta targetTotalMeta = targetTotal.getItemMeta();
-        targetTotalMeta.setDisplayName(ChatColor.GOLD + "" + i);
+        targetTotalMeta.setDisplayName(ChatColor.GOLD + String.valueOf(i));
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "Current value: " + ChatColor.GOLD + i);
         targetTotalMeta.setLore(lore);
@@ -251,5 +337,43 @@ public class ShopsManager {
         }
 
         return false;
+    }
+
+    public List<String> getNames() {
+        List<String> names = new ArrayList<>();
+        for (Shop shop : shops.values()) {
+            names.add(shop.getName());
+        }
+        return names;
+    }
+
+    public void create(CommandSender sender,String name) {
+        for (Shop shop : shops.values()) {
+            if (shop.getName().equalsIgnoreCase(name)) {
+                MessageManager.shops_exists(sender,name);
+                return;
+            }
+        }
+        String uuid = UUID.randomUUID().toString().split("-")[0];
+        Shop shop = new Shop(uuid, name);
+        shops.put(uuid, shop);
+
+        ShopsSQL.saveShop(shop);
+        MessageManager.shops_created(sender,name);
+    }
+
+    @Nullable
+    public Shop get(String uuid) {
+        return shops.get(uuid);
+    }
+
+
+    public void addItem(CommandSender sender, Material name) {
+        ShopsSQL.addItem(name);
+        loadShops();
+    }
+
+    public void save(Price price) {
+        ShopsSQL.savePrice(price);
     }
 }

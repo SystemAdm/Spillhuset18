@@ -211,10 +211,10 @@ public class OddJob extends JavaPlugin {
         return gameManager;
     }
 
-    public void logToFile(String message) {
+    public void logToFile(String message,String filename) {
         File dataFolder = getDataFolder();
         if (!dataFolder.exists()) dataFolder.mkdir();
-        File saveTo = new File(getDataFolder(), "data.txt");
+        File saveTo = new File(getDataFolder(), filename);
         if (!saveTo.exists()) {
             try {
                 saveTo.createNewFile();

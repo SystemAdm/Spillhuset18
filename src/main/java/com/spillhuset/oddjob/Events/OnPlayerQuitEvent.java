@@ -18,6 +18,6 @@ public class OnPlayerQuitEvent implements Listener {
 
         OddJob.getInstance().getPlayerManager().getScoreboard(player.getUniqueId());
         player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-        OddJob.getInstance().logToFile(new Date().getTime()+" quit: "+player.getName());
+        OddJob.getInstance().logToFile(new Date().getTime()+" quit: "+player.getName(),"join_quit.txt");
     }
 }

@@ -6,9 +6,10 @@ public enum Profession {
     MONSTER_HUNTER("Kill that bastard", "resources", "Killing mobs"),
     FISHER("And you call that a fish?", "fish", "Fishing"),
     FARMER("Wheat it", "vegetable", "Farming"),
-    BUTCHER("Mooooo", "meat", "Killing animals");
+    BUTCHER("Mooooo", "meat", "Killing animals"),
+    COMMON("Sup?","","");
 
-    private Profession(String description, String gain, String drop) {
+    Profession(String description, String gain, String drop) {
         this.description = description;
         this.gain = gain;
         this.drop = drop;

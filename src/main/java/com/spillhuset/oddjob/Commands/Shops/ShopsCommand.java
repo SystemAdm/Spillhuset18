@@ -8,15 +8,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.xml.sax.SAXNotSupportedException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShopsCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
     public ShopsCommand() {
+        subCommands.add(new ShopsCreateCommand());
+        subCommands.add(new ShopsListCommand());
+        subCommands.add(new ShopsInfoCommand());
+        subCommands.add(new ShopsSetCommand());
         subCommands.add(new ShopsSellCommand());
         subCommands.add(new ShopsPriceCommand());
         subCommands.add(new ShopsBuyCommand());
+        subCommands.add(new ShopsAddItemCommand());
+        subCommands.add(new ShopsSetItemCommand());
     }
 
     @Override
@@ -67,8 +74,8 @@ public class ShopsCommand extends SubCommandInterface implements CommandExecutor
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        if (args[0].equalsIgnoreCase("common")) {
-            OddJob.getInstance().getShopsManager().commonShop(sender);
+        if (args.length == 1) {
+            OddJob.getInstance().getShopsManager().commonShop(sender,args[0]);
             return true;
         }
         finder(sender, args);

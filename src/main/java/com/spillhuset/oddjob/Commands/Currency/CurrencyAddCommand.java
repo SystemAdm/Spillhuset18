@@ -54,7 +54,7 @@ public class CurrencyAddCommand extends SubCommand {
 
     @Override
     public int maxArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class CurrencyAddCommand extends SubCommand {
             list.addAll(finderAccount(args[1]));
             if (can(sender, true, false)) {
                 for (OddPlayer odd : OddJob.getInstance().getPlayerManager().getAll()) {
-                    if (args[1].isEmpty() || odd.getName().startsWith(args[1])) {
+                    if (args[1].isEmpty() || odd.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
                         list.add(odd.getName());
                     }
                 }

@@ -6,12 +6,10 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class ShopsPriceCommand extends SubCommand {
+public class ShopsAddItemCommand extends SubCommand {
     @Override
     public boolean denyConsole() {
         return false;
@@ -29,7 +27,7 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "price";
+        return "additem";
     }
 
     @Override
@@ -49,12 +47,12 @@ public class ShopsPriceCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -85,15 +83,18 @@ public class ShopsPriceCommand extends SubCommand {
         if (!can(sender, false, true)) {
             return;
         }
-        Player player = (Player) sender;
-        if (args.length == depth()) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType().equals(Material.AIR)) {
-                return;
-            }
 
-            OddJob.getInstance().getShopsManager().getPrice(player,item);
+        Material material = null;
+        try {
+            material = Material.valueOf(args[1]);
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            ex.printStackTrace();
         }
+        if (material == null) {
+            sender.sendMessage("error");
+            return;
+        }
+        OddJob.getInstance().getShopsManager().addItem(sender, material);
     }
 
     @Override
