@@ -128,13 +128,13 @@ public class ShopsInfoCommand extends SubCommand {
         if (shop.isOpen()) {
             extra.setColor(ChatColor.GREEN);
             extra.setText("true");
-            extra.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to close").create()));
-            extra.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/shops set open " + shop.getUuid().toString() + " false"));
+            extra.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to close")));
+            extra.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/shops set open " + shop.getUuid() + " false"));
         } else {
             extra.setColor(ChatColor.RED);
             extra.setText("false");
             extra.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to open")));
-            extra.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/shops set open " + shop.getUuid().toString() + " true"));
+            extra.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/shops set open " + shop.getUuid() + " true"));
         }
         message.addExtra(extra);
         sender.spigot().sendMessage(message);
@@ -164,7 +164,7 @@ public class ShopsInfoCommand extends SubCommand {
         List<String> list = new ArrayList<>();
         for (Shop shop : OddJob.getInstance().getShopsManager().shops.values()) {
             if (args[1].isEmpty() || shop.getName().startsWith(args[1]))
-                list.add(shop.getUuid().toString() + " " + shop.getName());
+                list.add(shop.getUuid() + " " + shop.getName());
         }
         return list;
     }

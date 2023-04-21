@@ -58,7 +58,7 @@ public class Tool {
                 if (itemMeta.hasEnchants()) {
                     JsonArray enchants = new JsonArray();
                     itemMeta.getEnchants().forEach((enchantment, integer) -> {
-                        enchants.add(new JsonPrimitive(enchantment.getName() + ":" + integer));
+                        enchants.add(new JsonPrimitive(enchantment.getKey().getNamespace() + ":" + integer));
                     });
                     metaJson.add("enchants", enchants);
                 }
@@ -70,7 +70,7 @@ public class Tool {
                 if (itemMeta instanceof SkullMeta skullMeta) {
                     if (skullMeta.hasOwner()) {
                         JsonObject extraMeta = new JsonObject();
-                        extraMeta.addProperty("owner", skullMeta.getOwner());
+                        extraMeta.addProperty("owner", (skullMeta.getOwningPlayer() != null)?skullMeta.getOwningPlayer().getName():null);
                         metaJson.add("extra-meta", extraMeta);
                     }
                 } else if (itemMeta instanceof BannerMeta bannerMeta) {
@@ -92,7 +92,7 @@ public class Tool {
                         JsonObject extraMeta = new JsonObject();
                         JsonArray storedEnchants = new JsonArray();
                         enchantmentStorageMeta.getStoredEnchants().forEach((enchantment, integer) -> {
-                            storedEnchants.add(new JsonPrimitive(enchantment.getName() + ":" + integer));
+                            storedEnchants.add(new JsonPrimitive(enchantment.getKey().getNamespace() + ":" + integer));
                         });
                         extraMeta.add("stored-enchants", storedEnchants);
                         metaJson.add("extra-meta", extraMeta);

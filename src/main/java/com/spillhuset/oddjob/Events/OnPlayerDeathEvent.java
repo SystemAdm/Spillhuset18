@@ -19,6 +19,7 @@ public class OnPlayerDeathEvent implements Listener {
         Player player = event.getEntity();
         Location location = player.getLocation();
 
+        // GameMode Inventory Save On Death
         if(player.hasPermission("gmi.sod")) {
             OddJob.getInstance().getInventoryHandler().saveOnDeath(player);
             event.getDrops().clear();
@@ -39,6 +40,7 @@ public class OnPlayerDeathEvent implements Listener {
                         inventory.setItem(i,player.getInventory().getItem(i));
                     }
                 }
+                player.getInventory().clear();
                 OddJob.getInstance().getPlayerManager().setSpirit(player,armorStand,inventory);
             }
         }
