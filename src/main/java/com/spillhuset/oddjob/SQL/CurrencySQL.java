@@ -32,11 +32,15 @@ public class CurrencySQL extends MySQLManager {
     public static void subBank(UUID player, double value) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = `bank` - ? WHERE `uuid` = ?");
-            preparedStatement.setDouble(1, value);
-            preparedStatement.setString(2, player.toString());
-            preparedStatement.executeUpdate();
-
+            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, player.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = ? WHERE `uuid` = ?");
+                preparedStatement.setDouble(1, resultSet.getDouble("bank") - value);
+                preparedStatement.setString(2, player.toString());
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -69,10 +73,15 @@ public class CurrencySQL extends MySQLManager {
     public static void subPocket(UUID player, double value) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = `pocket` - ? WHERE `uuid` = ?");
-            preparedStatement.setDouble(1, value);
-            preparedStatement.setString(2, player.toString());
-            preparedStatement.executeUpdate();
+            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, player.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = ? WHERE `uuid` = ?");
+                preparedStatement.setDouble(1, resultSet.getDouble("pocket") - value);
+                preparedStatement.setString(2, player.toString());
+                preparedStatement.executeUpdate();
+            }
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -120,17 +129,18 @@ public class CurrencySQL extends MySQLManager {
     public static void addBank(UUID uuid, double value) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = `bank` + ? WHERE `uuid` = ?");
-            preparedStatement.setDouble(1, value);
-            preparedStatement.setString(2, uuid.toString());
-            int affected = preparedStatement.executeUpdate();
-            preparedStatement.close();
-            if (affected == 0) {
+            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = ? WHERE `uuid` = ?");
+                preparedStatement.setDouble(1, resultSet.getDouble("bank") + value);
+            } else {
                 preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`bank`,`uuid`) VALUES (?,?)");
                 preparedStatement.setDouble(1, value);
-                preparedStatement.setString(2, uuid.toString());
-                preparedStatement.executeUpdate();
             }
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -141,17 +151,18 @@ public class CurrencySQL extends MySQLManager {
     public static void addPocket(UUID uuid, double value) {
         try {
             connect();
-            preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = `pocket` + ? WHERE `uuid` = ?");
-            preparedStatement.setDouble(1, value);
-            preparedStatement.setString(2, uuid.toString());
-            int affected = preparedStatement.executeUpdate();
-            preparedStatement.close();
-            if (affected == 0) {
+            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement.setString(1, uuid.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = ? WHERE `uuid` = ?");
+                preparedStatement.setDouble(1, resultSet.getDouble("pocket") + value);
+            } else {
                 preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`pocket`,`uuid`) VALUES (?,?)");
                 preparedStatement.setDouble(1, value);
-                preparedStatement.setString(2, uuid.toString());
-                preparedStatement.executeUpdate();
             }
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {

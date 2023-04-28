@@ -130,7 +130,7 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
             MessageManager.currency_invalid_account(sender, args[1]);
             return true;
         }
-        OddJob.getInstance().log(args[1]);
+        OddJob.getInstance().log(accountSender.name()+" "+value);
         OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, player.getUniqueId(), accountReciever, uuidTarget, value);
 
         return true;

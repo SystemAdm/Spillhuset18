@@ -141,12 +141,14 @@ public class CurrencyManager {
                 MessageManager.insufficient_funds(sender);
                 return true;
             }
+            OddJob.getInstance().log("from pocket");
             CurrencySQL.subPocket(fromUUID, value);
         } else {
             if (!CurrencySQL.hasBank(fromUUID, value)) {
                 MessageManager.insufficient_funds(sender);
                 return true;
             }
+            OddJob.getInstance().log("from bank");
             CurrencySQL.subBank(fromUUID, value);
         }
         OddJob.getInstance().log("transfer");
@@ -154,16 +156,19 @@ public class CurrencyManager {
             case guild -> {
                 receiver_guild = true;
                 receiver_name = OddJob.getInstance().getGuildsManager().getGuilds().get(toUUID).getName();
+                OddJob.getInstance().log("to guild");
                 CurrencySQL.addBank(toUUID, value);
             }
             case bank -> {
                 receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
                 toUUID = ((Player) sender).getUniqueId();
                 CurrencySQL.addBank(toUUID, value);
+                OddJob.getInstance().log("to bank");
             }
             case pocket -> {
                 receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
                 CurrencySQL.addPocket(toUUID, value);
+                OddJob.getInstance().log("to pocket");
             }
         }
         MessageManager.currency_transferred(sender, fromAccount.name(), sender_name, sender_guild, toAccount.name(), receiver_name, receiver_guild, value);
