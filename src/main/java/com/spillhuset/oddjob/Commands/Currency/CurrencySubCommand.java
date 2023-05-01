@@ -46,7 +46,7 @@ public class CurrencySubCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "currency.sub";
+        return "currency.admin";
     }
 
     @Override

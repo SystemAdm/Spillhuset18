@@ -1,7 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plu;
-import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.TeleportType;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.HomesSQL;
@@ -31,12 +31,12 @@ public class HomesManager {
 
         double price = (bought * plu.getValue()) * plu.getMultiplier();
 
-        if (!OddJob.getInstance().getCurrencyManager().checkBank(player.getUniqueId(), price)) {
+        if (!OddJob.getInstance().getCurrencyManager().has(player.getUniqueId(), Account.bank, price)) {
             MessageManager.homes_cant_afford(player);
             return;
         }
 
-        OddJob.getInstance().getCurrencyManager().subBank(player.getUniqueId(), price);
+        OddJob.getInstance().getCurrencyManager().sub(player, player.getUniqueId(), Account.bank, price);
         OddJob.getInstance().getPlayerManager().incBoughtHomes(player.getUniqueId());
     }
 
@@ -46,8 +46,8 @@ public class HomesManager {
             int x = location.getChunk().getX();
             int z = location.getChunk().getZ();
 
-            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x,z,world) != null) {
-                MessageManager.homes_inside(sender,name);
+            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x, z, world) != null) {
+                MessageManager.homes_inside(sender, name);
                 return;
             }
         }
@@ -101,8 +101,8 @@ public class HomesManager {
             int x = location.getChunk().getX();
             int z = location.getChunk().getZ();
 
-            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x,z,world) != null) {
-                MessageManager.homes_inside(sender,name);
+            if (OddJob.getInstance().getGuildsManager().getGuildByCords(x, z, world) != null) {
+                MessageManager.homes_inside(sender, name);
                 return;
             }
         }
@@ -137,11 +137,11 @@ public class HomesManager {
         if (ConfigManager.getBoolean("plugin.currency")) {
             CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
             double price = Plu.PLAYER_HOMES_TELEPORT.getValue();
-            if (!currencyManager.checkPocket(destinationPlayer.getUuid(), price)) {
+            if (currencyManager.has(destinationPlayer.getUuid(), Account.pocket, price)) {
                 MessageManager.insufficient_funds(sender);
                 return;
             }
-            currencyManager.subPocket(destinationPlayer.getUuid(), price);
+            currencyManager.sub(sender, destinationPlayer.getUuid(), Account.pocket, price);
 
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {
@@ -164,42 +164,42 @@ public class HomesManager {
     }
 
     public void delGuild(Player player, Guild guild, String home) {
-        HomesSQL.delete(guild.getUuid(),home);
-        MessageManager.guilds_homes_deleted(player,home);
+        HomesSQL.delete(guild.getUuid(), home);
+        MessageManager.guilds_homes_deleted(player, home);
     }
 
     public void changeGuild(Player player, Guild guild, String home) {
-        HomesSQL.change(guild.getUuid(),home,player.getLocation());
-        MessageManager.guilds_homes_relocated(player,home);
+        HomesSQL.change(guild.getUuid(), home, player.getLocation());
+        MessageManager.guilds_homes_relocated(player, home);
     }
 
     public void renameGuild(Player player, Guild guild, String oldName, String newName) {
         if (HomesSQL.get(guild.getUuid(), oldName) == null) {
-            MessageManager.guilds_homes_not_exists(player,oldName);
+            MessageManager.guilds_homes_not_exists(player, oldName);
             return;
         }
         if (HomesSQL.get(guild.getUuid(), newName) != null) {
-            MessageManager.guilds_homes_exists(player,oldName);
+            MessageManager.guilds_homes_exists(player, oldName);
             return;
         }
-        HomesSQL.rename(guild.getUuid(),oldName,newName);
-        MessageManager.guilds_homes_renamed(player,oldName,newName);
+        HomesSQL.rename(guild.getUuid(), oldName, newName);
+        MessageManager.guilds_homes_renamed(player, oldName, newName);
     }
 
     public void teleportGuild(Player player, Guild guild, String home) {
         if (HomesSQL.get(guild.getUuid(), home) == null) {
-            MessageManager.guilds_homes_not_exists(player,home);
+            MessageManager.guilds_homes_not_exists(player, home);
             return;
         }
         Location location = HomesSQL.get(guild.getUuid(), home);
         if (ConfigManager.getBoolean("plugin.currency")) {
             CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
             double price = Plu.GUILDS_HOMES_TELEPORT.getValue();
-            if (!currencyManager.checkPocket(player.getUniqueId(), price)) {
+            if (currencyManager.has(player.getUniqueId(), Account.pocket, price)) {
                 MessageManager.insufficient_funds(player);
                 return;
             }
-            currencyManager.subPocket(player.getUniqueId(), price);
+            currencyManager.sub(player, player.getUniqueId(), Account.pocket, price);
 
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {

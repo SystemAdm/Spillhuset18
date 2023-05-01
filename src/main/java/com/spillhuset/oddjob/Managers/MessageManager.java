@@ -67,6 +67,7 @@ public class MessageManager {
         }
         sender.sendMessage(ChatColor.GRAY + "___________________________");
     }
+
     private static void listComponent(CommandSender sender, String title, List<TextComponent> list) {
         sender.sendMessage(cInfo + title);
         for (TextComponent textComponent : list) {
@@ -817,11 +818,15 @@ public class MessageManager {
         player.spigot().sendMessage(accept);
     }
 
-    public static void currency_added(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+    public static void currency_added(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value, double newValue) {
         success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
 
-    public static void currency_subbed(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+    public static void currency_set(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        success(Plugin.currency, sender, "Successfully set " + cValue + value + cSuccess + " to " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
+    }
+
+    public static void currency_subbed(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value, double newValue) {
         success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
 
@@ -832,11 +837,11 @@ public class MessageManager {
         }
     }
 
-    public static void currency_added(CommandSender sender, Account account, double value) {
+    public static void currency_added(CommandSender sender, Account account, double value, double newValue) {
         success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to your " + cValue + account.name());
     }
 
-    public static void currency_subbed(CommandSender sender, Account account, double value) {
+    public static void currency_subbed(CommandSender sender, Account account, double value, double newValue) {
         success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from your " + cValue + account.name());
     }
 
@@ -844,7 +849,7 @@ public class MessageManager {
         for (UUID uuid : guild.getMembers(guild.getUuid())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                info(Plugin.guilds, player, cPlayer+sender.getName()+cInfo+" changed guild settings "+cValue+"flow of water"+cInfo+" to "+cValue+flow);
+                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cValue + "flow of water" + cInfo + " to " + cValue + flow);
             }
         }
     }
@@ -853,29 +858,29 @@ public class MessageManager {
         for (UUID uuid : guild.getMembers(guild.getUuid())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                info(Plugin.guilds, player, cPlayer+sender.getName()+cInfo+" changed guild settings "+cValue+"flow of lava"+cInfo+" to "+cValue+flow);
+                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cValue + "flow of lava" + cInfo + " to " + cValue + flow);
             }
         }
     }
 
     public static void shops_list(CommandSender sender, List<TextComponent> names) {
-        listComponent(sender,"Shops",names);
+        listComponent(sender, "Shops", names);
     }
 
 
     public static void shops_set_open(CommandSender sender, String name, boolean result) {
-        success(Plugin.shops,sender,"Set shop "+cValue+name+cSuccess+" to "+cValue+result);
+        success(Plugin.shops, sender, "Set shop " + cValue + name + cSuccess + " to " + cValue + result);
     }
 
     public static void shops_inventory_full(CommandSender sender) {
-        danger(Plugin.shops,sender,ChatColor.BOLD+"Inventory is full!");
+        danger(Plugin.shops, sender, ChatColor.BOLD + "Inventory is full!");
     }
 
     public static void shops_exists(CommandSender sender, String name) {
-        danger(Plugin.shops,sender,"Shop with name "+cValue+name+cDanger+" does already exist!");
+        danger(Plugin.shops, sender, "Shop with name " + cValue + name + cDanger + " does already exist!");
     }
 
     public static void shops_created(CommandSender sender, String name) {
-        success(Plugin.shops,sender,"Shop with name "+cValue+name+cSuccess+" created!");
+        success(Plugin.shops, sender, "Shop with name " + cValue + name + cSuccess + " created!");
     }
 }

@@ -4,6 +4,7 @@ import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -61,11 +62,10 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         ///pay <player> <value>
 
-        UUID target;
+        OddPlayer target;
         double value;
-        Player player = (Player) sender;
 
-        target = OddJob.getInstance().getPlayerManager().get(args[0]).getUuid();
+        target = OddJob.getInstance().getPlayerManager().get(args[0]);
         if (target == null) {
             MessageManager.errors_find_player(getPlugin(), args[0], sender);
             return true;
@@ -78,7 +78,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
             return true;
         }
 
-        OddJob.getInstance().getCurrencyManager().pay(sender, args[0],target, value);
+        OddJob.getInstance().getCurrencyManager().pay(sender,target, value);
 
         return true;
     }

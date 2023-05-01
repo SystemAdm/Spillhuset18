@@ -4,7 +4,7 @@ import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.Guild;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class TransferCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
     @Override
@@ -66,9 +65,10 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
 
         Account accountSender;
         Account accountReciever;
-        UUID uuidTarget;
         double value;
         Player player = (Player) sender;
+        OddPlayer from = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
+        OddPlayer to = null;
 
         List<String> accounts = new ArrayList<>();
         for (Account account : Account.values()) {
@@ -85,8 +85,8 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
         if (args[1].equalsIgnoreCase("player")) {
             OddJob.getInstance().log("player");
             // Get the player
-            uuidTarget = OddJob.getInstance().getPlayerManager().get(args[2]).getUuid();
-            if (uuidTarget == null) {
+            to = OddJob.getInstance().getPlayerManager().get(args[2]);
+            if (to == null) {
                 MessageManager.errors_find_player(getPlugin(), args[2], sender);
                 return true;
             }
@@ -94,44 +94,27 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
-                MessageManager.errors_number(getPlugin(),args[3],sender);
+                MessageManager.errors_number(getPlugin(), args[3], sender);
                 return true;
             }
             accountReciever = Account.bank;
-        } else if (args[1].equalsIgnoreCase("guild")) {
-            OddJob.getInstance().log("guild");
-            // Get guild
-            Guild guild = OddJob.getInstance().getGuildsManager().getGuildByMember(player.getUniqueId());
-            if (guild == null) {
-                MessageManager.guilds_not_associated(sender);
-                return true;
-            }
-            uuidTarget = guild.getUuid();
-            // Resolve value
-            try {
-                value = Double.parseDouble(args[2]);
-            } catch (NumberFormatException e) {
-                MessageManager.errors_number(getPlugin(),args[2],sender);
-                return true;
-            }
-            accountReciever = Account.guild;
         } else if (accounts.contains(args[1])) {
             OddJob.getInstance().log("other");
             accountReciever = Account.valueOf(args[1]);
-            uuidTarget = player.getUniqueId();
+            to = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             // Resolve value
             try {
                 value = Double.parseDouble(args[2]);
             } catch (NumberFormatException e) {
-                MessageManager.errors_number(getPlugin(),args[2],sender);
+                MessageManager.errors_number(getPlugin(), args[2], sender);
                 return true;
             }
         } else {
             MessageManager.currency_invalid_account(sender, args[1]);
             return true;
         }
-        OddJob.getInstance().log(accountSender.name()+" "+value);
-        OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, player.getUniqueId(), accountReciever, uuidTarget, value);
+        OddJob.getInstance().log(accountSender.name() + " " + value);
+        OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, from, accountReciever, to, value);
 
         return true;
     }

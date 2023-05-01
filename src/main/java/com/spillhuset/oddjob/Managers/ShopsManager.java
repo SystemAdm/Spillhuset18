@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class ShopsManager {
 
-    private final double INDEX_SELL =1.01;
+    private final double INDEX_SELL = 1.01;
     private final double INDEX_BUY = 0.09;
     private final double DIFFERENCE = 1.3;
 
@@ -60,10 +60,10 @@ public class ShopsManager {
         if (plu.isBuyAble()) {
             lore.add("Right Click to Buy: " + ChatColor.GOLD + plu.getNormal() * DIFFERENCE * amount);
         } else lore.add("");
-        OddJob.getInstance().log("buyable: "+plu.isBuyAble());
-        OddJob.getInstance().log("normal: "+plu.getNormal());
-        OddJob.getInstance().log("diff: "+DIFFERENCE);
-        OddJob.getInstance().log("new: "+plu.getNormal()*DIFFERENCE);
+        OddJob.getInstance().log("buyable: " + plu.isBuyAble());
+        OddJob.getInstance().log("normal: " + plu.getNormal());
+        OddJob.getInstance().log("diff: " + DIFFERENCE);
+        OddJob.getInstance().log("new: " + plu.getNormal() * DIFFERENCE);
         im.setLore(lore);
         is.setItemMeta(im);
         return is;
@@ -347,10 +347,10 @@ public class ShopsManager {
         return names;
     }
 
-    public void create(CommandSender sender,String name) {
+    public void create(CommandSender sender, String name) {
         for (Shop shop : shops.values()) {
             if (shop.getName().equalsIgnoreCase(name)) {
-                MessageManager.shops_exists(sender,name);
+                MessageManager.shops_exists(sender, name);
                 return;
             }
         }
@@ -359,7 +359,7 @@ public class ShopsManager {
         shops.put(uuid, shop);
 
         ShopsSQL.saveShop(shop);
-        MessageManager.shops_created(sender,name);
+        MessageManager.shops_created(sender, name);
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Managers;
 
 import com.sk89q.worldedit.regions.Region;
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.TeleportType;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.WarpSQL;
@@ -15,8 +16,9 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class WarpsManager {
+    private final Account affected = Account.pocket;
     private final HashMap<UUID, Warp> warps;
-    private HashMap<Location, Portal> portals = new HashMap<Location, Portal>();
+    private final HashMap<Location, Portal> portals;
 
     public WarpsManager() {
         warps = load();
@@ -59,12 +61,12 @@ public class WarpsManager {
     public void teleport(Player player, String name, String passwd) {
         Warp warp = get(name);
         if (ConfigManager.getBoolean("plugin.currency") && warp.hasCost()) {
-            if (!OddJob.getInstance().getCurrencyManager().checkPocket(player.getUniqueId(), warp.getCost())) {
+            if (OddJob.getInstance().getCurrencyManager().has(player.getUniqueId(), affected, warp.getCost())) {
                 MessageManager.warps_cant_afford(player, name, warp.getCost());
                 return;
             }
             MessageManager.warps_withdraw(player, warp.getCost());
-            OddJob.getInstance().getCurrencyManager().subPocket(player.getUniqueId(), warp.getCost());
+            OddJob.getInstance().getCurrencyManager().sub(player, player.getUniqueId(), affected, warp.getCost());
         }
         if (warp.isProtected() && !warp.matchPwd(passwd)) {
             MessageManager.warps_protected(player, name);
@@ -139,7 +141,7 @@ public class WarpsManager {
         int yMax = region.getMaximumPoint().getBlockY();
         int yMin = region.getMinimumPoint().getBlockY();
 
-        Portal portal = new Portal(name,warpUUID);
+        Portal portal = new Portal(name, warpUUID);
 
         for (int x = xMin; x <= xMax; x++) {
             for (int z = zMin; z <= zMax; z++) {
@@ -150,8 +152,8 @@ public class WarpsManager {
                     if (block.getType().equals(Material.AIR)) {
                         block.setType(frame, false);
                     }
-                    portals.put(location,portal);
-                    WarpSQL.savePortal(location,portal);
+                    portals.put(location, portal);
+                    WarpSQL.savePortal(location, portal);
                 }
             }
         }
@@ -168,7 +170,7 @@ public class WarpsManager {
 
     public Portal getPortal(Location location) {
         for (Location portal : portals.keySet()) {
-            if (location.getBlockX() == portal.getBlockX() &&location.getBlockY() == portal.getBlockY() &&location.getBlockZ() == portal.getBlockZ()&& location.getWorld().getUID().equals(portal.getWorld().getUID())) {
+            if (location.getBlockX() == portal.getBlockX() && location.getBlockY() == portal.getBlockY() && location.getBlockZ() == portal.getBlockZ() && location.getWorld().getUID().equals(portal.getWorld().getUID())) {
                 return portals.get(portal);
             }
         }

@@ -46,7 +46,7 @@ public class CurrencySetCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "currency.set";
+        return "currency.admin";
     }
 
     @Override
@@ -89,6 +89,7 @@ public class CurrencySetCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
+
         /*            0       1            2       3    */
         /* /currency set <bank|pocket> <player> <value> */
         /* /currency set <bank|pocket> <value>          */
@@ -96,6 +97,7 @@ public class CurrencySetCommand extends SubCommand {
         Account account = null;
         double value = 0.0;
 
+        // Find Account
         for (Account acc : Account.values()) {
             if (acc.name().equalsIgnoreCase(args[1])) {
                 account = acc;
@@ -103,12 +105,14 @@ public class CurrencySetCommand extends SubCommand {
         }
 
         if (args.length == 4) {
+            // Find target
             OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(args[2]);
             if (oddPlayer == null) {
                 MessageManager.errors_find_player(getPlugin(), args[2], sender);
                 return;
             }
             target = oddPlayer;
+            // Check value
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
@@ -117,13 +121,17 @@ public class CurrencySetCommand extends SubCommand {
         }
         if (args.length == 3 && sender instanceof Player player) {
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
+            // Check value
             try {
                 value = Double.parseDouble(args[2]);
             } catch (NumberFormatException e) {
                 MessageManager.errors_number(getPlugin(), args[2], sender);
             }
         }
-        OddJob.getInstance().getCurrencyManager().add(sender, target, account, value);
+        if (account == null) {
+            return;
+        }
+        OddJob.getInstance().getCurrencyManager().set(sender, target, account, value);
     }
 
     @Override

@@ -73,135 +73,95 @@ public class CurrencyManager {
         earnings.clear();
     }
 
-
-    public boolean checkBank(UUID player, double price) {
-        return CurrencySQL.hasBank(player, price);
-    }
-
-    public void subBank(UUID player, double price) {
-        CurrencySQL.subBank(player, price);
-    }
-
     public void add(CommandSender sender, Account account, double value) {
         Player player = (Player) sender;
-        if (account.equals(Account.pocket)) {
-            CurrencySQL.addPocket(player.getUniqueId(), value);
-        } else {
-            CurrencySQL.addBank(player.getUniqueId(), value);
-        }
-        MessageManager.currency_added(sender, account, value);
+        double current = CurrencySQL.get(player.getUniqueId(), Account.bank);
+        double newValue = current + value;
+        CurrencySQL.set(player.getUniqueId(), Account.bank, newValue);
+        MessageManager.currency_added(sender, account, value, newValue);
     }
 
-    public void add(CommandSender sender, OddPlayer oddPlayer, @NotNull Account account, double value) {
-        if (account.equals(Account.pocket)) {
-            CurrencySQL.addPocket(oddPlayer.getUuid(), value);
-        } else {
-            CurrencySQL.addBank(oddPlayer.getUuid(), value);
-        }
+    public void add(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        double current = CurrencySQL.get(oddPlayer.getUuid(), Account.bank);
+        double newValue = current + value;
+        CurrencySQL.set(oddPlayer.getUuid(), Account.bank, newValue);
         if (sender != null) {
-            MessageManager.currency_added(sender, oddPlayer, account, value);
+            MessageManager.currency_added(sender, oddPlayer, account, value, newValue);
         } else {
             MessageManager.currency_payday(oddPlayer, value);
         }
     }
 
     public void showPlayer(Player player) {
-        MessageManager.currency_holding(player, CurrencySQL.getPocket(player.getUniqueId()), CurrencySQL.getBank(player.getUniqueId()));
+        MessageManager.currency_holding(player, CurrencySQL.get(player.getUniqueId(), Account.pocket), CurrencySQL.get(player.getUniqueId(), Account.bank));
     }
 
     public void sub(CommandSender sender, Account account, double value) {
         Player player = (Player) sender;
-        if (account.equals(Account.pocket)) {
-            CurrencySQL.subPocket(player.getUniqueId(), value);
-        } else {
-            CurrencySQL.subBank(player.getUniqueId(), value);
-        }
-        MessageManager.currency_subbed(sender, account, value);
+        double current = CurrencySQL.get(player.getUniqueId(), account);
+        double newValue = current - value;
+        CurrencySQL.set(player.getUniqueId(), account, newValue);
+        MessageManager.currency_subbed(sender, account, value, newValue);
     }
 
-    public void sub(CommandSender sender, OddPlayer oddPlayer, @NotNull Account account, double value) {
-        if (account.equals(Account.pocket)) {
-            CurrencySQL.subPocket(oddPlayer.getUuid(), value);
-        } else {
-            CurrencySQL.subBank(oddPlayer.getUuid(), value);
-        }
+    public void sub(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        double current = CurrencySQL.get(oddPlayer.getUuid(), account);
+        double newValue = current - value;
+        CurrencySQL.set(oddPlayer.getUuid(), account, newValue);
         if (sender != null) {
-            MessageManager.currency_subbed(sender, oddPlayer, account, value);
+            MessageManager.currency_subbed(sender, oddPlayer, account, value, newValue);
         }
     }
 
-    public boolean transfer(CommandSender sender, Account fromAccount, UUID fromUUID, Account toAccount, UUID toUUID, double value) {
+    public void transfer(CommandSender sender, Account fromAccount, OddPlayer fromPlayer, Account toAccount, OddPlayer toPlayer, double value) {
         boolean sender_guild = false;
         boolean receiver_guild = false;
         String sender_name = "";
-        String receiver_name = "";
+        String receiver_name;
 
-        if (fromAccount == Account.pocket) {
-            if (!CurrencySQL.hasPocket(fromUUID, value)) {
-                MessageManager.insufficient_funds(sender);
-                return true;
-            }
-            OddJob.getInstance().log("from pocket");
-            CurrencySQL.subPocket(fromUUID, value);
-        } else {
-            if (!CurrencySQL.hasBank(fromUUID, value)) {
-                MessageManager.insufficient_funds(sender);
-                return true;
-            }
-            OddJob.getInstance().log("from bank");
-            CurrencySQL.subBank(fromUUID, value);
+        if (!CurrencySQL.has(fromPlayer.getUuid(), fromAccount, value)) {
+            MessageManager.insufficient_funds(sender);
+            return;
         }
+        sub(null, fromPlayer, fromAccount, value);
+
         OddJob.getInstance().log("transfer");
-        switch (toAccount) {
-            case guild -> {
-                receiver_guild = true;
-                receiver_name = OddJob.getInstance().getGuildsManager().getGuilds().get(toUUID).getName();
-                OddJob.getInstance().log("to guild");
-                CurrencySQL.addBank(toUUID, value);
-            }
-            case bank -> {
-                receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
-                toUUID = ((Player) sender).getUniqueId();
-                CurrencySQL.addBank(toUUID, value);
-                OddJob.getInstance().log("to bank");
-            }
-            case pocket -> {
-                receiver_name = OddJob.getInstance().getPlayerManager().get(toUUID).getName();
-                CurrencySQL.addPocket(toUUID, value);
-                OddJob.getInstance().log("to pocket");
-            }
-        }
+
+
+        receiver_name = toPlayer.getName();
+        add(null, toPlayer, toAccount, value);
+
+
         MessageManager.currency_transferred(sender, fromAccount.name(), sender_name, sender_guild, toAccount.name(), receiver_name, receiver_guild, value);
-        return true;
         ///transfer bank pocket 280
     }
 
-    public boolean checkPocket(UUID player, double cost) {
-        return CurrencySQL.hasPocket(player, cost);
+    public boolean has(UUID player, Account account, double cost) {
+        return !CurrencySQL.has(player, account, cost);
     }
 
-    public void subPocket(UUID player, double cost) {
-        CurrencySQL.subPocket(player, cost);
+    public void sub(CommandSender sender, UUID player, Account account, double value) {
+        double current = CurrencySQL.get(player, account);
+        double newValue = current - value;
+        CurrencySQL.set(player, account, newValue);
     }
 
-    public double getPocket(UUID player) {
-        return CurrencySQL.getPocket(player);
+    public double get(UUID uniqueId, Account account) {
+        return CurrencySQL.get(uniqueId, account);
     }
 
-    public double getBank(UUID uniqueId) {
-        return CurrencySQL.getBank(uniqueId);
-    }
-
-    public void pay(CommandSender sender, String name, UUID target, double value) {
+    public void pay(CommandSender sender, OddPlayer target, double value) {
+        Account affected = Account.pocket;
         Player player = (Player) sender;
-        if (!CurrencySQL.hasPocket(player.getUniqueId(), value)) {
+
+        if (!CurrencySQL.has(player.getUniqueId(), affected, value)) {
             MessageManager.insufficient_funds(sender);
             return;
         }
 
-        CurrencySQL.subPocket(player.getUniqueId(), value);
-        CurrencySQL.addPocket(target, value);
-        MessageManager.currency_paid(sender, name, value);
+        sub(null, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), affected, value);
+        add(null, target, affected, value);
+        MessageManager.currency_paid(sender, target.getDisplayName(), value);
     }
 
     public void earnings(UUID uniqueId) {
@@ -210,5 +170,14 @@ public class CurrencyManager {
             inc += earnings.get(uniqueId);
         }
         earnings.put(uniqueId, inc);
+    }
+
+    public void set(CommandSender sender, OddPlayer oddPlayer, Account account, double value) {
+        CurrencySQL.set(oddPlayer.getUuid(), account, value);
+        if (sender != null) {
+            MessageManager.currency_set(sender, oddPlayer, account, value);
+        } else {
+            MessageManager.currency_payday(oddPlayer, value);
+        }
     }
 }

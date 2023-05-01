@@ -1,46 +1,29 @@
 package com.spillhuset.oddjob.SQL;
 
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Managers.MySQLManager;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
 public class CurrencySQL extends MySQLManager {
-    public static boolean hasBank(UUID player, double value) {
-        boolean ret = false;
-        double bank;
+    public static void set(UUID uuid, Account account, double value) {
+        String query = "SELECT " + account.getType() + " FROM `mine_balances` WHERE `uuid` = ?";
+        String update = "UPDATE `mine_balances` SET " + account.getType() + " = ? WHERE `uuid` = ?";
+        String insert = "INSERT INTO `mine_balances` (" + account.getType() + ",`uuid`) VALUES (?,?)";
         try {
             connect();
-            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, player.toString());
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, uuid.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                bank = resultSet.getDouble("bank");
-                if (bank >= value) {
-                    ret = true;
-                }
+                preparedStatement = connection.prepareStatement(update);
+            } else {
+                preparedStatement = connection.prepareStatement(insert);
             }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-        return ret;
-    }
-
-    public static void subBank(UUID player, double value) {
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, player.toString());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = ? WHERE `uuid` = ?");
-                preparedStatement.setDouble(1, resultSet.getDouble("bank") - value);
-                preparedStatement.setString(2, player.toString());
-                preparedStatement.executeUpdate();
-            }
+            preparedStatement.setDouble(1, value);
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -48,16 +31,17 @@ public class CurrencySQL extends MySQLManager {
         }
     }
 
-    public static boolean hasPocket(UUID player, double value) {
+    public static boolean has(UUID player, Account account, double value) {
+        String query = "SELECT " + account.getType() + " FROM `mine_balances` WHERE `uuid` = ?";
         boolean ret = false;
         double bank;
         try {
             connect();
-            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, player.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                bank = resultSet.getDouble("pocket");
+                bank = resultSet.getDouble(account.name());
                 if (bank >= value) {
                     ret = true;
                 }
@@ -70,35 +54,16 @@ public class CurrencySQL extends MySQLManager {
         return ret;
     }
 
-    public static void subPocket(UUID player, double value) {
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, player.toString());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = ? WHERE `uuid` = ?");
-                preparedStatement.setDouble(1, resultSet.getDouble("pocket") - value);
-                preparedStatement.setString(2, player.toString());
-                preparedStatement.executeUpdate();
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-    }
-
-    public static double getPocket(UUID uuid) {
+    public static double get(UUID uuid, Account account) {
+        String query = "SELECT " + account.getType() + " FROM `mine_balances` WHERE `uuid` = ?";
         double value = 0.0;
         try {
             connect();
-            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, uuid.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                value = resultSet.getDouble("pocket");
+                value = resultSet.getDouble(account.name());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -106,68 +71,6 @@ public class CurrencySQL extends MySQLManager {
             close();
         }
         return value;
-    }
-
-    public static double getBank(UUID uuid) {
-        double value = 0.0;
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, uuid.toString());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                value = resultSet.getDouble("bank");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-        return value;
-    }
-
-    public static void addBank(UUID uuid, double value) {
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `bank` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, uuid.toString());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `bank` = ? WHERE `uuid` = ?");
-                preparedStatement.setDouble(1, resultSet.getDouble("bank") + value);
-            } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`bank`,`uuid`) VALUES (?,?)");
-                preparedStatement.setDouble(1, value);
-            }
-            preparedStatement.setString(2, uuid.toString());
-            preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
-    }
-
-    public static void addPocket(UUID uuid, double value) {
-        try {
-            connect();
-            preparedStatement = connection.prepareStatement("SELECT `pocket` FROM `mine_balances` WHERE `uuid` = ?");
-            preparedStatement.setString(1, uuid.toString());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                preparedStatement = connection.prepareStatement("UPDATE `mine_balances` SET `pocket` = ? WHERE `uuid` = ?");
-                preparedStatement.setDouble(1, resultSet.getDouble("pocket") + value);
-            } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO `mine_balances` (`pocket`,`uuid`) VALUES (?,?)");
-                preparedStatement.setDouble(1, value);
-            }
-            preparedStatement.setString(2, uuid.toString());
-            preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close();
-        }
     }
 }
 

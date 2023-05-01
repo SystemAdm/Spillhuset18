@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Events;
 
+import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.Enums.ScoreBoard;
 import com.spillhuset.oddjob.Managers.*;
@@ -27,7 +28,7 @@ public class OnPlayerJoinEvent implements Listener {
         GuildsManager gm = OddJob.getInstance().getGuildsManager();
         PlayerManager pm = OddJob.getInstance().getPlayerManager();
 
-        MessageManager.essentials_join(player, cm.getPocket(player.getUniqueId()), cm.getBank(player.getUniqueId()), hm.getMax(player.getUniqueId()), hm.getCurrent(player.getUniqueId()));
+        MessageManager.essentials_join(player, cm.get(player.getUniqueId(), Account.pocket), cm.get(player.getUniqueId(), Account.bank), hm.getMax(player.getUniqueId()), hm.getCurrent(player.getUniqueId()));
 
         Guild guild = gm.getGuildByMember(player.getUniqueId());
         if (guild != null) {
@@ -52,7 +53,7 @@ public class OnPlayerJoinEvent implements Listener {
 
         // Setup Scoreboard
         ScoreBoard scoreboard = pm.get(player.getUniqueId()).getScoreBoard();
-        pm.setScoreboard(player,scoreboard);
-        OddJob.getInstance().logToFile(new Date().getTime()+" joined: "+player.getName(),"join_quit.txt");
+        pm.setScoreboard(player, scoreboard);
+        OddJob.getInstance().logToFile(new Date().getTime() + " joined: " + player.getName(), "join_quit.txt");
     }
 }

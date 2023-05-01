@@ -7,6 +7,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class CurrencyAddCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "currency.add";
+        return "currency.admin";
     }
 
     @Override
@@ -82,100 +83,48 @@ public class CurrencyAddCommand extends SubCommand {
         if (!argsLength(sender, args.length)) {
             return;
         }
+
         if (!can(sender, false, true)) {
             return;
         }
-        Account account;
-        OddPlayer oddPlayer;
+
+        Account account = null;
+        OddPlayer oddPlayer = null;
         double value = 0d;
 
         if (args.length == 3) {
-            account = findAccount(args[1]);
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    account = acc;
+                }
+            }
             try {
                 value = Double.parseDouble(args[2]);
             } catch (NumberFormatException ignored) {
             }
-            OddJob.getInstance().getCurrencyManager().add(sender, account, value);
+
         } else if (args.length == 4 && can(sender, true, true)) {
             oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
-            account = findAccount(args[2]);
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    account = acc;
+                }
+            }
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException ignored) {
             }
-            OddJob.getInstance().getCurrencyManager().add(sender, oddPlayer, account, value);
         }
+        if (account == null) {
+            return;
+        }
+        OddJob.getInstance().getCurrencyManager().add(sender, oddPlayer, account, value);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         // currency add <account> <amount>
         // currency add <player> <account> <amount>
-        List<String> list = new ArrayList<>();
-        Account account;
-        OddPlayer oddPlayer = null;
-        double value;
-        if (args.length == 2) {
-            list.addAll(finderAccount(args[1]));
-            if (can(sender, true, false)) {
-                for (OddPlayer odd : OddJob.getInstance().getPlayerManager().getAll()) {
-                    if (args[1].isEmpty() || odd.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
-                        list.add(odd.getName());
-                    }
-                }
-            }
-        }
-        if (args.length == 3) {
-            account = findAccount(args[1]);
-            if (account == null && can(sender, true, false)) {
-                oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
-                if (oddPlayer == null) {
-                    list.add("Error player!!");
-                } else {
-                    list.addAll(finderAccount(args[1]));
-                }
-            } else {
-                if (!args[2].isEmpty()) {
-                    try {
-                        value = Double.parseDouble(args[2]);
-                        list.add("value");
-                    } catch (NumberFormatException ex) {
-                        list.add("Error number!!");
-                    }
-                }
-            }
-        }
-        if (args.length == 4 && can(sender, true, false)) {
-            oddPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
-            account = findAccount(args[2]);
-            if (!args[2].isEmpty()) {
-                try {
-                    value = Double.parseDouble(args[3]);
-                    list.add("value");
-                } catch (NumberFormatException ex) {
-                    list.add("Error number!!");
-                }
-            }
-        }
-        return list;
-    }
-
-    private Account findAccount(String name) {
-        for (Account acc : Account.values()) {
-            if (acc.name().equalsIgnoreCase(name)) {
-                return acc;
-            }
-        }
-        return null;
-    }
-
-    private List<String> finderAccount(String name) {
-        List<String> list = new ArrayList<>();
-        for (Account acc : Account.values()) {
-            if (name.isEmpty() || acc.name().startsWith(name)) {
-                list.add(acc.name());
-            }
-        }
-        return list;
+        return new ArrayList<>();
     }
 }
