@@ -25,9 +25,9 @@ import java.util.UUID;
 
 public class ShopsManager {
 
-    private final double INDEX_SELL = 1.01;
-    private final double INDEX_BUY = 0.09;
-    private final double DIFFERENCE = 1.3;
+    final double INDEX_SELL = 1.01;
+    final double INDEX_BUY = 0.09;
+    final double DIFFERENCE = 1.3;
 
     private final HashMap<UUID, UUID> trades = new HashMap<>();
     private final HashMap<UUID, Integer> values = new HashMap<>();
@@ -257,10 +257,12 @@ public class ShopsManager {
     public ItemStack incOne() {
         ItemStack incOne = new ItemStack(Material.GOLD_NUGGET);
         ItemMeta targetAddOneMeta = incOne.getItemMeta();
-        targetAddOneMeta.setDisplayName("+10");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Click to add " + ChatColor.GOLD + 1 + ChatColor.GREEN + " to current value");
-        targetAddOneMeta.setLore(lore);
+        if (targetAddOneMeta != null) {
+            targetAddOneMeta.setDisplayName("+10");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GREEN + "Click to add " + ChatColor.GOLD + 1 + ChatColor.GREEN + " to current value");
+            targetAddOneMeta.setLore(lore);
+        }
         incOne.setItemMeta(targetAddOneMeta);
         return incOne;
     }
@@ -268,10 +270,12 @@ public class ShopsManager {
     public ItemStack incTen() {
         ItemStack incTen = new ItemStack(Material.GOLD_INGOT);
         ItemMeta targetAddTenMeta = incTen.getItemMeta();
-        targetAddTenMeta.setDisplayName("x10");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Click to multiply by " + ChatColor.GOLD + 10 + ChatColor.GREEN + " to current value");
-        targetAddTenMeta.setLore(lore);
+        if (targetAddTenMeta != null) {
+            targetAddTenMeta.setDisplayName("x10");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GREEN + "Click to multiply by " + ChatColor.GOLD + 10 + ChatColor.GREEN + " to current value");
+            targetAddTenMeta.setLore(lore);
+        }
         incTen.setItemMeta(targetAddTenMeta);
         return incTen;
     }
@@ -279,10 +283,12 @@ public class ShopsManager {
     public ItemStack decOne() {
         ItemStack decOne = new ItemStack(Material.GOLD_NUGGET);
         ItemMeta targetDecOneMeta = decOne.getItemMeta();
-        targetDecOneMeta.setDisplayName("-1");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.RED + "Click to sub " + ChatColor.GOLD + 1 + ChatColor.RED + " to current value");
-        targetDecOneMeta.setLore(lore);
+        if (targetDecOneMeta != null) {
+            targetDecOneMeta.setDisplayName("-1");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.RED + "Click to sub " + ChatColor.GOLD + 1 + ChatColor.RED + " to current value");
+            targetDecOneMeta.setLore(lore);
+        }
         decOne.setItemMeta(targetDecOneMeta);
         return decOne;
     }
@@ -290,10 +296,12 @@ public class ShopsManager {
     public ItemStack decTen() {
         ItemStack decTen = new ItemStack(Material.GOLD_INGOT);
         ItemMeta targetDecTenMeta = decTen.getItemMeta();
-        targetDecTenMeta.setDisplayName("/10");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.RED + "Click to divide by " + ChatColor.GOLD + 10 + ChatColor.RED + " to current value");
-        targetDecTenMeta.setLore(lore);
+        if (targetDecTenMeta != null) {
+            targetDecTenMeta.setDisplayName("/10");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.RED + "Click to divide by " + ChatColor.GOLD + 10 + ChatColor.RED + " to current value");
+            targetDecTenMeta.setLore(lore);
+        }
         decTen.setItemMeta(targetDecTenMeta);
         return decTen;
     }
@@ -312,15 +320,18 @@ public class ShopsManager {
         int i = values.get(uniqueId) != null ? values.get(uniqueId) : 0;
         ItemStack targetTotal = new ItemStack(Material.GOLD_INGOT);
         ItemMeta targetTotalMeta = targetTotal.getItemMeta();
-        targetTotalMeta.setDisplayName(ChatColor.GOLD + String.valueOf(i));
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Current value: " + ChatColor.GOLD + i);
-        targetTotalMeta.setLore(lore);
+        if (targetTotalMeta != null) {
+            targetTotalMeta.setDisplayName(ChatColor.GOLD + String.valueOf(i));
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "Current value: " + ChatColor.GOLD + i);
+            targetTotalMeta.setLore(lore);
+        }
         targetTotal.setItemMeta(targetTotalMeta);
         return targetTotal;
     }
 
     public boolean tradeAction(Player player, Inventory inventory, ItemStack itemStack) {
+        if (itemStack.getItemMeta() != null){
         switch (itemStack.getItemMeta().getDisplayName()) {
             case "+1": {
                 values.put(player.getUniqueId(), values.get(player.getUniqueId()) + 1);
@@ -334,7 +345,7 @@ public class ShopsManager {
             case "/10": {
                 values.put(player.getUniqueId(), values.get(player.getUniqueId()) / 10);
             }
-        }
+        }}
 
         return false;
     }
