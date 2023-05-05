@@ -102,7 +102,7 @@ public class WarpAddCommand extends SubCommand {
                     double d = Double.parseDouble(t);
                     if (d != 0d) cost = d;
                     else {
-                        MessageManager.invalidNumber(getPlugin(), sender, t);
+                        MessageManager.errors_number(getPlugin(),t,sender);
                         return;
                     }
                 }

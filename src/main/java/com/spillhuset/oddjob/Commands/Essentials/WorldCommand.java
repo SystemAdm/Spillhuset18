@@ -73,13 +73,12 @@ public class WorldCommand extends SubCommandInterface implements CommandExecutor
         return true;
     }
 
-    @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> list = new ArrayList<>();
-        List<World> worlds = Bukkit.getWorlds();
-        for (World world : worlds) {
-            if (args.length == 0 || world.getName().startsWith(args[0])) {
+
+        for (World world : Bukkit.getWorlds()) {
+            if (args[0].isEmpty() || world.getName().startsWith(args[0])) {
                 list.add(world.getName());
             }
         }

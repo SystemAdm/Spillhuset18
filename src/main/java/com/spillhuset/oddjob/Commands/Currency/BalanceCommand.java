@@ -1,7 +1,9 @@
 package com.spillhuset.oddjob.Commands.Currency;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -62,10 +64,19 @@ public class BalanceCommand extends SubCommandInterface implements CommandExecut
         if (!argsLength(sender, args.length)) {
             return true;
         }
-
-        if (sender instanceof Player player) {
-            OddJob.getInstance().getCurrencyManager().showPlayer(player);
+        OddPlayer player = null;
+        if (sender instanceof Player play && args.length == 0) {
+            player = OddJob.getInstance().getPlayerManager().get(play.getUniqueId());
+        } else if (args.length == 1 && can(sender, true, true)) {
+            player = OddJob.getInstance().getPlayerManager().get(args[0]);
         }
+
+        if (player == null) {
+            MessageManager.errors_find_player(Plugin.currency, args[0], sender);
+        } else {
+            OddJob.getInstance().getCurrencyManager().showPlayer(sender, player);
+        }
+
         return true;
     }
 

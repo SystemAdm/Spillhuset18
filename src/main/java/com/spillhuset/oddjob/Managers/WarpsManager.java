@@ -66,7 +66,7 @@ public class WarpsManager {
                 return;
             }
             MessageManager.warps_withdraw(player, warp.getCost());
-            OddJob.getInstance().getCurrencyManager().sub(player, player.getUniqueId(), affected, warp.getCost());
+            OddJob.getInstance().getCurrencyManager().sub(player.getUniqueId(), affected, warp.getCost());
         }
         if (warp.isProtected() && !warp.matchPwd(passwd)) {
             MessageManager.warps_protected(player, name);

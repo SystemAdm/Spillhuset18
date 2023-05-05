@@ -4,6 +4,7 @@ import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
@@ -24,7 +25,7 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public boolean denyOp() {
-        return true;
+        return false;
     }
 
     @Override
@@ -59,63 +60,102 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        //transfer <accountSender> player <to_player> bank <value>
-        //transfer <accountSender> guild <to_guild> bank <value>
-        //transfer <accountSender> <to_account> <value>
+        //transfer <bank,pocket,guild> player <to_player> bank <value>
+        //transfer <bank,pocket,guild> guild <to_guild> bank <value>
+        //transfer <bank,pocket,guild> <bank,pocket,guild> <value>
+        if (!argsLength(sender, args.length)) {
+            return true;
+        }
 
-        Account accountSender;
-        Account accountReciever;
+        if (!can(sender, false, true)) {
+            return true;
+        }
+
+        Account accountSender = null;
+        Account accountReceiver;
         double value;
         Player player = (Player) sender;
         OddPlayer from = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
-        OddPlayer to = null;
+        OddPlayer to;
+        Guild toGuild;
+        Guild fromGuild;
+        boolean guild = false;
 
         List<String> accounts = new ArrayList<>();
         for (Account account : Account.values()) {
             accounts.add(account.name());
         }
 
-        if (accounts.contains(args[0])) {
+        fromGuild = OddJob.getInstance().getGuildsManager().getGuildByMember(((Player) sender).getUniqueId());
+        // Find Account
+        if (args[0].equalsIgnoreCase("guild") && fromGuild != null) {
+            guild = true;
+        } else if (accounts.contains(args[0])) {
             accountSender = Account.valueOf(args[0]);
         } else {
             MessageManager.currency_invalid_account(sender, args[0]);
             return true;
         }
 
-        if (args[1].equalsIgnoreCase("player")) {
-            OddJob.getInstance().log("player");
-            // Get the player
-            to = OddJob.getInstance().getPlayerManager().get(args[2]);
-            if (to == null) {
-                MessageManager.errors_find_player(getPlugin(), args[2], sender);
+
+
+        if (args[1].equalsIgnoreCase("guild")) {
+            accountReceiver = Account.guild;
+            // Find Target
+            toGuild = OddJob.getInstance().getGuildsManager().getGuildByName(args[2]);
+            if (toGuild == null) {
+                MessageManager.guilds_not_found(sender, args[2]);
                 return true;
             }
-            // Resolve value
+            // Find Value
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
                 MessageManager.errors_number(getPlugin(), args[3], sender);
                 return true;
             }
-            accountReciever = Account.bank;
+            if (guild) {
+                OddJob.getInstance().getCurrencyManager().transfer(sender, null, from, accountReceiver, null, value, fromGuild.getUuid(), toGuild.getUuid());
+            } else {
+                OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, from, accountReceiver, null, value, null, toGuild.getUuid());
+            }
+            return true;
+        } else if (args[1].equalsIgnoreCase("player")) {
+            accountReceiver = Account.bank;
+            // Find Target
+            to = OddJob.getInstance().getPlayerManager().get(args[2]);
+            if (to == null) {
+                MessageManager.errors_find_player(getPlugin(), args[2], sender);
+                return true;
+            }
+            OddJob.getInstance().log("to " + to.getName());
+            // Find Value
+            try {
+                value = Double.parseDouble(args[3]);
+            } catch (NumberFormatException e) {
+                MessageManager.errors_number(getPlugin(), args[3], sender);
+                return true;
+            }
         } else if (accounts.contains(args[1])) {
-            OddJob.getInstance().log("other");
-            accountReciever = Account.valueOf(args[1]);
+            accountReceiver = Account.valueOf(args[1]);
             to = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
-            // Resolve value
+            // Find Value
             try {
                 value = Double.parseDouble(args[2]);
             } catch (NumberFormatException e) {
                 MessageManager.errors_number(getPlugin(), args[2], sender);
                 return true;
             }
+            OddJob.getInstance().log("to " + accountReceiver.name());
         } else {
             MessageManager.currency_invalid_account(sender, args[1]);
             return true;
         }
-        OddJob.getInstance().log(accountSender.name() + " " + value);
-        OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, from, accountReciever, to, value);
-
+        if (guild) {
+            OddJob.getInstance().getCurrencyManager().transfer(sender, null, from, accountReceiver, to, value, fromGuild.getUuid(), null);
+        }else {
+            OddJob.getInstance().getCurrencyManager().transfer(sender, accountSender, from, accountReceiver, to, value, null, null);
+        }
         return true;
     }
 
@@ -144,6 +184,7 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
         }
 
         if (args.length == 2) {
+            to.remove(args[0]);
             for (String account : to) {
                 if (args[1].isEmpty() || account.startsWith(args[1])) {
                     list.add(account);
@@ -154,7 +195,7 @@ public class TransferCommand extends SubCommandInterface implements CommandExecu
         if (args.length == 3) {
             if (args[1].equalsIgnoreCase("player")) {
                 for (String player : OddJob.getInstance().getPlayerManager().listAll()) {
-                    if (args[2].isEmpty() || player.startsWith(args[2])) {
+                    if (args[2].isEmpty() || player.toLowerCase().startsWith(args[2].toLowerCase())) {
                         list.add(player);
                     }
                 }

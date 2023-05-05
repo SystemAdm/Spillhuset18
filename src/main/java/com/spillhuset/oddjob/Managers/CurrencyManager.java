@@ -3,6 +3,7 @@ package com.spillhuset.oddjob.Managers;
 import com.spillhuset.oddjob.Enums.Account;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.CurrencySQL;
+import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 public class CurrencyManager {
     private final HashMap<UUID, Double> earnings = new HashMap<>();
+    private final Account AFFECTED_PAY = Account.pocket;
     NamespacedKey key = NamespacedKey.minecraft("income");
 
     public CurrencyManager() {
@@ -62,7 +64,7 @@ public class CurrencyManager {
     private void payday() {
         for (UUID uuid : earnings.keySet()) {
             OddPlayer player = OddJob.getInstance().getPlayerManager().get(uuid);
-            add(null, player, Account.bank, earnings.get(uuid));
+            add(null,player.getUuid(), Account.bank, earnings.get(uuid),false);
         }
         BossBar bossBar = Bukkit.getBossBar(key);
         if (bossBar != null) {
@@ -75,62 +77,68 @@ public class CurrencyManager {
 
     public void add(CommandSender sender, Account account, double value) {
         Player player = (Player) sender;
-        double current = CurrencySQL.get(player.getUniqueId(), Account.bank);
-        double newValue = current + value;
-        CurrencySQL.set(player.getUniqueId(), Account.bank, newValue);
+        double newValue = add(player.getUniqueId(), account, value);
         MessageManager.currency_added(sender, account, value, newValue);
     }
 
-    public void add(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
-        double current = CurrencySQL.get(oddPlayer.getUuid(), Account.bank);
+    public double add(UUID uuid, Account account, double value) {
+        double current = CurrencySQL.get(uuid, account);
         double newValue = current + value;
-        CurrencySQL.set(oddPlayer.getUuid(), Account.bank, newValue);
+        CurrencySQL.set(uuid, account, newValue);
+        return newValue;
+    }
+
+    public void add(CommandSender sender, @NotNull UUID uuid, @NotNull Account account, double value,boolean guild) {
+        double newValue = add(uuid, account, value);
         if (sender != null) {
-            MessageManager.currency_added(sender, oddPlayer, account, value, newValue);
+            if (guild){
+                Guild guildTarget = OddJob.getInstance().getGuildsManager().getGuild(uuid);
+                MessageManager.currency_added_guild(sender, guildTarget, account, value, newValue);
+            } else {
+                OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(uuid);
+                MessageManager.currency_added(sender, oddPlayer, account, value, newValue);
+            }
         } else {
+            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(uuid);
             MessageManager.currency_payday(oddPlayer, value);
         }
     }
 
-    public void showPlayer(Player player) {
-        MessageManager.currency_holding(player, CurrencySQL.get(player.getUniqueId(), Account.pocket), CurrencySQL.get(player.getUniqueId(), Account.bank));
+    public void showPlayer(CommandSender sender, OddPlayer player) {
+        MessageManager.currency_holding(sender, get(player.getUuid(), Account.pocket), get(player.getUuid(), Account.bank));
     }
 
     public void sub(CommandSender sender, Account account, double value) {
         Player player = (Player) sender;
-        double current = CurrencySQL.get(player.getUniqueId(), account);
-        double newValue = current - value;
-        CurrencySQL.set(player.getUniqueId(), account, newValue);
+        double newValue = sub(player.getUniqueId(), account, value);
         MessageManager.currency_subbed(sender, account, value, newValue);
     }
 
-    public void sub(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
-        double current = CurrencySQL.get(oddPlayer.getUuid(), account);
-        double newValue = current - value;
-        CurrencySQL.set(oddPlayer.getUuid(), account, newValue);
+    public double sub(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
+        double newValue = sub(oddPlayer.getUuid(), account, value);
         if (sender != null) {
-            MessageManager.currency_subbed(sender, oddPlayer, account, value, newValue);
+            MessageManager.currency_added(sender, oddPlayer, account, value, newValue);
         }
+        return newValue;
     }
 
-    public void transfer(CommandSender sender, Account fromAccount, OddPlayer fromPlayer, Account toAccount, OddPlayer toPlayer, double value) {
+    public void transfer(CommandSender sender, Account fromAccount, OddPlayer fromPlayer, Account toAccount, OddPlayer toPlayer, double value, UUID fromGuild, UUID toGuild) {
         boolean sender_guild = false;
         boolean receiver_guild = false;
         String sender_name = "";
         String receiver_name;
 
-        if (!CurrencySQL.has(fromPlayer.getUuid(), fromAccount, value)) {
+        if (has(fromPlayer.getUuid(), fromAccount, value)) {
             MessageManager.insufficient_funds(sender);
             return;
         }
-        sub(null, fromPlayer, fromAccount, value);
+        OddJob.getInstance().log("value " + sub(null, fromPlayer, fromAccount, value));
 
         OddJob.getInstance().log("transfer");
 
-
-        receiver_name = toPlayer.getName();
-        add(null, toPlayer, toAccount, value);
-
+        UUID toUUID = (toGuild == null) ? toPlayer.getUuid() : toGuild;
+        receiver_name = (toGuild == null) ? toPlayer.getName() : OddJob.getInstance().getGuildsManager().getGuild(toGuild).getName();
+        add(null, toUUID, toAccount, value,toGuild != null);
 
         MessageManager.currency_transferred(sender, fromAccount.name(), sender_name, sender_guild, toAccount.name(), receiver_name, receiver_guild, value);
         ///transfer bank pocket 280
@@ -140,10 +148,11 @@ public class CurrencyManager {
         return !CurrencySQL.has(player, account, cost);
     }
 
-    public void sub(CommandSender sender, UUID player, Account account, double value) {
+    public double sub(UUID player, Account account, double value) {
         double current = CurrencySQL.get(player, account);
         double newValue = current - value;
         CurrencySQL.set(player, account, newValue);
+        return newValue;
     }
 
     public double get(UUID uniqueId, Account account) {
@@ -151,16 +160,26 @@ public class CurrencyManager {
     }
 
     public void pay(CommandSender sender, OddPlayer target, double value) {
-        Account affected = Account.pocket;
         Player player = (Player) sender;
 
-        if (!CurrencySQL.has(player.getUniqueId(), affected, value)) {
+        if (!CurrencySQL.has(player.getUniqueId(), AFFECTED_PAY, value)) {
             MessageManager.insufficient_funds(sender);
             return;
         }
 
-        sub(null, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), affected, value);
-        add(null, target, affected, value);
+        sub(null, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), AFFECTED_PAY, value);
+        add(null, target.getUuid(), AFFECTED_PAY, value,false);
+        MessageManager.currency_paid(sender, target.getDisplayName(), value);
+    }
+
+    public void pay(CommandSender sender, OddPlayer newTarget, OddPlayer target, double value) {
+        if (!CurrencySQL.has(newTarget.getUuid(), AFFECTED_PAY, value)) {
+            MessageManager.insufficient_funds(sender);
+            return;
+        }
+
+        sub(null, OddJob.getInstance().getPlayerManager().get(newTarget.getUuid()), AFFECTED_PAY, value);
+        add(null, target.getUuid(), AFFECTED_PAY, value,false);
         MessageManager.currency_paid(sender, target.getDisplayName(), value);
     }
 
@@ -172,12 +191,14 @@ public class CurrencyManager {
         earnings.put(uniqueId, inc);
     }
 
+    public void set(UUID uuid, Account account, double value) {
+        CurrencySQL.set(uuid, account, value);
+    }
+
     public void set(CommandSender sender, OddPlayer oddPlayer, Account account, double value) {
-        CurrencySQL.set(oddPlayer.getUuid(), account, value);
+        set(oddPlayer.getUuid(), account, value);
         if (sender != null) {
             MessageManager.currency_set(sender, oddPlayer, account, value);
-        } else {
-            MessageManager.currency_payday(oddPlayer, value);
         }
     }
 }

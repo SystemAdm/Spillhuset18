@@ -49,7 +49,7 @@ public class GuildsManager extends Managers {
             MessageManager.insufficient_funds(sender);
             return;
         }
-        OddJob.getInstance().getCurrencyManager().sub(sender, guild.getUuid(), Account.guild, price);
+        OddJob.getInstance().getCurrencyManager().sub(guild.getUuid(), Account.guild, price);
         guild.incBoughtClaims();
     }
 
@@ -222,7 +222,7 @@ public class GuildsManager extends Managers {
             MessageManager.insufficient_funds(player);
             return;
         }
-        OddJob.getInstance().getCurrencyManager().sub(player, guild.getUuid(), Account.guild, price);
+        OddJob.getInstance().getCurrencyManager().sub(guild.getUuid(), Account.guild, price);
         guild.incBoughtHomes();
         save(guild);
         price = Plu.GUILDS_HOMES.getValue() * (guild.getBoughtHomes() + 1 * Plu.GUILDS_HOMES.getMultiplier());

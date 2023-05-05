@@ -70,11 +70,6 @@ public class PlayerCommand extends SubCommandInterface implements CommandExecuto
             return true;
         }
 
-        if (sender instanceof Player player && args.length == depth()) {
-            OddJob.getInstance().getCurrencyManager().showPlayer(player);
-            return true;
-        }
-
         finder(sender, args);
 
         return true;

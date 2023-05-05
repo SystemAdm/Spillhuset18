@@ -69,12 +69,9 @@ public class CurrencyCommand extends SubCommandInterface implements CommandExecu
             return true;
         }
 
-        if (sender instanceof Player player && args.length == depth()) {
-            OddJob.getInstance().getCurrencyManager().showPlayer(player);
-            return true;
+        if (args.length > 0) {
+            finder(sender, args);
         }
-
-        finder(sender, args);
 
         return true;
     }

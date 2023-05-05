@@ -1,6 +1,7 @@
 package com.spillhuset.oddjob.Commands.Essentials;
 
 import com.spillhuset.oddjob.Enums.Plugin;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -32,7 +33,7 @@ public class SudoCommand extends SubCommandInterface implements CommandExecutor,
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return Plugin.essentials;
     }
 
     @Override
@@ -57,21 +58,42 @@ public class SudoCommand extends SubCommandInterface implements CommandExecutor,
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        Player player = Bukkit.getPlayer(args[0]);
-        if (player != null) {
-            StringBuilder cmd = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                cmd.append(args[i]).append(" ");
-            }
-            Bukkit.dispatchCommand(player, cmd.toString());
-            sender.sendMessage(player.getName() + " did '" + cmd + "'");
+        if (!argsLength(sender, args.length)) {
+            return true;
         }
+        if (!can(sender, false, true)) {
+            return true;
+        }
+
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            MessageManager.errors_find_player(getPlugin(), args[0], sender);
+            return true;
+        }
+
+        StringBuilder cmd = new StringBuilder();
+        for (int i = 1; i < args.length; i++) {
+            cmd.append(args[i]).append(" ");
+        }
+
+        Bukkit.dispatchCommand(player, cmd.toString());
+        sender.sendMessage(player.getName() + " did '" + cmd + "'");
+
         return true;
     }
 
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        return new ArrayList<>();
+        List<String> list = new ArrayList<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!player.isOp() || !player.hasPermission("admin")) {
+                if (args[0].isEmpty() || player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                    list.add(player.getName());
+                }
+            }
+        }
+        return list;
     }
 }

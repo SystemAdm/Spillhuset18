@@ -61,7 +61,12 @@ public class HealCommand extends SubCommandInterface implements CommandExecutor 
         }
         if (args.length == 0) {
             OddJob.getInstance().getPlayerManager().healOne(sender);
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
+        } else if (!can(sender, true, true)) {
+            return true;
+        }
+
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
             OddJob.getInstance().getPlayerManager().healAll(sender);
         } else if (args.length == 1) {
             OddJob.getInstance().getPlayerManager().healOne(args[0], sender);
@@ -75,11 +80,13 @@ public class HealCommand extends SubCommandInterface implements CommandExecutor 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> list = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            list.add(player.getName());
+        if (can(sender, true, false)) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (args[0].isEmpty() || player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                    list.add(player.getName());
+                }
+            }
         }
-
         return list;
     }
 }

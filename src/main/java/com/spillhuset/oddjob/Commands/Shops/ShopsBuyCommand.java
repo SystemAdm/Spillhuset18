@@ -96,7 +96,7 @@ public class ShopsBuyCommand extends SubCommand {
             try {
                 amount = Integer.parseInt(args[2]);
             } catch (NumberFormatException ex) {
-                MessageManager.invalidNumber(Plugin.shops, sender, args[2]);
+                MessageManager.errors_number(getPlugin(),args[2],sender);
                 return;
             }
         }

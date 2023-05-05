@@ -91,53 +91,93 @@ public class CurrencySubCommand extends SubCommand {
         /*            0       1            2       3    */
         /* /currency sub <bank|pocket> <player> <value> */
         /* /currency sub <bank|pocket> <value>          */
-        OddPlayer target = null;
+        OddPlayer target;
         Account account = null;
-        double value = 0.0;
+        double value;
 
-        for (Account acc : Account.values()) {
-            if (acc.name().equalsIgnoreCase(args[1])) {
-                account = acc;
-            }
-        }
-
-        if (args.length == 4) {
-            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(args[2]);
-            if (oddPlayer == null) {
+        if (args.length == 4 && can(sender, true, true)) {
+            // Find Target
+            target = OddJob.getInstance().getPlayerManager().get(args[2]);
+            if (target == null) {
                 MessageManager.errors_find_player(getPlugin(), args[2], sender);
                 return;
             }
-            target = oddPlayer;
+            // Find Account
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    account = acc;
+                }
+            }
+            if (account == null) {
+                MessageManager.currency_invalid_account(sender, args[1]);
+                return;
+            }
+            // Find Value
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
                 MessageManager.errors_number(getPlugin(), args[3], sender);
+                return;
             }
+            OddJob.getInstance().getCurrencyManager().sub(sender, target, account, value);
         }
         if (args.length == 3 && sender instanceof Player player) {
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
+            // Find Account
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    account = acc;
+                }
+            }
+            if (account == null) {
+                MessageManager.currency_invalid_account(sender, args[1]);
+                return;
+            }
+            // Find value
             try {
                 value = Double.parseDouble(args[2]);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ex) {
                 MessageManager.errors_number(getPlugin(), args[2], sender);
+                return;
             }
+            OddJob.getInstance().getCurrencyManager().sub(sender, target, account, value);
         }
-        OddJob.getInstance().getCurrencyManager().sub(sender, target, account, value);
+
 
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         //currency sub <account> <value>
-        //currency sub <name> <account> <value>
+        //currency sub <account> <name> <value>
         List<String> list = new ArrayList<>();
-        Account account = null;
         if (args.length == 2) {
             for (Account a : Account.values()) {
-                if (args[1].equalsIgnoreCase(a.name())) {
-
+                if (a.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    list.add(a.name());
                 }
             }
+        }
+        if (args.length == 3) {
+            if (can(sender, true, false)) {
+                if (args[1].equalsIgnoreCase(Account.guild.name())) {
+                    for (String name : OddJob.getInstance().getGuildsManager().list()) {
+                        if (name.toLowerCase().startsWith(args[2].toLowerCase())) {
+                            list.add(name);
+                        }
+                    }
+                } else {
+                    for (String name : OddJob.getInstance().getPlayerManager().listAll()) {
+                        if (name.toLowerCase().startsWith(args[2].toLowerCase())) {
+                            list.add(name);
+                        }
+                    }
+                }
+            }
+            list.add("[value]");
+        }
+        if (args.length == 4 && can(sender, true, false)) {
+            list.add("[value]");
         }
         return list;
     }

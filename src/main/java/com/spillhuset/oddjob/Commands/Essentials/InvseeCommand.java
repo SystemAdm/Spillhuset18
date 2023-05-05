@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class InvseeCommand extends SubCommandInterface implements CommandExecuto
 
     @Override
     public Plugin getPlugin() {
-        return Plugin.players;
+        return Plugin.essentials;
     }
 
     @Override
@@ -55,16 +56,17 @@ public class InvseeCommand extends SubCommandInterface implements CommandExecuto
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!can(sender,true,true)) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!can(sender, true, true)) {
             return true;
         }
-        if (!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return true;
         }
+
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            MessageManager.errors_find_player(getPlugin(),args[0],sender);
+            MessageManager.errors_find_player(getPlugin(), args[0], sender);
             return true;
         }
 
@@ -74,11 +76,13 @@ public class InvseeCommand extends SubCommandInterface implements CommandExecuto
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.isOp() || !player.hasPermission("admin")) {
-                list.add(player.getName());
+                if (args[0].isEmpty() || player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                    list.add(player.getName());
+                }
             }
         }
         return list;

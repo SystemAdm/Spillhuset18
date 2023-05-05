@@ -4,10 +4,7 @@ import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
 import com.spillhuset.oddjob.Commands.Currency.TransferCommand;
-import com.spillhuset.oddjob.Commands.Essentials.FeedCommand;
-import com.spillhuset.oddjob.Commands.Essentials.HealCommand;
-import com.spillhuset.oddjob.Commands.Essentials.LoadedCommand;
-import com.spillhuset.oddjob.Commands.Essentials.SuicideCommand;
+import com.spillhuset.oddjob.Commands.Essentials.*;
 import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
@@ -116,6 +113,10 @@ public class OddJob extends JavaPlugin {
         getCommand("suicide").setExecutor(new SuicideCommand());
         getCommand("feed").setExecutor(new FeedCommand());
         getCommand("heal").setExecutor(new HealCommand());
+        getCommand("enderchest").setExecutor(new EnderchestCommand());
+        getCommand("world").setExecutor(new WorldCommand());
+        getCommand("invsee").setExecutor(new InvseeCommand());
+        getCommand("sudo").setExecutor(new SudoCommand());
 
         /* Misc */
         getCommand("loaded").setExecutor(new LoadedCommand());

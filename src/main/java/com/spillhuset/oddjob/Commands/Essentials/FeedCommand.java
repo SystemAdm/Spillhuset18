@@ -36,7 +36,7 @@ public class FeedCommand extends SubCommandInterface implements CommandExecutor 
 
     @Override
     public String getPermission() {
-        return "essentials.heal";
+        return "essentials.feed";
     }
 
     @Override
@@ -56,12 +56,20 @@ public class FeedCommand extends SubCommandInterface implements CommandExecutor 
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!argsLength(sender, args.length)) {
+            return true;
+        }
         if (!can(sender, false, true)) {
             return true;
         }
+
         if (args.length == 0) {
             OddJob.getInstance().getPlayerManager().feedOne(sender);
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
+        } else if (!can(sender, true, true)) {
+            return true;
+        }
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
             OddJob.getInstance().getPlayerManager().feedAll(sender);
         } else if (args.length == 1) {
             OddJob.getInstance().getPlayerManager().feedOne(args[0], sender);
@@ -75,11 +83,13 @@ public class FeedCommand extends SubCommandInterface implements CommandExecutor 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> list = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            list.add(player.getName());
+        if (can(sender,true,false)) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (args[0].isEmpty() || player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                    list.add(player.getName());
+                }
+            }
         }
-
         return list;
     }
 }

@@ -137,3 +137,5 @@ permissions:
     default: true
   shops.admin:
     default: false #Change later
+  world:
+    default: op

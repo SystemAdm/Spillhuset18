@@ -36,7 +36,7 @@ public class HomesManager {
             return;
         }
 
-        OddJob.getInstance().getCurrencyManager().sub(player, player.getUniqueId(), Account.bank, price);
+        OddJob.getInstance().getCurrencyManager().sub(player.getUniqueId(), Account.bank, price);
         OddJob.getInstance().getPlayerManager().incBoughtHomes(player.getUniqueId());
     }
 
@@ -141,7 +141,7 @@ public class HomesManager {
                 MessageManager.insufficient_funds(sender);
                 return;
             }
-            currencyManager.sub(sender, destinationPlayer.getUuid(), Account.pocket, price);
+            currencyManager.sub(destinationPlayer.getUuid(), Account.pocket, price);
 
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {
@@ -199,7 +199,7 @@ public class HomesManager {
                 MessageManager.insufficient_funds(player);
                 return;
             }
-            currencyManager.sub(player, player.getUniqueId(), Account.pocket, price);
+            currencyManager.sub(player.getUniqueId(), Account.pocket, price);
 
         }
         if (ConfigManager.getBoolean("plugin.teleport")) {

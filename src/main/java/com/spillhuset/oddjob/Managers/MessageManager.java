@@ -95,11 +95,11 @@ public class MessageManager {
     }
 
     public static void homes_exists(String name, OddPlayer target, CommandSender sender) {
-        danger(Plugin.homes, sender, "The " + name + " has already been used");
+        danger(Plugin.homes, sender, "The " + cItem + name + cDanger + " has already been used");
     }
 
     public static void homes_not_exists(String name, OddPlayer target, CommandSender sender) {
-        danger(Plugin.homes, sender, "The " + name + " does not exist");
+        danger(Plugin.homes, sender, "The " + cItem + name + cDanger + " does not exist");
     }
 
     public static void homes_max_reached(String name, OddPlayer target, CommandSender sender) {
@@ -107,32 +107,32 @@ public class MessageManager {
     }
 
     public static void homes_successfully_added(String name, OddPlayer target, CommandSender sender) {
-        success(Plugin.homes, sender, "Home " + name + " successfully set");
+        success(Plugin.homes, sender, "Home " + cItem + name + cSuccess + " successfully set");
     }
 
     public static void homes_send_list(CommandSender sender, List<String> list, int max) {
-        list(sender, "List of homes " + list.size() + "/" + max, list);
+        list(sender, "List of homes " + cValue + list.size() + cList + "/" + cValue + max, list);
     }
 
     public static void homes_no_name(CommandSender sender, String destinationName) {
-        danger(Plugin.homes, sender, "No homes found with the name " + destinationName);
+        danger(Plugin.homes, sender, "No homes found with the name " + cValue + destinationName);
     }
 
     public static void homes_successfully_renamed(CommandSender sender, String nameOld, String nameNew) {
-        success(Plugin.homes, sender, "Successfully changed " + nameOld + " to " + nameNew);
+        success(Plugin.homes, sender, "Successfully changed " + cValue + nameOld + cSuccess + " to " + cValue + nameNew);
     }
 
     public static void homes_successfully_deleted(CommandSender sender, String name) {
-        success(Plugin.homes, sender, "Successfully deleted " + name);
+        success(Plugin.homes, sender, "Successfully deleted " + cValue + name);
     }
 
     public static void homes_successfully_changed(CommandSender sender, String name) {
-        success(Plugin.homes, sender, "Successfully relocated " + name);
+        success(Plugin.homes, sender, "Successfully relocated " + cValue + name);
     }
     /* Homes end */
 
     public static void sendSyntax(Plugin plugin, String toString, CommandSender sender) {
-        sender.sendMessage("Valid subcommands are: " + toString);
+        sender.sendMessage("Valid subcommands are: " + cValue + toString);
     }
 
     /* Errors start */
@@ -143,6 +143,7 @@ public class MessageManager {
     }
 
     public static void errors_denied_players(Plugin plugin, CommandSender sender) {
+        danger(plugin, sender, "Correct permission needed");
     }
 
     public static void errors_too_many_args(Plugin plugin, CommandSender sender) {
@@ -160,7 +161,7 @@ public class MessageManager {
     }
 
     public static void errors_find_player(Plugin plugin, String targetName, CommandSender sender) {
-        danger(plugin, sender, "Sorry, we can't find player with name " + ChatColor.GOLD + targetName);
+        danger(plugin, sender, "Sorry, we can't find player with name " + cPlayer + targetName);
     }
     /* Errors end*/
 
@@ -353,12 +354,12 @@ public class MessageManager {
         danger(Plugin.currency, sender, "Insufficient funds.");
     }
 
-    public static void currency_holding(Player sender, double pocket, double bank) {
+    public static void currency_holding(CommandSender sender, double pocket, double bank) {
         info(Plugin.currency, sender, "You are currently holding " + cValue + pocket + cInfo + " in your " + cAccount + Account.pocket.name() + cInfo + ", and " + cValue + bank + cInfo + " in your " + cAccount + Account.bank.name());
     }
 
     public static void errors_number(Plugin plugin, String value, CommandSender sender) {
-        danger(plugin, sender, "`" + value + "` is an invalid number");
+        danger(plugin, sender, cValue + value + cDanger + " is an invalid number");
     }
 
     public static void plugin(CommandSender sender, String plugin, String enabled) {
@@ -377,7 +378,7 @@ public class MessageManager {
     }
 
     public static void currency_invalid_account(CommandSender sender, String arg) {
-        danger(Plugin.currency, sender, "Invalid account");
+        danger(Plugin.currency, sender, "Invalid account " + cValue + arg);
     }
 
     public static void currency_paid(CommandSender sender, String name, double value) {
@@ -615,7 +616,7 @@ public class MessageManager {
     }
 
     public static void essentials_healed(CommandSender sender) {
-        info(Plugin.essentials, sender, "You have been feed");
+        info(Plugin.essentials, sender, "You have been healed");
     }
 
     public static void essentials_heal_all(CommandSender sender, List<String> players) {
@@ -822,6 +823,10 @@ public class MessageManager {
         success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
 
+    public static void currency_added_guild(CommandSender sender, @NotNull Guild guild, @NotNull Account account, double value, double newValue) {
+        success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to " + cGuild + guild.getName() + cSuccess + "s " + cValue + account.name());
+    }
+
     public static void currency_set(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value) {
         success(Plugin.currency, sender, "Successfully set " + cValue + value + cSuccess + " to " + cPlayer + oddPlayer.getName() + cSuccess + "s " + cValue + account.name());
     }
@@ -838,18 +843,18 @@ public class MessageManager {
     }
 
     public static void currency_added(CommandSender sender, Account account, double value, double newValue) {
-        success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to your " + cValue + account.name());
+        success(Plugin.currency, sender, "Successfully add " + cValue + value + cSuccess + " to your " + cAccount + account.name() + cSuccess + " new value " + cValue + newValue);
     }
 
     public static void currency_subbed(CommandSender sender, Account account, double value, double newValue) {
-        success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from your " + cValue + account.name());
+        success(Plugin.currency, sender, "Successfully subtracted " + cValue + value + cSuccess + " from your " + cAccount + account.name() + cSuccess + " new value " + cValue + newValue);
     }
 
     public static void guilds_set_flow_water(CommandSender sender, Guild guild, boolean flow) {
         for (UUID uuid : guild.getMembers(guild.getUuid())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cValue + "flow of water" + cInfo + " to " + cValue + flow);
+                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cItem + "flow of water" + cInfo + " to " + cValue + flow);
             }
         }
     }
@@ -858,7 +863,7 @@ public class MessageManager {
         for (UUID uuid : guild.getMembers(guild.getUuid())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cValue + "flow of lava" + cInfo + " to " + cValue + flow);
+                info(Plugin.guilds, player, cPlayer + sender.getName() + cInfo + " changed guild settings " + cInfo + "flow of lava" + cInfo + " to " + cValue + flow);
             }
         }
     }
@@ -869,7 +874,7 @@ public class MessageManager {
 
 
     public static void shops_set_open(CommandSender sender, String name, boolean result) {
-        success(Plugin.shops, sender, "Set shop " + cValue + name + cSuccess + " to " + cValue + result);
+        success(Plugin.shops, sender, "Set shop " + cItem + name + cSuccess + " to " + cValue + result);
     }
 
     public static void shops_inventory_full(CommandSender sender) {
@@ -877,10 +882,19 @@ public class MessageManager {
     }
 
     public static void shops_exists(CommandSender sender, String name) {
-        danger(Plugin.shops, sender, "Shop with name " + cValue + name + cDanger + " does already exist!");
+        danger(Plugin.shops, sender, "Shop with name " + cItem + name + cDanger + " does already exist!");
     }
 
     public static void shops_created(CommandSender sender, String name) {
-        success(Plugin.shops, sender, "Shop with name " + cValue + name + cSuccess + " created!");
+        success(Plugin.shops, sender, "Shop with name " + cItem + name + cSuccess + " created!");
+    }
+
+    public static void essentials_suicide(Plugin plugin, List<String> affected, CommandSender sender) {
+        StringBuilder sb = new StringBuilder();
+        for (String string : affected) {
+            sb.append(cPlayer).append(string).append(cSuccess).append(",");
+        }
+        sb.deleteCharAt(sb.lastIndexOf(","));
+        success(plugin, sender, "Affected players: " + sb);
     }
 }

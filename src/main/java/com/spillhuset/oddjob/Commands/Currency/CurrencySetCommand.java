@@ -51,12 +51,12 @@ public class CurrencySetCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 3;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 4;
     }
 
     @Override
@@ -97,69 +97,86 @@ public class CurrencySetCommand extends SubCommand {
         Account account = null;
         double value = 0.0;
 
-        // Find Account
-        for (Account acc : Account.values()) {
-            if (acc.name().equalsIgnoreCase(args[1])) {
-                account = acc;
-            }
-        }
-
-        if (args.length == 4) {
+        if (args.length == 4 && can(sender, true, true) ) {
             // Find target
-            OddPlayer oddPlayer = OddJob.getInstance().getPlayerManager().get(args[2]);
-            if (oddPlayer == null) {
-                MessageManager.errors_find_player(getPlugin(), args[2], sender);
+            target = OddJob.getInstance().getPlayerManager().get(args[1]);
+            if (target == null) {
+                MessageManager.errors_find_player(getPlugin(), args[1], sender);
                 return;
             }
-            target = oddPlayer;
-            // Check value
+            // Find Account
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[2].toLowerCase())) {
+                    account = acc;
+                }
+            }
+            if (account == null) {
+                MessageManager.currency_invalid_account(sender, args[2]);
+                return;
+            }
+            // Find Value
             try {
                 value = Double.parseDouble(args[3]);
             } catch (NumberFormatException e) {
                 MessageManager.errors_number(getPlugin(), args[3], sender);
+                return;
             }
+            OddJob.getInstance().getCurrencyManager().set(sender, target, account, value);
         }
         if (args.length == 3 && sender instanceof Player player) {
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
-            // Check value
+            // Find Account
+            for (Account acc : Account.values()) {
+                if (acc.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    account = acc;
+                }
+            }
+            if (account == null) {
+                MessageManager.currency_invalid_account(sender, args[1]);
+                return;
+            }
+            // FInd Value
             try {
                 value = Double.parseDouble(args[2]);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ex) {
                 MessageManager.errors_number(getPlugin(), args[2], sender);
+                return;
             }
+            OddJob.getInstance().getCurrencyManager().set(sender, target, account, value);
         }
-        if (account == null) {
-            return;
-        }
-        OddJob.getInstance().getCurrencyManager().set(sender, target, account, value);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-
-        if(args.length == 4) {
-            list.add("value");
+        if (args.length == 2) {
+            for (Account a : Account.values()) {
+                if (a.name().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    list.add(a.name());
+                }
+            }
         }
         if (args.length == 3) {
-            if (can(sender,true,false)) {
-                for (OddPlayer oddPlayer : OddJob.getInstance().getPlayerManager().getAll()) {
-                    if (args[2].length() == 0 || args[2].toLowerCase().startsWith(oddPlayer.getName().toLowerCase())) {
-                        list.add(oddPlayer.getName());
+            if (can(sender, true, false)) {
+                if (args[1].equalsIgnoreCase(Account.guild.name())) {
+                    for (String name : OddJob.getInstance().getGuildsManager().list()) {
+                        if (name.toLowerCase().startsWith(args[2].toLowerCase())) {
+                            list.add(name);
+                        }
+                    }
+                } else {
+                    for (String name : OddJob.getInstance().getPlayerManager().listAll()) {
+                        if (name.toLowerCase().startsWith(args[2].toLowerCase())) {
+                            list.add(name);
+                        }
                     }
                 }
-            } else {
-                list.add("value");
             }
+            list.add("[value]");
         }
-        if (args.length == 2) {
-            for (Account account : Account.values()) {
-                if (args[1].length() == 0 || args[1].toLowerCase().startsWith(account.name().toLowerCase())) {
-                    list.add(account.name());
-                }
-            }
+        if (args.length == 4 && can(sender,true,false)) {
+            list.add("[value]");
         }
-
         return list;
     }
 }
