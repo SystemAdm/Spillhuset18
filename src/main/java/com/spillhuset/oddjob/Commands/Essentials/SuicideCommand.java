@@ -39,7 +39,7 @@ public class SuicideCommand extends SubCommandInterface implements CommandExecut
 
     @Override
     public String getPermission() {
-        return "admin";
+        return "essentials";
     }
 
     @Override

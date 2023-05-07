@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
-    private final List<SubCommand> subCommands = new ArrayList<>();
 
     public PlayerCommand() {
         subCommands.add(new PlayerSetCommand());
+        subCommands.add(new PlayerBlacklistCommand());
     }
     @Override
     public boolean denyConsole() {

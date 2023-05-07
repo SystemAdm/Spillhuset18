@@ -18,13 +18,12 @@ import java.util.List;
 public class OnInventoryCloseEvent implements Listener {
     @EventHandler
     public void onInventoryInteract(InventoryInteractEvent event) {
-        OddJob.getInstance().log("inventory interact event");
+        //OddJob.getInstance().log("inventory interact event");
     }
 
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent event) {
-
-        OddJob.getInstance().log("inventory move item event");
+        //OddJob.getInstance().log("inventory move item event");
     }
 
     @EventHandler
@@ -65,23 +64,23 @@ public class OnInventoryCloseEvent implements Listener {
 
         }
 
-        OddJob.getInstance().log((event.isRightClick() ? "r" : "l") + " " + event.getRawSlot());
-        OddJob.getInstance().log("inventory click event");
+        //OddJob.getInstance().log((event.isRightClick() ? "r" : "l") + " " + event.getRawSlot());
+        //OddJob.getInstance().log("inventory click event");
     }
 
     @EventHandler
     public void onInventoryPickup(InventoryPickupItemEvent event) {
-        OddJob.getInstance().log("inventory pickup item event");
+        //OddJob.getInstance().log("inventory pickup item event");
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        OddJob.getInstance().log("inventory drag event");
+        //OddJob.getInstance().log("inventory drag event");
     }
 
     @EventHandler
     public void onInventory(InventoryEvent event) {
-        OddJob.getInstance().log("inventory event");
+        //OddJob.getInstance().log("inventory event");
     }
 
     @EventHandler

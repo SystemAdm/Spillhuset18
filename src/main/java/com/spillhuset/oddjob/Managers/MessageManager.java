@@ -366,9 +366,8 @@ public class MessageManager {
         sender.sendMessage(plugin + ": " + enabled);
     }
 
-    public static void essentials_join(CommandSender sender, double pocket, double bank, int max, int current) {
-        info(Plugin.currency, sender, "Your current balance at bank: `" + cValue + bank + cInfo + "`; in pocket `" + cValue + pocket + cInfo + "`");
-        info(Plugin.homes, sender, "You have set `" + cValue + current + cInfo + "` homes of `" + cValue + max + cInfo + "` available");
+    public static void essentials_join(CommandSender sender, int max, int current) {
+        info(Plugin.homes, sender, "You have set " + cValue + current + cInfo + " homes of " + cValue + max + cInfo + " available");
     }
 
     public static void guild_join(CommandSender sender, Guild guild, Role role, double bank, boolean hasHome) {
@@ -896,5 +895,14 @@ public class MessageManager {
         }
         sb.deleteCharAt(sb.lastIndexOf(","));
         success(plugin, sender, "Affected players: " + sb);
+    }
+
+    public static void player_blacklist(CommandSender sender, OddPlayer oddPlayer) {
+        List<String> sb = new ArrayList<>();
+        for (UUID uuid : oddPlayer.getBlackList()) {
+            OddPlayer target = OddJob.getInstance().getPlayerManager().get(uuid);
+            sb.add(target.getName());
+        }
+        list(sender,"Blacklist",sb);
     }
 }

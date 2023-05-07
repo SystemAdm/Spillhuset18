@@ -8,6 +8,7 @@ import com.spillhuset.oddjob.Commands.Essentials.*;
 import com.spillhuset.oddjob.Commands.Guilds.GuildsCommand;
 import com.spillhuset.oddjob.Commands.Homes.HomesCommand;
 import com.spillhuset.oddjob.Commands.Locks.LocksCommand;
+import com.spillhuset.oddjob.Commands.Player.PlayerCommand;
 import com.spillhuset.oddjob.Commands.Profession.ProfessionCommand;
 import com.spillhuset.oddjob.Commands.Shops.ShopsCommand;
 import com.spillhuset.oddjob.Commands.Shops.TradeCommand;
@@ -49,6 +50,7 @@ public class OddJob extends JavaPlugin {
         instance = this;
         ConfigManager.load();
         playerManager = new PlayerManager();
+        getCommand("player").setExecutor(new PlayerCommand());
 
         /* Homes */
         if (ConfigManager.getBoolean("plugin.homes")) {

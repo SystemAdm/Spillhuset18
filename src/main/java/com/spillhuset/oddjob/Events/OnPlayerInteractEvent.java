@@ -31,17 +31,25 @@ public class OnPlayerInteractEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLockTool(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
+
+        // There must be a block
         if (block == null) {
             return;
         }
-        /* Locking */
+
+        // Use of locking event
         if (!OddJob.getInstance().getLocksManager().lockTool.equals(event.getItem())) {
             return;
         }
+
         event.setCancelled(true);
+
+        // Clicked the correct way?
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
+
+        // Must be lockable
         if (!OddJob.getInstance().getLocksManager().isLockable(block.getType())) {
             return;
         }

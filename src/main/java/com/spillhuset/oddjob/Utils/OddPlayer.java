@@ -110,5 +110,9 @@ public class OddPlayer {
     public void incBoughtHomes() {
         boughtHomes++;
     }
+
+    public void removeBlackList(UUID uuid) {
+        blackList.remove(uuid);
+    }
 }
 

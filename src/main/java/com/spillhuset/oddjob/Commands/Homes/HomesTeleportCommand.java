@@ -1,12 +1,10 @@
 package com.spillhuset.oddjob.Commands.Homes;
 
-import com.spillhuset.oddjob.Enums.Changed;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.HistoryManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
-import com.spillhuset.oddjob.Utils.ListInterface;
+import com.spillhuset.oddjob.SQL.HomesSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
@@ -64,8 +62,9 @@ public class HomesTeleportCommand extends SubCommand {
 
     @Override
     public int depth() {
-        return 1;
+        return 2;
     }
+
     @Override
     public boolean noGuild() {
         return false;
@@ -80,6 +79,7 @@ public class HomesTeleportCommand extends SubCommand {
     public Role guildRole() {
         return null;
     }
+
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender, false, true)) {
@@ -91,29 +91,25 @@ public class HomesTeleportCommand extends SubCommand {
         }
         // homes tp <player> [name]
         // homes tp [name]
-        OddPlayer destinationPlayer;
+        OddPlayer destinationPlayer = null;
         String destinationName = "home";
-        if (sender instanceof Player) {
-            destinationPlayer = OddJob.getInstance().getPlayerManager().get(((Player) sender).getUniqueId());
-            if (args.length == 1) {
-                MessageManager.homes_no_name(sender, destinationName);
-            }
-            if (args.length == 2) {
-                destinationName = args[1];
-            } else if (args.length == 3) {
+
+        if (sender instanceof Player player) {
+            if (args.length == 3 && can(sender, true, true)) {
                 destinationName = args[2];
                 destinationPlayer = OddJob.getInstance().getPlayerManager().get(args[1]);
+            } else if (args.length == 2) {
+                destinationPlayer = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
+                destinationName = args[1];
             }
-        } else {
-            MessageManager.errors_denied_console(getPlugin(), sender);
+            if (destinationPlayer == null) {
+                MessageManager.errors_find_player(getPlugin(), args[1], sender);
+            } else {
+                OddJob.getInstance().getHomesManager().teleport(player, destinationPlayer, destinationName);
+            }
             return;
         }
-        if (destinationPlayer == null) {
-            MessageManager.errors_find_player(getPlugin(), args[1], sender);
-            return;
-        }
-
-        OddJob.getInstance().getHomesManager().teleport(sender, destinationPlayer, destinationName);
+        MessageManager.errors_find_player(getPlugin(), args[1], sender);
 
     }
 
@@ -121,18 +117,30 @@ public class HomesTeleportCommand extends SubCommand {
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         if (can(sender, true, false)) {
-            if (args.length == 2) {
-                ListInterface.playerList(list, args[1],sender.getName());
-            } else if (args.length == 3) {
+            if (args.length == 3) {
                 UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
                 if (uuid != null) {
-                    ListInterface.listHomes(list, uuid, args[2]);
+                    for (String home : HomesSQL.getList(uuid)) {
+                        if (args[2].isEmpty() || home.toLowerCase().startsWith(args[2].toLowerCase())) {
+                            list.add(home);
+                        }
+                    }
+                }
+            } else if (args.length == 2) {
+                for (String name : OddJob.getInstance().getPlayerManager().listAll()) {
+                    if (args[1].isEmpty() || name.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        list.add(name);
+                    }
                 }
             }
         }
         if (args.length == 2) {
             if (sender instanceof Player player) {
-                ListInterface.listHomes(list, player.getUniqueId(), args[1]);
+                for (String home : HomesSQL.getList(player.getUniqueId())) {
+                    if (args[1].isEmpty() || home.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        list.add(home);
+                    }
+                }
             }
         }
         return list;

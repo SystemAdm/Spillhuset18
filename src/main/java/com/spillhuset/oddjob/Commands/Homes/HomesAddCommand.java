@@ -2,7 +2,6 @@ package com.spillhuset.oddjob.Commands.Homes;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
-import com.spillhuset.oddjob.Managers.HomesManager;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.ListInterface;
@@ -13,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class HomesAddCommand extends SubCommand implements ListInterface {
     @Override
@@ -123,12 +121,13 @@ public class HomesAddCommand extends SubCommand implements ListInterface {
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         if (can(sender, true, false)) {
-            if (args.length == 2) {
-                ListInterface.playerList(list, args[1], sender.getName());
-            } else if (args.length == 3) {
-                UUID uuid = OddJob.getInstance().getPlayerManager().get(args[1]).getUuid();
-                if (uuid != null) {
-                    list.add("<name_of_home>");
+            if (args.length == 3) {
+                list.add("<name_of_home>");
+            } else if (args.length == 2) {
+                for (String name : OddJob.getInstance().getPlayerManager().listAll()) {
+                    if (args[1].isEmpty() || name.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        list.add(name);
+                    }
                 }
             }
         }

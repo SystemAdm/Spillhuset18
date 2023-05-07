@@ -8,7 +8,6 @@ import com.spillhuset.oddjob.SQL.HomesSQL;
 import com.spillhuset.oddjob.SQL.PlayerSQL;
 import com.spillhuset.oddjob.Utils.Guild;
 import com.spillhuset.oddjob.Utils.OddPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -128,29 +127,26 @@ public class HomesManager {
         MessageManager.homes_successfully_deleted(sender, name);
     }
 
-    public void teleport(CommandSender sender, OddPlayer destinationPlayer, String destinationName) {
+    public void teleport(Player sender, OddPlayer destinationPlayer, String destinationName) {
         if (HomesSQL.get(destinationPlayer.getUuid(), destinationName) == null) {
             MessageManager.homes_no_name(sender, destinationName);
             return;
         }
         Location location = HomesSQL.get(destinationPlayer.getUuid(), destinationName);
-        if (ConfigManager.getBoolean("plugin.currency")) {
+        if (ConfigManager.getBoolean("plugin.currency") && (!sender.isOp() || !sender.hasPermission("currency.override"))) {
             CurrencyManager currencyManager = OddJob.getInstance().getCurrencyManager();
             double price = Plu.PLAYER_HOMES_TELEPORT.getValue();
-            if (currencyManager.has(destinationPlayer.getUuid(), Account.pocket, price)) {
+            if (currencyManager.has(sender.getUniqueId(), Account.pocket, price)) {
                 MessageManager.insufficient_funds(sender);
                 return;
             }
-            currencyManager.sub(destinationPlayer.getUuid(), Account.pocket, price);
+            currencyManager.sub(sender.getUniqueId(), Account.pocket, price);
 
         }
-        if (ConfigManager.getBoolean("plugin.teleport")) {
-            OddJob.getInstance().getTeleportManager().teleport(destinationPlayer, location);
+        if (ConfigManager.getBoolean("plugin.teleport") && (!sender.isOp() || !sender.hasPermission("currency.override"))) {
+            OddJob.getInstance().getTeleportManager().teleport(sender, location, TeleportType.player);
         } else {
-            Player player = Bukkit.getPlayer(destinationPlayer.getUuid());
-            if (player != null) {
-                player.teleport(location);
-            }
+            sender.teleport(location);
         }
     }
 

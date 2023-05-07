@@ -40,7 +40,9 @@ public class OnPlayerDeathEvent implements Listener {
                         inventory.setItem(i,player.getInventory().getItem(i));
                     }
                 }
+                event.getDrops().clear();
                 player.getInventory().clear();
+
                 OddJob.getInstance().getPlayerManager().setSpirit(player,armorStand,inventory);
             }
         }

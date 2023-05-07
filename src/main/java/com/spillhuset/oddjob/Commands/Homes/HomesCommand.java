@@ -100,7 +100,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         if (args.length == 1 && sender instanceof Player player) {
             for (String name : HomesSQL.getList(player.getUniqueId())) {
                 if (args[0].equalsIgnoreCase(name)) {
-                    OddJob.getInstance().getHomesManager().teleport(sender, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), name);
+                    OddJob.getInstance().getHomesManager().teleport(player, OddJob.getInstance().getPlayerManager().get(player.getUniqueId()), name);
                     return true;
                 }
             }
@@ -119,7 +119,7 @@ public class HomesCommand extends SubCommandInterface implements CommandExecutor
         if (sender instanceof Player player) {
             List<String> homes = HomesSQL.getList(player.getUniqueId());
             for (String string : homes) {
-                if (args.length == 0 || (args.length == 1 && string.startsWith(args[0]))) {
+                if (args[0].isEmpty() ||  string.toLowerCase().startsWith(args[0].toLowerCase())) {
                     list.add(string);
                 }
             }

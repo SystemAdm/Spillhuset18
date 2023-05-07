@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ArenaManager {
-    private HashMap<Chunk, Arena> chunks = new HashMap<>();
+    private final HashMap<Chunk, Arena> chunks = new HashMap<>();
     private HashMap<UUID, Arena> arenas;
 
     public void create() {

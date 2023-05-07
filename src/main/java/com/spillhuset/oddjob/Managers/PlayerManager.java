@@ -210,24 +210,23 @@ public class PlayerManager {
         player.setCompassTarget(player.getLocation());
         spiritTimer.put(uuid, Bukkit.getScheduler().runTaskTimer(OddJob.getInstance(), () -> {
             armorStand.setCustomName(ChatColor.GREEN + "Spirit of " + ChatColor.GOLD + player.getName() + ChatColor.GREEN + " leaving in " + ChatColor.GRAY + ref.i);
-            {
-                if (ref.i == 600) {
-                    MessageManager.death_timer(owner, ref.i);
-                }
-                if (ref.i == 300) {
-                    MessageManager.death_timer(owner, ref.i);
-                }
-                if (ref.i == 60) {
-                    MessageManager.death_timer(owner, ref.i);
-                }
-                if (ref.i <= 10) {
-                    MessageManager.death_timer(owner, ref.i);
-                }
-                if (ref.i == 0) {
-                    removeArmorstand(uuid);
-                }
-                ref.i--;
+            if (ref.i == 600) {
+                MessageManager.death_timer(owner, ref.i);
             }
+            if (ref.i == 300) {
+                MessageManager.death_timer(owner, ref.i);
+            }
+            if (ref.i == 60) {
+                MessageManager.death_timer(owner, ref.i);
+            }
+            if (ref.i <= 10) {
+                MessageManager.death_timer(owner, ref.i);
+            }
+            if (ref.i >= 0) {
+                removeArmorstand(uuid);
+            }
+            ref.i--;
+
         }, 20, 20));
     }
 
@@ -331,6 +330,6 @@ public class PlayerManager {
             PlayerSQL.save(players.get(uuid));
             i++;
         }
-        OddJob.getInstance().log("Saved players "+i);
+        OddJob.getInstance().log("Saved players " + i);
     }
 }
