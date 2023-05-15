@@ -52,6 +52,7 @@ commands:
   balance:
   trade:
   professions:
+  player:
 
 
 permissions:

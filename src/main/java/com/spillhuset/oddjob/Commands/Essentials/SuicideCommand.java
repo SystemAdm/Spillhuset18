@@ -2,7 +2,6 @@ package com.spillhuset.oddjob.Commands.Essentials;
 
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Managers.MessageManager;
-import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -59,17 +58,17 @@ public class SuicideCommand extends SubCommandInterface implements CommandExecut
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if (!can(sender,false,true)) {
+        if (!can(sender, false, true)) {
             return true;
         }
-        if(!argsLength(sender,args.length)) {
+        if (!argsLength(sender, args.length)) {
             return true;
         }
 
         if (args.length == 0 && sender instanceof Player player) {
             player.setHealth(0);
             return true;
-        } else if (!can(sender,true,true)) {
+        } else if (!can(sender, true, true)) {
             return true;
         }
 
@@ -84,9 +83,11 @@ public class SuicideCommand extends SubCommandInterface implements CommandExecut
         } else if (args.length == 1) {
             Player player = Bukkit.getPlayer(args[0]);
             if (player == null) {
-                MessageManager.errors_find_player(getPlugin(),args[0],sender);
+                MessageManager.errors_find_player(getPlugin(), args[0], sender);
                 return true;
-            }affected.add(player.getName());
+            }
+            affected.add(player.getName());
+            player.setHealth(0);
         } else {
             for (String arg : args) {
                 Player player = Bukkit.getPlayer(arg);
@@ -96,7 +97,7 @@ public class SuicideCommand extends SubCommandInterface implements CommandExecut
                 }
             }
         }
-        MessageManager.essentials_suicide(getPlugin(),affected,sender);
+        MessageManager.essentials_suicide(getPlugin(), affected, sender);
         return true;
     }
 
@@ -105,7 +106,7 @@ public class SuicideCommand extends SubCommandInterface implements CommandExecut
         List<String> list = new ArrayList<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.hasPermission("admin") && !player.isOp()) {
-                if (args[args.length-1].isEmpty() || player.getName().toLowerCase().startsWith(args[args.length-1].toLowerCase())) {
+                if (args[args.length - 1].isEmpty() || player.getName().toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
                     list.add(player.getName());
                 }
             }

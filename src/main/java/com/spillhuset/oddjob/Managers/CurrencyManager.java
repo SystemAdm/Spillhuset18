@@ -23,6 +23,7 @@ import java.util.UUID;
 public class CurrencyManager {
     private final HashMap<UUID, Double> earnings = new HashMap<>();
     private final Account AFFECTED_PAY = Account.pocket;
+    private final Account AFFECTED_TRANSFER = Account.bank;
     NamespacedKey key = NamespacedKey.minecraft("income");
 
     public CurrencyManager() {
@@ -52,7 +53,7 @@ public class CurrencyManager {
                 }
             }
 
-            if (i[0] == 0) {
+            if (i[0] <= 0) {
                 payday();
                 i[0] = 300;
             } else {
@@ -64,7 +65,8 @@ public class CurrencyManager {
     private void payday() {
         for (UUID uuid : earnings.keySet()) {
             OddPlayer player = OddJob.getInstance().getPlayerManager().get(uuid);
-            add(null,player.getUuid(), Account.bank, earnings.get(uuid),false);
+            add(null,player.getUuid(), AFFECTED_TRANSFER, earnings.get(uuid),false);
+            OddJob.getInstance().log("earn:"+earnings.get(uuid));
         }
         BossBar bossBar = Bukkit.getBossBar(key);
         if (bossBar != null) {
@@ -105,7 +107,7 @@ public class CurrencyManager {
     }
 
     public void showPlayer(CommandSender sender, OddPlayer player) {
-        MessageManager.currency_holding(sender, get(player.getUuid(), Account.pocket), get(player.getUuid(), Account.bank));
+        MessageManager.currency_holding(sender, get(player.getUuid(), Account.pocket), get(player.getUuid(), AFFECTED_TRANSFER));
     }
 
     public void sub(CommandSender sender, Account account, double value) {
@@ -161,7 +163,7 @@ public class CurrencyManager {
 
     public void pay(CommandSender sender, OddPlayer target, double value) {
         Player player = (Player) sender;
-
+        if (player == null) return;
         if (!CurrencySQL.has(player.getUniqueId(), AFFECTED_PAY, value)) {
             MessageManager.insufficient_funds(sender);
             return;

@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob.Events;
 
+import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Shop;
 import org.bukkit.ChatColor;
@@ -28,6 +29,7 @@ public class OnInventoryCloseEvent implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (!ConfigManager.getBoolean("plugins.shop")) return;
         Player player = (Player) event.getWhoClicked();
         String name = event.getView().getTitle().split(" ")[0];
         OddJob.getInstance().log(name);

@@ -222,7 +222,7 @@ public class PlayerManager {
             if (ref.i <= 10) {
                 MessageManager.death_timer(owner, ref.i);
             }
-            if (ref.i >= 0) {
+            if (ref.i <= 0) {
                 removeArmorstand(uuid);
             }
             ref.i--;
@@ -275,6 +275,8 @@ public class PlayerManager {
     }
 
     public void openArmorstand(UUID armorstand, Player player) {
+        ArmorStand armorStand = (ArmorStand) Bukkit.getEntity(armorstand);
+        if (armorStand != null && armorStand.getEquipment() != null) armorStand.getEquipment().clear();
         player.openInventory(spiritContents.get(armorstand));
     }
 

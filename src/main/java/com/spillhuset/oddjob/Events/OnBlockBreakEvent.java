@@ -82,7 +82,7 @@ public class OnBlockBreakEvent implements Listener {
     @EventHandler (priority = EventPriority.MONITOR)
     public void breakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (!player.hasPermission("pay_override") || player.isOp()) return;
+        if (player.hasPermission("pay_override") || player.isOp()) return;
         OddJob.getInstance().getCurrencyManager().earnings(player.getUniqueId());
     }
 }

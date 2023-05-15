@@ -97,7 +97,7 @@ public class PlayerBlacklistRemoveCommand extends SubCommand {
                 return;
             }
             target.removeBlackList(black.getUuid());
-            MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
+            //MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
         } else if (sender instanceof Player player){
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             black = OddJob.getInstance().getPlayerManager().get(args[2]);
@@ -106,7 +106,7 @@ public class PlayerBlacklistRemoveCommand extends SubCommand {
                 return;
             }
             target.removeBlackList(black.getUuid());
-            MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
+            //MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
         }
     }
 

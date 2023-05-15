@@ -33,12 +33,18 @@ public class OnPlayerDeathEvent implements Listener {
             EntityEquipment equipmentArmorStand = armorStand.getEquipment();
             if (equipmentPlayer != null && equipmentArmorStand != null) {
                 equipmentArmorStand.setArmorContents(equipmentPlayer.getArmorContents());
-                Inventory inventory = Bukkit.createInventory(null,36,"Spirit of "+player.getName());
+                Inventory inventory = Bukkit.createInventory(null,45,"Spirit of "+player.getName());
                 for (int i = 0; i < 36; i ++) {
                     ItemStack is = player.getInventory().getItem(i);
                     if (is != null && is.getType() != Material.AIR) {
                         inventory.setItem(i,player.getInventory().getItem(i));
                     }
+                }
+                ItemStack[] in = equipmentPlayer.getArmorContents();
+                int i = 37;
+                for (ItemStack item : in) {
+                    inventory.setItem(i++,item);
+                    OddJob.getInstance().log("item:"+i);
                 }
                 event.getDrops().clear();
                 player.getInventory().clear();
