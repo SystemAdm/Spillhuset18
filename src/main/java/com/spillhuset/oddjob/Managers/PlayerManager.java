@@ -289,7 +289,7 @@ public class PlayerManager {
         objective.getScore(ChatColor.GRAY + ">> Online").setScore(15);
 
         Team onlineCounter = scoreboard.registerNewTeam("onlineCounter");
-        onlineCounter.addEntry(ChatColor.BLACK + "" + ChatColor.WHITE);
+        onlineCounter.addEntry(ChatColor.BLACK + String.valueOf(ChatColor.WHITE));
 
         if (Bukkit.getOnlinePlayers().size() == 0) {
             onlineCounter.setPrefix("0/" + Bukkit.getMaxPlayers());
