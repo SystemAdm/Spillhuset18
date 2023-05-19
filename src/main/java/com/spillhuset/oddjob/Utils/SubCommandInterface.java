@@ -89,8 +89,8 @@ public abstract class SubCommandInterface {
         if (args.length >= depth()) {
             //OddJob.getInstance().log("args: " + args.length + " depth: " + depth());
             for (SubCommand subCommand : subCommands) {
-                //OddJob.getInstance().log("command: " + subCommand.getName());
-                //OddJob.getInstance().log("like: " + args[depth()]);
+                OddJob.getInstance().log("command: " + subCommand.getName());
+                OddJob.getInstance().log("like: " + args[depth()]);
                 if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
                     if (subCommand.can(sender, false, true)) {
                         subCommand.getCommandExecutor(sender, args);

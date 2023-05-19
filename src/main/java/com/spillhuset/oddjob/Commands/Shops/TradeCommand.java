@@ -1,7 +1,6 @@
 package com.spillhuset.oddjob.Commands.Shops;
 
 import com.spillhuset.oddjob.Enums.Plugin;
-import com.spillhuset.oddjob.Utils.SubCommand;
 import com.spillhuset.oddjob.Utils.SubCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,16 +8,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TradeCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
-    private List<SubCommand> subCommands = new ArrayList<>();
-    public TradeCommand(){
+    public TradeCommand() {
         subCommands.add(new TradeRequestCommand());
         subCommands.add(new TradeAcceptCommand());
         subCommands.add(new TradeDenyCommand());
     }
+
     @Override
     public boolean denyConsole() {
         return true;
@@ -61,12 +59,21 @@ public class TradeCommand extends SubCommandInterface implements CommandExecutor
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!argsLength(sender, args.length)) {
+            return true;
+        }
+        if (!can(sender, false, true)) {
+            return true;
+        }
 
+        if (args.length > 0) {
+            finder(sender, args);
+        }
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        return null;
+        return tabs(sender, args);
     }
 }

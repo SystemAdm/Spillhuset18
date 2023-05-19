@@ -75,8 +75,13 @@ public class PlayerBlacklistAddCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        if (!argsLength(sender,args.length)) {return;}
-        if(!can(sender,false,true)){return;}
+        if (!argsLength(sender, args.length)) {
+            return;
+        }
+        if (!can(sender, false, true)) {
+            return;
+        }
+
     }
 
     @Override

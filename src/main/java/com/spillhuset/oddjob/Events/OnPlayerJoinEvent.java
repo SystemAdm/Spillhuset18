@@ -28,6 +28,10 @@ public class OnPlayerJoinEvent implements Listener {
         GuildsManager gm = OddJob.getInstance().getGuildsManager();
         PlayerManager pm = OddJob.getInstance().getPlayerManager();
 
+        if(pm.get(player.getUniqueId()) == null) {
+            pm.create(player);
+        }
+
         MessageManager.essentials_join(player, hm.getMax(player.getUniqueId()), hm.getCurrent(player.getUniqueId()));
         cm.showPlayer(player,pm.get(player.getUniqueId()));
 

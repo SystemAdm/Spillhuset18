@@ -63,7 +63,7 @@ public class CurrencySQL extends MySQLManager {
             preparedStatement.setString(1, uuid.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                value = resultSet.getDouble(account.name());
+                value = resultSet.getDouble(account.getType());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

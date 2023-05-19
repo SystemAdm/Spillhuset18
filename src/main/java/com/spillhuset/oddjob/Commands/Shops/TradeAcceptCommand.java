@@ -1,6 +1,8 @@
 package com.spillhuset.oddjob.Commands.Shops;
+
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
+import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.Bukkit;
@@ -48,17 +50,17 @@ public class TradeAcceptCommand extends SubCommand {
 
     @Override
     public int minArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int maxArgs() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int depth() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -78,9 +80,22 @@ public class TradeAcceptCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        Player trader = Bukkit.getPlayer(args[1]);
-        Player target = (Player) sender;
-        OddJob.getInstance().getShopsManager().tradeAccept(target,trader);
+        if (!argsLength(sender, args.length)) return;
+        if (!can(sender, false, true)) return;
+
+        Player target = Bukkit.getPlayer(UUID.fromString(args[1]));
+        if (target == null) {
+            MessageManager.errors_find_player(getPlugin(), args[1], sender);
+            return;
+        }
+
+        Player trader = Bukkit.getPlayer(((Player) sender).getUniqueId());
+        if (trader == null) {
+            OddJob.getInstance().log("error");
+            return;
+        }
+        OddJob.getInstance().log("trade accept");
+        OddJob.getInstance().getShopsManager().tradeAccept(target, trader);
     }
 
     @Override

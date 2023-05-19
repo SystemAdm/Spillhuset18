@@ -64,8 +64,7 @@ public class CurrencyManager {
 
     private void payday() {
         for (UUID uuid : earnings.keySet()) {
-            OddPlayer player = OddJob.getInstance().getPlayerManager().get(uuid);
-            add(null,player.getUuid(), AFFECTED_TRANSFER, earnings.get(uuid),false);
+            add(null,uuid, AFFECTED_TRANSFER, earnings.get(uuid),false);
             OddJob.getInstance().log("earn:"+earnings.get(uuid));
         }
         BossBar bossBar = Bukkit.getBossBar(key);
@@ -147,7 +146,7 @@ public class CurrencyManager {
     }
 
     public boolean has(UUID player, Account account, double cost) {
-        return !CurrencySQL.has(player, account, cost);
+        return CurrencySQL.has(player, account, cost);
     }
 
     public double sub(UUID player, Account account, double value) {

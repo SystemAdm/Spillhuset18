@@ -140,3 +140,5 @@ permissions:
     default: false #Change later
   world:
     default: op
+  trade:
+    default: true

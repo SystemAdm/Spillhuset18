@@ -791,7 +791,7 @@ public class MessageManager {
         info(Plugin.shops, sender, "Trade with " + cPlayer + target.getName() + " cancelled");
     }
 
-    public static void shops_trade_changed(CommandSender sender, @NotNull Player player, @NotNull OddPlayer target) {
+    public static void shops_trade_changed(CommandSender sender, @NotNull OddPlayer player, @NotNull OddPlayer target) {
         info(Plugin.shops, sender, "Trade request changed from " + cPlayer + target.getName() + cInfo + " to " + cPlayer + player.getName());
     }
 
@@ -802,8 +802,10 @@ public class MessageManager {
         }
     }
 
-    public static void shops_trade_created(CommandSender sender, Player player) {
+    public static void shops_trade_created(CommandSender sender, OddPlayer player) {
         Player trader = (Player) sender;
+        Player trade = Bukkit.getPlayer(player.getUuid());
+        if (trade == null) return;
         info(Plugin.shops, sender, "Trade request sent to " + cPlayer + player.getName());
 
         TextComponent accept = new TextComponent(ChatColor.GREEN + "Accept");
@@ -814,8 +816,8 @@ public class MessageManager {
 
         accept.addExtra(" or ");
         accept.addExtra(deny);
-        info(Plugin.shops, player, "Trade request from " + cPlayer + trader.getName());
-        player.spigot().sendMessage(accept);
+        info(Plugin.shops, trade, "Trade request from " + cPlayer + trader.getName());
+        trade.spigot().sendMessage(accept);
     }
 
     public static void currency_added(CommandSender sender, @NotNull OddPlayer oddPlayer, @NotNull Account account, double value, double newValue) {
@@ -904,5 +906,9 @@ public class MessageManager {
             sb.add(target.getName());
         }
         list(sender,"Blacklist",sb);
+    }
+
+    public static void player_blacklist_removed(String name, CommandSender sender) {
+        success(Plugin.players,sender,"Successfully removed "+cPlayer+name+cSuccess+" from the Blacklist");
     }
 }

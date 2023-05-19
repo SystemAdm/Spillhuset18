@@ -9,6 +9,7 @@ import com.spillhuset.oddjob.Utils.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBlacklistRemoveCommand extends SubCommand {
@@ -97,8 +98,8 @@ public class PlayerBlacklistRemoveCommand extends SubCommand {
                 return;
             }
             target.removeBlackList(black.getUuid());
-            //MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
-        } else if (sender instanceof Player player){
+            MessageManager.player_blacklist_removed(black.getName(), sender);
+        } else if (sender instanceof Player player) {
             target = OddJob.getInstance().getPlayerManager().get(player.getUniqueId());
             black = OddJob.getInstance().getPlayerManager().get(args[2]);
             if (target == null || black == null) {
@@ -106,12 +107,21 @@ public class PlayerBlacklistRemoveCommand extends SubCommand {
                 return;
             }
             target.removeBlackList(black.getUuid());
-            //MessageManager.player_blacklist_removed(getPlugin(),black.getName(),sender);
+            MessageManager.player_blacklist_removed(black.getName(), sender);
         }
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        // players blacklist remove [target] [black]
+        List<String> list = new ArrayList<>();
+        if ((args.length == 4 && can(sender, true, false)) || args.length == 3) {
+            for (String name : OddJob.getInstance().getPlayerManager().listAll()) {
+                if (args[args.length - 1].isEmpty() || name.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
+                    list.add(name);
+                }
+            }
+        }
+        return list;
     }
 }

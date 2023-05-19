@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
@@ -229,29 +230,32 @@ public class ShopsManager {
         }
     }
 
-    public void tradeRequest(CommandSender sender, Player player) {
-        UUID trader = ((Player) sender).getUniqueId();
-
+    public void tradeRequest(OddPlayer trading_oddplayer, OddPlayer want_to_trade_with) {
+        UUID trading_uuid = trading_oddplayer.getUuid();
+        Player sender = Bukkit.getPlayer(trading_oddplayer.getUuid());
         // traded with earlier
-        UUID old = trades.get(trader);
-        OddPlayer target = OddJob.getInstance().getPlayerManager().get(old);
-        if (old != null) {
-            if (old.equals(player.getUniqueId())) {
+        UUID old_trading_with = trades.get(trading_uuid);
+        if (old_trading_with != null) {
+            OddJob.getInstance().log("old trade");
+            if (old_trading_with.equals(want_to_trade_with.getUuid())) {
                 // trade cancelled
-                MessageManager.shops_trade_cancelled(sender, target);
+                OddJob.getInstance().log("trade cancelled");
+                MessageManager.shops_trade_cancelled(sender, want_to_trade_with);
                 //todo cancel
-                trades.remove(trader);
+                trades.remove(trading_uuid);
                 return;
             } else {
                 // trade changed from old to new
-                MessageManager.shops_trade_changed(sender, player, target);
+                OddJob.getInstance().log("trade changed");
+                MessageManager.shops_trade_changed(sender, OddJob.getInstance().getPlayerManager().get(old_trading_with), want_to_trade_with);
             }
             // trade with old aborted
-            MessageManager.shops_trade_aborted(sender, target);
+            OddJob.getInstance().log("request sent");
+            MessageManager.shops_trade_aborted(sender, OddJob.getInstance().getPlayerManager().get(old_trading_with));
         }
 
-        MessageManager.shops_trade_created(sender, player);
-        trades.put(trader, player.getUniqueId());
+        MessageManager.shops_trade_created(sender, want_to_trade_with);
+        trades.put(trading_uuid, want_to_trade_with.getUuid());
     }
 
     public ItemStack incOne() {
@@ -281,7 +285,7 @@ public class ShopsManager {
     }
 
     public ItemStack decOne() {
-        ItemStack decOne = new ItemStack(Material.GOLD_NUGGET);
+        ItemStack decOne = new ItemStack(Material.IRON_NUGGET);
         ItemMeta targetDecOneMeta = decOne.getItemMeta();
         if (targetDecOneMeta != null) {
             targetDecOneMeta.setDisplayName("-1");
@@ -294,7 +298,7 @@ public class ShopsManager {
     }
 
     public ItemStack decTen() {
-        ItemStack decTen = new ItemStack(Material.GOLD_INGOT);
+        ItemStack decTen = new ItemStack(Material.IRON_INGOT);
         ItemMeta targetDecTenMeta = decTen.getItemMeta();
         if (targetDecTenMeta != null) {
             targetDecTenMeta.setDisplayName("/10");
@@ -306,19 +310,35 @@ public class ShopsManager {
         return decTen;
     }
 
+    public ItemStack clear() {
+        ItemStack clear = new ItemStack(Material.IRON_INGOT);
+        ItemMeta clearMeta = clear.getItemMeta();
+        if (clearMeta != null) {
+            clearMeta.setDisplayName(">0<");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "Click to clear to zero ");
+            clearMeta.setLore(lore);
+        }
+        clear.setItemMeta(clearMeta);
+        return clear;
+    }
+
     public void tradeAccept(Player target, Player trader) {
-        Inventory inventory = Bukkit.createInventory(null, 27, "Trading " + trader.getUniqueId());
+        Inventory inventory = Bukkit.createInventory(null, 27, "Trading " + trader.getUniqueId().toString().split("-")[0]);
         inventory.setItem(9, incTen());
         inventory.setItem(10, incOne());
         inventory.setItem(12, total(target.getUniqueId()));
+        inventory.setItem(13, clear());
         inventory.setItem(14, total(trader.getUniqueId()));
         inventory.setItem(16, decOne());
         inventory.setItem(17, decTen());
+        target.openInventory(inventory);
+        trader.openInventory(inventory);
     }
 
     private ItemStack total(UUID uniqueId) {
         int i = values.get(uniqueId) != null ? values.get(uniqueId) : 0;
-        ItemStack targetTotal = new ItemStack(Material.GOLD_INGOT);
+        ItemStack targetTotal = new ItemStack(Material.COPPER_INGOT);
         ItemMeta targetTotalMeta = targetTotal.getItemMeta();
         if (targetTotalMeta != null) {
             targetTotalMeta.setDisplayName(ChatColor.GOLD + String.valueOf(i));
@@ -330,24 +350,32 @@ public class ShopsManager {
         return targetTotal;
     }
 
-    public boolean tradeAction(Player player, Inventory inventory, ItemStack itemStack) {
-        if (itemStack.getItemMeta() != null){
-        switch (itemStack.getItemMeta().getDisplayName()) {
-            case "+1": {
-                values.put(player.getUniqueId(), values.get(player.getUniqueId()) + 1);
-            }
-            case "-1": {
-                values.put(player.getUniqueId(), values.get(player.getUniqueId()) - 1);
-            }
-            case "*10": {
-                values.put(player.getUniqueId(), values.get(player.getUniqueId()) * 10);
-            }
-            case "/10": {
-                values.put(player.getUniqueId(), values.get(player.getUniqueId()) / 10);
-            }
-        }}
+    public void tradeAction(Player player, Inventory inventory, ItemStack itemStack, InventoryView view) {
 
-        return false;
+        if (itemStack.getItemMeta() != null) {
+            switch (itemStack.getItemMeta().getDisplayName()) {
+                case "+1": {
+                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) + 1);
+                }
+                case "-1": {
+                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) - 1);
+                }
+                case "x10": {
+                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) * 10);
+                }
+                case "/10": {
+                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) / 10);
+                }
+                case ">0<": {
+                    values.put(player.getUniqueId(), 0);
+                }
+            }
+            //total()
+        }
+
+    }
+
+    private boolean me(UUID uniqueId, Inventory inventory) {
     }
 
     public List<String> getNames() {

@@ -334,4 +334,9 @@ public class PlayerManager {
         }
         OddJob.getInstance().log("Saved players " + i);
     }
+
+    public void create(Player player) {
+        OddPlayer oddPlayer = new OddPlayer(player.getUniqueId(),player.getName());
+        PlayerSQL.save(oddPlayer);
+    }
 }
