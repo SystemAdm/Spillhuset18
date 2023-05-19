@@ -376,6 +376,7 @@ public class ShopsManager {
     }
 
     private boolean me(UUID uniqueId, Inventory inventory) {
+        return true;
     }
 
     public List<String> getNames() {
