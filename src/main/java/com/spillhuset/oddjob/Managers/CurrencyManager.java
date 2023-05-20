@@ -129,7 +129,7 @@ public class CurrencyManager {
         String sender_name = "";
         String receiver_name;
 
-        if (has(fromPlayer.getUuid(), fromAccount, value)) {
+        if (!has(fromPlayer.getUuid(), fromAccount, value)) {
             MessageManager.insufficient_funds(sender);
             return;
         }

@@ -6,12 +6,12 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.SessionManager;
-import com.sk89q.worldedit.world.World;
 import com.spillhuset.oddjob.Enums.Plugin;
 import com.spillhuset.oddjob.Enums.Role;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Arena;
 import com.spillhuset.oddjob.Utils.SubCommand;
+import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -67,7 +67,7 @@ public class ArenaCreateCommand extends SubCommand {
 
     @Override
     public int depth() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -89,29 +89,43 @@ public class ArenaCreateCommand extends SubCommand {
     public void getCommandExecutor(CommandSender sender, String[] args) {
         if (!can(sender,false,true)) return;
         if (!argsLength(sender,args.length)) return;
+
         // arena create <name>
-        Player player = (Player) sender;
-
-        com.sk89q.worldedit.entity.Player actor = BukkitAdapter.adapt(player);
-        SessionManager manager = WorldEdit.getInstance().getSessionManager();
-        LocalSession localSession = manager.get(actor);
-
-        Region region;
-        World selectionWorld = localSession.getSelectionWorld();
-
-        try {
-            if (selectionWorld == null) throw new IncompleteRegionException();
-            region = localSession.getSelection(selectionWorld);
-        } catch (IncompleteRegionException ex) {
-            OddJob.getInstance().log("some error");
-            return;
+        WorldType worldType = WorldType.NORMAL;
+        for (WorldType w : WorldType.values()) {
+            if (w.getName().equalsIgnoreCase(args[3])) {
+                worldType = w;
+            }
         }
-
-        OddJob.getInstance().getArenaManager().create(args[1],player,region);
+        World.Environment environment = World.Environment.NORMAL;
+        for (World.Environment e: World.Environment.values()) {
+            if (e.name().equalsIgnoreCase(args[2])) {
+                environment = e;
+            }
+        }
+        OddJob.getInstance().getArenaManager().create(sender,args[1],environment,worldType);
     }
 
     @Override
     public List<String> getTabCompleter(CommandSender sender, String[] args) {
-        return null;
+        List<String> list = new ArrayList<>();
+        if (args.length == 2) {
+            list.add("<name>");
+        }
+        if (args.length == 3){
+            for (World.Environment e : World.Environment.values()) {
+                if (args[2].isEmpty() || e.name().toLowerCase().startsWith(args[2].toLowerCase())) {
+                    list.add(e.name());
+                }
+            }
+        }
+        if (args.length == 4) {
+            for (WorldType e : WorldType.values()) {
+                if (args[3].isEmpty() || e.name().toLowerCase().startsWith(args[3].toLowerCase())) {
+                    list.add(e.name());
+                }
+            }
+        }
+        return list;
     }
 }

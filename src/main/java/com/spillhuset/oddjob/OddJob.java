@@ -1,5 +1,6 @@
 package com.spillhuset.oddjob;
 
+import com.spillhuset.oddjob.Commands.Arena.ArenaCommand;
 import com.spillhuset.oddjob.Commands.Currency.BalanceCommand;
 import com.spillhuset.oddjob.Commands.Currency.CurrencyCommand;
 import com.spillhuset.oddjob.Commands.Currency.PayCommand;
@@ -78,6 +79,8 @@ public class OddJob extends JavaPlugin {
         if (ConfigManager.getBoolean("plugin.games")) {
             arenaManager = new ArenaManager();
             gameManager = new GameManager();
+            getCommand("arena").setExecutor(new ArenaCommand());
+            //getCommand("game").setExecutor(new GameCommand());
         }
 
         /* Auctions */

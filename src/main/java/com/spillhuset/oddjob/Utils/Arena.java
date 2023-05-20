@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public class Arena {
     String name;
-    World world;
+    UUID world;
     UUID uuid;
 
-    public Arena(String name, World world) {
-        this.uuid = UUID.randomUUID();
+    public Arena(UUID uuid, String name, UUID world) {
+        this.uuid = uuid;
         this.name = name;
         this.world = world;
     }
@@ -19,7 +19,7 @@ public class Arena {
         return this.name;
     }
 
-    public World getWorld() {
+    public UUID getWorld() {
         return this.world;
     }
 

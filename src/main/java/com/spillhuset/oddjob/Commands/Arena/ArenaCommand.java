@@ -18,6 +18,7 @@ import java.util.List;
 public class ArenaCommand extends SubCommandInterface implements CommandExecutor, TabCompleter {
     public ArenaCommand() {
         subCommands.add(new ArenaCreateCommand());
+        subCommands.add(new ArenaDeleteCommand());
         subCommands.add(new ArenaEditCommand());
         subCommands.add(new ArenaSetCommand());
         subCommands.add(new ArenaSaveCommand());
@@ -83,40 +84,14 @@ public class ArenaCommand extends SubCommandInterface implements CommandExecutor
             return true;
         }
 
-        if (sender instanceof Player player && args.length == depth()) {
-            OddJob.getInstance().getGuildsManager().info(player);
-            return true;
-        }
-
-        if (args.length > 0) {
-            for (SubCommand subCommand : subCommands) {
-                if (subCommand.getName().equalsIgnoreCase(args[0])) {
-                    if (subCommand.can(sender, false, true)) {
-                        subCommand.getCommandExecutor(sender, args);
-                        return true;
-                    }
-                }
-            }
-        }
-        MessageManager.sendSyntax(getPlugin(), list(sender), sender);
-
+        finder(sender,args);
+OddJob.getInstance().log("here");
 
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> list = new ArrayList<>();
-        for (SubCommand subCommand : subCommands) {
-            // Can use 'self' command
-            if (can(sender, false, false)) {
-                if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
-                    return subCommand.getTabCompleter(sender, args);
-                } else if (args[depth()].isEmpty() || subCommand.getName().startsWith(args[depth()])) {
-                    list.add(subCommand.getName());
-                }
-            }
-        }
-        return list;
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        return tabs(sender, args);
     }
 }
