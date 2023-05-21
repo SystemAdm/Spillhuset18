@@ -3,6 +3,8 @@ package com.spillhuset.oddjob.Events;
 import com.spillhuset.oddjob.Managers.MessageManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.LockUtil;
+import com.spillhuset.oddjob.Utils.Menu;
+import com.spillhuset.oddjob.Utils.TradeMenu;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,30 +17,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.UUID;
 
 public class OnPlayerInteractEvent implements Listener {
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        OddJob.getInstance().log("event");
-
-        // In trading inventory
-        if (event.getView().getTitle().startsWith("Trading ")) {
-            OddJob.getInstance().log("trading");
-            Player player = (Player) event.getWhoClicked();
-            Inventory inventory = event.getInventory();
-            ItemStack itemStack = event.getWhoClicked().getItemOnCursor();
-
-            OddJob.getInstance().getShopsManager().tradeAction(player, inventory, itemStack,event.getView());
-
-            event.setCancelled(true);
-        }
-
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLockTool(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();

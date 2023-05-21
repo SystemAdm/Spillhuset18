@@ -42,7 +42,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
 
     @Override
     public int minArgs() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
             return true;
         }
 
-        if (can(sender,true,false) && args.length == 3) {
+        if (can(sender, true, false) && args.length == 3) {
             OddPlayer newTarget;
             newTarget = OddJob.getInstance().getPlayerManager().get(args[1]);
             if (newTarget == null) {
@@ -87,7 +87,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
                 MessageManager.errors_number(getPlugin(), args[2], sender);
                 return true;
             }
-            OddJob.getInstance().getCurrencyManager().pay(sender, newTarget,target, value);
+            OddJob.getInstance().getCurrencyManager().pay(sender, newTarget, target, value);
         } else {
             try {
                 value = Double.parseDouble(args[1]);
@@ -97,7 +97,6 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
             }
             OddJob.getInstance().getCurrencyManager().pay(sender, target, value);
         }
-
 
 
         return true;
@@ -118,7 +117,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
         }
 
         if (args.length == 2) {
-            if(can(sender,true,false)) {
+            if (can(sender, true, false)) {
                 for (String player : OddJob.getInstance().getPlayerManager().listAll()) {
                     if (args[1].isEmpty() || player.toLowerCase().startsWith(args[1].toLowerCase())) {
                         list.add(player);
@@ -127,7 +126,7 @@ public class PayCommand extends SubCommandInterface implements CommandExecutor, 
             }
             list.add("<value>");
         }
-        if (args.length == 3 && can(sender,true,false)) {
+        if (args.length == 3 && can(sender, true, false)) {
             list.add("<value>");
         }
         return list;

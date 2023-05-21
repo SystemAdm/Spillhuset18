@@ -146,15 +146,16 @@ public class LockUtil {
             if (bl == null || bl.getType() == Material.AIR) {
                 continue;
             }
-            Openable openable = (Openable) bl.getBlockData();
-            if (open) {
-                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_CLOSE, 1f, 8f);
-            } else {
-                player.playSound(location, Sound.BLOCK_WOODEN_DOOR_OPEN, 1f, 8f);
+            if (bl instanceof Openable openable) {
+                if (open) {
+                    player.playSound(location, Sound.BLOCK_WOODEN_DOOR_CLOSE, 1f, 8f);
+                } else {
+                    player.playSound(location, Sound.BLOCK_WOODEN_DOOR_OPEN, 1f, 8f);
+                }
+                openable.setOpen(!open);
+                bl.setBlockData(openable);
+                bl.getState().update(true, true);
             }
-            openable.setOpen(!open);
-            bl.setBlockData(openable);
-            bl.getState().update(true, true);
         }
     }
 }

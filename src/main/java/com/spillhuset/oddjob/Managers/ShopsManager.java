@@ -6,6 +6,7 @@ import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.SQL.ShopsSQL;
 import com.spillhuset.oddjob.Utils.OddPlayer;
 import com.spillhuset.oddjob.Utils.Shop;
+import com.spillhuset.oddjob.Utils.TradeMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,9 +31,10 @@ public class ShopsManager {
     final double INDEX_BUY = 0.09;
     final double DIFFERENCE = 1.3;
 
-    private final HashMap<UUID, UUID> trades = new HashMap<>();
-    private final HashMap<UUID, Integer> values = new HashMap<>();
+    private final HashMap<UUID, UUID> tradeRequests = new HashMap<>();
+    public final HashMap<UUID, Double> values = new HashMap<>();
     public HashMap<String, Shop> shops = new HashMap<>();
+    public List<TradeMenu> tradeActive = new ArrayList<>();
     private final HashMap<String, Inventory> inventories = new HashMap<>();
     public HashMap<String, Price> priceList = new HashMap<>();
 
@@ -234,7 +236,7 @@ public class ShopsManager {
         UUID trading_uuid = trading_oddplayer.getUuid();
         Player sender = Bukkit.getPlayer(trading_oddplayer.getUuid());
         // traded with earlier
-        UUID old_trading_with = trades.get(trading_uuid);
+        UUID old_trading_with = tradeRequests.get(trading_uuid);
         if (old_trading_with != null) {
             OddJob.getInstance().log("old trade");
             if (old_trading_with.equals(want_to_trade_with.getUuid())) {
@@ -242,7 +244,7 @@ public class ShopsManager {
                 OddJob.getInstance().log("trade cancelled");
                 MessageManager.shops_trade_cancelled(sender, want_to_trade_with);
                 //todo cancel
-                trades.remove(trading_uuid);
+                tradeRequests.remove(trading_uuid);
                 return;
             } else {
                 // trade changed from old to new
@@ -255,16 +257,16 @@ public class ShopsManager {
         }
 
         MessageManager.shops_trade_created(sender, want_to_trade_with);
-        trades.put(trading_uuid, want_to_trade_with.getUuid());
+        tradeRequests.put(trading_uuid, want_to_trade_with.getUuid());
     }
 
     public ItemStack incOne() {
         ItemStack incOne = new ItemStack(Material.GOLD_NUGGET);
         ItemMeta targetAddOneMeta = incOne.getItemMeta();
         if (targetAddOneMeta != null) {
-            targetAddOneMeta.setDisplayName("+10");
+            targetAddOneMeta.setDisplayName("+1");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GREEN + "Click to add " + ChatColor.GOLD + 1 + ChatColor.GREEN + " to current value");
+            lore.add(ChatColor.GREEN + "Click to increase the current value with " + ChatColor.GOLD + 1);
             targetAddOneMeta.setLore(lore);
         }
         incOne.setItemMeta(targetAddOneMeta);
@@ -277,7 +279,7 @@ public class ShopsManager {
         if (targetAddTenMeta != null) {
             targetAddTenMeta.setDisplayName("x10");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GREEN + "Click to multiply by " + ChatColor.GOLD + 10 + ChatColor.GREEN + " to current value");
+            lore.add(ChatColor.GREEN + "Click to multiply the current value with " + ChatColor.GOLD + 10);
             targetAddTenMeta.setLore(lore);
         }
         incTen.setItemMeta(targetAddTenMeta);
@@ -290,7 +292,7 @@ public class ShopsManager {
         if (targetDecOneMeta != null) {
             targetDecOneMeta.setDisplayName("-1");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.RED + "Click to sub " + ChatColor.GOLD + 1 + ChatColor.RED + " to current value");
+            lore.add(ChatColor.RED + "Click to subtract the current value with " + ChatColor.GOLD + 1);
             targetDecOneMeta.setLore(lore);
         }
         decOne.setItemMeta(targetDecOneMeta);
@@ -303,7 +305,7 @@ public class ShopsManager {
         if (targetDecTenMeta != null) {
             targetDecTenMeta.setDisplayName("/10");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.RED + "Click to divide by " + ChatColor.GOLD + 10 + ChatColor.RED + " to current value");
+            lore.add(ChatColor.RED + "Click to divide the current value with " + ChatColor.GOLD + 10);
             targetDecTenMeta.setLore(lore);
         }
         decTen.setItemMeta(targetDecTenMeta);
@@ -324,59 +326,25 @@ public class ShopsManager {
     }
 
     public void tradeAccept(Player target, Player trader) {
-        Inventory inventory = Bukkit.createInventory(null, 27, "Trading " + trader.getUniqueId().toString().split("-")[0]);
-        inventory.setItem(9, incTen());
-        inventory.setItem(10, incOne());
-        inventory.setItem(12, total(target.getUniqueId()));
-        inventory.setItem(13, clear());
-        inventory.setItem(14, total(trader.getUniqueId()));
-        inventory.setItem(16, decOne());
-        inventory.setItem(17, decTen());
-        target.openInventory(inventory);
-        trader.openInventory(inventory);
+        TradeMenu menu = new TradeMenu(trader.getUniqueId(), target.getUniqueId());
+        tradeActive.add(menu);
+        trader.openInventory(menu.getInventory());
+        target.openInventory(menu.getInventory());
     }
 
-    private ItemStack total(UUID uniqueId) {
-        int i = values.get(uniqueId) != null ? values.get(uniqueId) : 0;
+    public ItemStack total(UUID player, boolean trader) {
+
         ItemStack targetTotal = new ItemStack(Material.COPPER_INGOT);
         ItemMeta targetTotalMeta = targetTotal.getItemMeta();
         if (targetTotalMeta != null) {
-            targetTotalMeta.setDisplayName(ChatColor.GOLD + String.valueOf(i));
+            targetTotalMeta.setDisplayName(Bukkit.getPlayer(player).getName() + " " + ChatColor.GOLD + ((trader) ? "You got top!" : "You got bottom!"));
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "Current value: " + ChatColor.GOLD + i);
+            lore.add("You have " + ChatColor.GOLD + OddJob.getInstance().getCurrencyManager().get(player, Account.pocket) + ChatColor.RESET + " in your pocket");
+            lore.add("Trade value: " + ChatColor.GOLD + values.get(player));
             targetTotalMeta.setLore(lore);
         }
         targetTotal.setItemMeta(targetTotalMeta);
         return targetTotal;
-    }
-
-    public void tradeAction(Player player, Inventory inventory, ItemStack itemStack, InventoryView view) {
-
-        if (itemStack.getItemMeta() != null) {
-            switch (itemStack.getItemMeta().getDisplayName()) {
-                case "+1": {
-                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) + 1);
-                }
-                case "-1": {
-                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) - 1);
-                }
-                case "x10": {
-                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) * 10);
-                }
-                case "/10": {
-                    values.put(player.getUniqueId(), values.get(player.getUniqueId()) / 10);
-                }
-                case ">0<": {
-                    values.put(player.getUniqueId(), 0);
-                }
-            }
-            //total()
-        }
-
-    }
-
-    private boolean me(UUID uniqueId, Inventory inventory) {
-        return true;
     }
 
     public List<String> getNames() {
@@ -415,5 +383,31 @@ public class ShopsManager {
 
     public void save(Price price) {
         ShopsSQL.savePrice(price);
+    }
+
+    public ItemStack notReady() {
+        ItemStack clear = new ItemStack(Material.REDSTONE_BLOCK);
+        ItemMeta clearMeta = clear.getItemMeta();
+        if (clearMeta != null) {
+            clearMeta.setDisplayName("NOT READY");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "Click when ready to trade");
+            clearMeta.setLore(lore);
+        }
+        clear.setItemMeta(clearMeta);
+        return clear;
+    }
+
+    public ItemStack ready(String name) {
+        ItemStack clear = new ItemStack(Material.EMERALD_BLOCK);
+        ItemMeta clearMeta = clear.getItemMeta();
+        if (clearMeta != null) {
+            clearMeta.setDisplayName(name + " IS READY, ARE YOU?");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "Click to confirm to trade");
+            clearMeta.setLore(lore);
+        }
+        clear.setItemMeta(clearMeta);
+        return clear;
     }
 }

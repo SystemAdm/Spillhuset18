@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXNotSupportedException;
 
 import java.util.ArrayList;
@@ -67,23 +68,22 @@ public class ShopsCommand extends SubCommandInterface implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!can(sender, false, true)) {
             return true;
         }
         if (!argsLength(sender, args.length)) {
             return true;
         }
-        if (args.length == 1) {
-            OddJob.getInstance().getShopsManager().commonShop(sender,args[0]);
-            return true;
+
+        if (args.length > 0) {
+            finder(sender, args);
         }
-        finder(sender, args);
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
 
         // List commands

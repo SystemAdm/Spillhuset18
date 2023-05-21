@@ -36,12 +36,11 @@ public abstract class SubCommandInterface {
     public abstract List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args);
 
     /**
-     * Checking permission
      *
-     * @param sender
-     * @param others
-     * @param response
-     * @return
+     * @param sender Command sender
+     * @param others Boolean if can command others
+     * @param response Boolean send a visible notification
+     * @return Boolean
      */
     public boolean can(CommandSender sender, boolean others, boolean response) {
         if (denyConsole() && !(sender instanceof Player)) {
@@ -51,6 +50,11 @@ public abstract class SubCommandInterface {
 
         if (denyOp() && sender.isOp()) {
             if (response) MessageManager.errors_denied_op(getPlugin(), sender);
+            return false;
+        }
+
+        if (sender instanceof Player && others && !sender.hasPermission(getPermission() + ".others")) {
+            if (response) MessageManager.errors_denied_others(getPlugin(), sender);
             return false;
         }
 
@@ -81,16 +85,9 @@ public abstract class SubCommandInterface {
         return true;
     }
 
-    public void redirect(CommandSender sender, Plugin plugin, String subcommand) {
-        Bukkit.dispatchCommand(sender, plugin.name() + " " + subcommand);
-    }
-
     public void finder(CommandSender sender, String[] args) {
         if (args.length >= depth()) {
-            //OddJob.getInstance().log("args: " + args.length + " depth: " + depth());
             for (SubCommand subCommand : subCommands) {
-                OddJob.getInstance().log("command: " + subCommand.getName());
-                OddJob.getInstance().log("like: " + args[depth()]);
                 if (subCommand.getName().equalsIgnoreCase(args[depth()])) {
                     if (subCommand.can(sender, false, true)) {
                         subCommand.getCommandExecutor(sender, args);

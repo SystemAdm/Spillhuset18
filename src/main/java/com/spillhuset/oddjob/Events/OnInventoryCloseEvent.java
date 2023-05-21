@@ -3,6 +3,8 @@ package com.spillhuset.oddjob.Events;
 import com.spillhuset.oddjob.Managers.ConfigManager;
 import com.spillhuset.oddjob.OddJob;
 import com.spillhuset.oddjob.Utils.Shop;
+import com.spillhuset.oddjob.Utils.Menu;
+import com.spillhuset.oddjob.Utils.TradeMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -11,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -102,5 +105,21 @@ public class OnInventoryCloseEvent implements Listener {
             }
         }
         OddJob.getInstance().getPlayerManager().removeInventory(inventory, player);
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        InventoryHolder holder = event.getInventory().getHolder();
+        TradeMenu active = null;
+        if (holder instanceof Menu) {
+            for (TradeMenu trade : OddJob.getInstance().getShopsManager().tradeActive) {
+                if (trade.getTarget().equals(player.getUniqueId()) || trade.getTrader().equals(player.getUniqueId())) {
+                    active = trade;
+                }
+            }
+        }
+        if (active == null) return;
+        active.close();
     }
 }

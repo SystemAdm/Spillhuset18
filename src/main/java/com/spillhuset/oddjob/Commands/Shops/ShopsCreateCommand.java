@@ -76,11 +76,9 @@ public class ShopsCreateCommand extends SubCommand {
 
     @Override
     public void getCommandExecutor(CommandSender sender, String[] args) {
-        OddJob.getInstance().log("create");
         if (!argsLength(sender, args.length)) {
             return;
         }
-        OddJob.getInstance().log("args ok");
         if (!can(sender, false, true)) {
             return;
         }
